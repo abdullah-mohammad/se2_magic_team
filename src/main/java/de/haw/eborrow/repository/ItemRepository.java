@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findByPublished(boolean published);
+
     List<Item> findByTitleContaining(String title);
 }

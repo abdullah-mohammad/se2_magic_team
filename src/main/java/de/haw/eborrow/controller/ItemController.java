@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin
 @RestController
 @RequestMapping
 public class ItemController {
@@ -20,7 +20,7 @@ public class ItemController {
 
     @GetMapping("/items")
     public ResponseEntity<List<Item>> getAllItems(@RequestParam(required = false) String title) {
-        try{
+        try {
             List<Item> items = new ArrayList<>();
 
             if (title == null)
@@ -28,13 +28,12 @@ public class ItemController {
             else
                 itemRepository.findByTitleContaining(title);
 
-            if (items.isEmpty()){
+            if (items.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
             return new ResponseEntity<>(items, HttpStatus.OK);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -43,21 +42,19 @@ public class ItemController {
     public ResponseEntity<Item> getItemById(@PathVariable("id") long id) {
         Optional<Item> itemData = itemRepository.findById(id);
 
-        if (itemData.isPresent()){
+        if (itemData.isPresent()) {
             return new ResponseEntity<>(itemData.get(), HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/items")
-    public ResponseEntity<Item> createItem(@RequestBody Item item){
+    public ResponseEntity<Item> createItem(@RequestBody Item item) {
         try {
-            Item _item = itemRepository.save(new Item(item.getTitle(),item.getDescription(), item.isPublished()));
+            Item _item = itemRepository.save(new Item(item.getTitle(), item.getDescription(), item.isPublished()));
             return new ResponseEntity<>(_item, HttpStatus.CREATED);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -4,13 +4,19 @@
     <form>
       <div class="form-group">
         <label for="title">Title</label>
-        <input type="text" class="form-control" id="title"
+        <input
+          type="text"
+          class="form-control"
+          id="title"
           v-model="currentItem.title"
         />
       </div>
       <div class="form-group">
         <label for="description">Description</label>
-        <input type="text" class="form-control" id="description"
+        <input
+          type="text"
+          class="form-control"
+          id="description"
           v-model="currentItem.description"
         />
       </div>
@@ -21,27 +27,24 @@
       </div>
     </form>
 
-    <button class="badge badge-primary mr-2"
+    <button
+      class="badge badge-primary mr-2"
       v-if="currentItem.published"
       @click="updatePublished(false)"
     >
       UnPublish
     </button>
-    <button v-else class="badge badge-primary mr-2"
+    <button
+      v-else
+      class="badge badge-primary mr-2"
       @click="updatePublished(true)"
     >
       Publish
     </button>
 
-    <button class="badge badge-danger mr-2"
-      @click="deleteItem"
-    >
-      Delete
-    </button>
+    <button class="badge badge-danger mr-2" @click="deleteItem">Delete</button>
 
-    <button type="submit" class="badge badge-success"
-      @click="updateItem"
-    >
+    <button type="submit" class="badge badge-success" @click="updateItem">
       Update
     </button>
     <p>{{ message }}</p>
@@ -61,17 +64,17 @@ export default {
   data() {
     return {
       currentItem: null,
-      message: ''
+      message: "",
     };
   },
   methods: {
     getItem(id) {
       ItemDataService.get(id)
-        .then(response => {
+        .then((response) => {
           this.currentItem = response.data;
           console.log(response.data);
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
@@ -81,45 +84,45 @@ export default {
         id: this.currentItem.id,
         title: this.currentItem.title,
         description: this.currentItem.description,
-        published: status
+        published: status,
       };
 
       ItemDataService.update(this.currentItem.id, data)
-        .then(response => {
+        .then((response) => {
           this.currentItem.published = status;
           console.log(response.data);
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
 
     updateItem() {
       ItemDataService.update(this.currentItem.id, this.currentItem)
-        .then(response => {
+        .then((response) => {
           console.log(response.data);
-          this.message = 'The item was updated successfully!';
+          this.message = "The item was updated successfully!";
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
 
     deleteItem() {
       ItemDataService.delete(this.currentItem.id)
-        .then(response => {
+        .then((response) => {
           console.log(response.data);
           this.$router.push({ name: "items" });
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
-    }
+    },
   },
   mounted() {
-    this.message = '';
+    this.message = "";
     this.getItem(this.$route.params.id);
-  }
+  },
 };
 </script>
 

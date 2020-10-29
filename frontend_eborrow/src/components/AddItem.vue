@@ -60,7 +60,6 @@ export default {
       ItemDataService.create(data)
         .then(response => {
           this.item.id = response.data.id;
-          console.log(response.data);
           this.submitted = true;
         })
         .catch(e => {

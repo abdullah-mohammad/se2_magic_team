@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Table(name = "item")
 public class Item {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "title")
@@ -32,10 +32,6 @@ public class Item {
         return id;
     }
 
-//    public void setId(long id) {
-//        this.id = id;
-//    }
-//
     public String getTitle() {
         return title;
     }
