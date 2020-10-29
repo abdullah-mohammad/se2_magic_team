@@ -17,10 +17,9 @@
               name="username"
             />
           </div>
-            <div
-              v-if="submitted && errors.has('username')"
-              class="alert-danger"
-            >{{errors.first('username')}}</div>
+          <div v-if="submitted && errors.has('username')" class="alert-danger">
+            {{ errors.first("username") }}
+          </div>
           <div class="form-group">
             <label for="password">Password</label>
             <input
@@ -32,7 +31,9 @@
             <div
               v-if="submitted && errors.has('password')"
               class="alert-danger"
-            >{{errors.first('password')}}</div>
+            >
+              {{ errors.first("password") }}
+            </div>
           </div>
           <div class="form-group">
             <button class="btn btn-primary btn-block">Sign Up</button>
@@ -44,47 +45,47 @@
         v-if="message"
         class="alert"
         :class="successful ? 'alert-success' : 'alert-danger'"
-      >{{message}}</div>
+      >
+        {{ message }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import User from '../../models/user';
+import User from "../../models/user";
 
 export default {
-  name: 'Register',
+  name: "Register",
   data() {
     return {
-      user: new User('', '', ''),
+      user: new User("", "", ""),
       submitted: false,
       successful: false,
-      message: ''
+      message: "",
     };
   },
-  computed: {
-  },
-  mounted() {
-  },
+  computed: {},
+  mounted() {},
   methods: {
     handleRegister() {
-      this.message = '';
+      this.message = "";
       this.submitted = true;
-          this.$store.dispatch('auth/register', this.user).then(
-            data => {
-              this.message = data.message;
-              this.successful = true;
-            },
-            error => {
-              this.message =
-                (error.response && error.response.data) ||
-                error.message ||
-                error.toString();
-              this.successful = false;
-            }
-          );
-    }
-  }
+      this.$store.dispatch("auth/register", this.user).then(
+        (data) => {
+          this.message = data.message;
+          this.successful = true;
+        },
+        (error) => {
+          this.message =
+            (error.response && error.response.data) ||
+            error.message ||
+            error.toString();
+          this.successful = false;
+        }
+      );
+    },
+  },
 };
 </script>
 

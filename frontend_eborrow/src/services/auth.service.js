@@ -1,28 +1,28 @@
-import {http} from "../http-common";
+import { http } from "../http-common";
 
 class AuthService {
   login(user) {
     return http
-      .post('users/signin', {
+      .post("users/signin", {
         username: user.username,
-        password: user.password
+        password: user.password,
       })
-      .then(response => {
+      .then((response) => {
         if (response.data.accessToken) {
-          localStorage.setItem('user', JSON.stringify(response.data));
+          localStorage.setItem("user", JSON.stringify(response.data));
         }
         return response.data;
       });
   }
 
   logout() {
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
   }
 
   register(user) {
-    return http.post('users/signup', {
+    return http.post("users/signup", {
       username: user.username,
-      password: user.password
+      password: user.password,
     });
   }
 }

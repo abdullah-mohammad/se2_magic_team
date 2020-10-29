@@ -45,33 +45,33 @@ export default {
         id: null,
         title: "",
         description: "",
-        published: false
+        published: false,
       },
-      submitted: false
+      submitted: false,
     };
   },
   methods: {
     saveItem() {
       var data = {
         title: this.item.title,
-        description: this.item.description
+        description: this.item.description,
       };
 
       ItemDataService.create(data)
-        .then(response => {
+        .then((response) => {
           this.item.id = response.data.id;
           this.submitted = true;
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
-    
+
     newItem() {
       this.submitted = false;
       this.item = {};
-    }
-  }
+    },
+  },
 };
 </script>
 
