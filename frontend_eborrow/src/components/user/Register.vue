@@ -39,6 +39,9 @@
             <button class="btn btn-primary btn-block">Sign Up</button>
           </div>
         </div>
+        <div v-if="successful">
+          Account created, nice to have you on board!
+        </div>
       </form>
 
       <div
@@ -54,6 +57,7 @@
 
 <script>
 import User from "../../models/user";
+import authService from "../../services/AuthService";
 
 export default {
   name: "Register",
@@ -71,7 +75,7 @@ export default {
     handleRegister() {
       this.message = "";
       this.submitted = true;
-      this.$store.dispatch("auth/register", this.user).then(
+      authService.register(this.user).then(
         (data) => {
           this.message = data.message;
           this.successful = true;
