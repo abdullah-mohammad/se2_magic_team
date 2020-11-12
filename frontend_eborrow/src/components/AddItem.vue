@@ -45,34 +45,36 @@ export default {
         id: null,
         title: "",
         description: "",
-        published: false
+        published: false,
+        user: this.$store.state.auth.user.id
       },
-      submitted: false
+      submitted: false,
     };
   },
   methods: {
     saveItem() {
       var data = {
         title: this.item.title,
-        description: this.item.description
+        description: this.item.description,
+        available: false,
+        user: String(this.item.user)
       };
 
       ItemDataService.create(data)
-        .then(response => {
+        .then((response) => {
           this.item.id = response.data.id;
-          console.log(response.data);
           this.submitted = true;
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
-    
+
     newItem() {
       this.submitted = false;
       this.item = {};
-    }
-  }
+    },
+  },
 };
 </script>
 

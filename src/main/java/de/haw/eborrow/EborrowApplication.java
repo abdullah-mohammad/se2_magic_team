@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class EborrowApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(EborrowApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(EborrowApplication.class, args);
+    }
 
 }
