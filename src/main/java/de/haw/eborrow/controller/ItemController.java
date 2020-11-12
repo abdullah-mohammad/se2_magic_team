@@ -1,7 +1,11 @@
 package de.haw.eborrow.controller;
 
 import de.haw.eborrow.models.Item;
+import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.ItemRepository;
+import de.haw.eborrow.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,14 +13,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin
 @RestController
 @RequestMapping
 public class ItemController {
+
+    Logger logger = LoggerFactory.getLogger(ItemController.class);
+
     @Autowired
     ItemRepository itemRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @GetMapping("/items")
     public ResponseEntity<List<Item>> getAllItems(@RequestParam(required = false) String title) {
@@ -50,10 +60,16 @@ public class ItemController {
     }
 
     @PostMapping("/items")
-    public ResponseEntity<Item> createItem(@RequestBody Item item) {
+    public ResponseEntity<Item> createItem(@RequestBody Map<String, Object> item) {
         try {
-            Item _item = itemRepository.save(new Item(item.getTitle(), item.getDescription(), item.isAvailable()));
-            return new ResponseEntity<>(_item, HttpStatus.CREATED);
+            Long userid = Long.valueOf((String)item.get("user"));
+            User user = userRepository.getOne(userid);
+            String title = (String)item.get("title");
+            String description = (String)item.get("description");
+            boolean available = (boolean)item.get("available");
+            Item _item = itemRepository.save(new Item(title,description ,available , user));
+            user.addItem(_item);
+            return new ResponseEntity<>(null, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

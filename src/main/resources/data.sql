@@ -2,6 +2,10 @@
 insert into user (username, password, email, gender, profilepicture, birthdate)
 values
 ('user', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE); -- corresponds to password:'password'
+insert into user (username, password, email, gender, profilepicture, birthdate)
+values
+('user2', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE); -- corresponds to password:'password'
+
 
 
 

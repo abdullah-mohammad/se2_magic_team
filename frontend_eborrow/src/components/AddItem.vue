@@ -46,6 +46,7 @@ export default {
         title: "",
         description: "",
         published: false,
+        user: this.$store.state.auth.user.id
       },
       submitted: false,
     };
@@ -55,6 +56,8 @@ export default {
       var data = {
         title: this.item.title,
         description: this.item.description,
+        available: false,
+        user: String(this.item.user)
       };
 
       ItemDataService.create(data)

@@ -23,6 +23,9 @@ class AuthService {
     return http.post("users/signup", {
       username: user.username,
       password: user.password,
+      email: user.email,
+      gender: user.gender,
+      birthdate: user.birthdate
     });
   }
 }

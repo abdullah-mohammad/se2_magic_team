@@ -17,9 +17,6 @@
               name="username"
             />
           </div>
-          <div v-if="submitted && errors.has('username')" class="alert-danger">
-            {{ errors.first("username") }}
-          </div>
           <div class="form-group">
             <label for="password">Password</label>
             <input
@@ -28,13 +25,35 @@
               class="form-control"
               name="password"
             />
-            <div
-              v-if="submitted && errors.has('password')"
-              class="alert-danger"
-            >
-              {{ errors.first("password") }}
-            </div>
           </div>
+          <div class="form-group">
+            <label for="email">email</label>
+            <input
+              v-model="user.email"
+              type="email"
+              class="form-control"
+              name="email"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender">gender</label>
+            <input
+              v-model="user.gender"
+              type="gender"
+              class="form-control"
+              name="gender"
+            />
+          </div>
+          <div class="form-group">
+            <label for="birthdate">birthdate</label>
+            <input
+              v-model="user.birthdate"
+              type="birthdate"
+              class="form-control"
+              name="gender"
+            />
+          </div>
+
           <div class="form-group">
             <button class="btn btn-primary btn-block">Sign Up</button>
           </div>
@@ -63,7 +82,7 @@ export default {
   name: "Register",
   data() {
     return {
-      user: new User("", "", ""),
+      user: new User(),
       submitted: false,
       successful: false,
       message: "",
@@ -74,6 +93,7 @@ export default {
   methods: {
     handleRegister() {
       this.message = "";
+      console.log(this.user);
       this.submitted = true;
       authService.register(this.user).then(
         (data) => {

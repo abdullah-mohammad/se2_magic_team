@@ -1,5 +1,8 @@
 package de.haw.eborrow.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 
@@ -17,8 +20,9 @@ public class Item {
 
     private String picture;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    @JsonBackReference("user")
+    @JoinColumn(name = "user_id")
     private User user;
 
 
@@ -26,6 +30,13 @@ public class Item {
         this.title = title;
         this.description = description;
         this.available = available;
+    }
+
+    public Item(String title, String description, boolean available, User user) {
+        this.title = title;
+        this.description = description;
+        this.available = available;
+        this.user = user;
     }
 
     public Item() {

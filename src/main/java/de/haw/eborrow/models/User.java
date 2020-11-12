@@ -1,10 +1,11 @@
 package de.haw.eborrow.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -18,12 +19,24 @@ public class User {
     private String profilepicture;
     private Date birthdate;
 
+    @JsonManagedReference("user")
+    @OneToMany(mappedBy="user")
+    Set<Item> items = new HashSet();
+
     public User() {
     }
 
     public User(String _username, String _password) {
         this.username = _username;
         this.password = _password;
+    }
+
+    public User(String _username, String _password, String _email, String _gender, Date _birthdate) {
+        this.username = _username;
+        this.password = _password;
+        this.email = _email;
+        this.gender = _gender;
+        this.birthdate = _birthdate;
     }
 
     public String getEmail() {
@@ -81,5 +94,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void addItem(Item item ){
+        this.items.add(item);
+//        item.setUser(this);
     }
 }
