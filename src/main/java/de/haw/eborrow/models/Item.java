@@ -4,25 +4,28 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name = "item")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "title")
     private String title;
 
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "published")
-    private boolean published;
+    private boolean available;
 
-    public Item(String title, String description, boolean published) {
+    private String picture;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+
+    public Item(String title, String description, boolean available) {
         this.title = title;
         this.description = description;
-        this.published = published;
+        this.available = available;
     }
 
     public Item() {
@@ -30,6 +33,26 @@ public class Item {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getTitle() {
@@ -48,12 +71,12 @@ public class Item {
         this.description = description;
     }
 
-    public boolean isPublished() {
-        return published;
+    public boolean isAvailable() {
+        return available;
     }
 
-    public void setPublished(boolean published) {
-        this.published = published;
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
     @Override
@@ -62,7 +85,7 @@ public class Item {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", published=" + published +
+                ", available=" + available +
                 '}';
     }
 }

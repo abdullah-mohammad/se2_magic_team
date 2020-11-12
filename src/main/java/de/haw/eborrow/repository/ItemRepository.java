@@ -6,7 +6,7 @@ import de.haw.eborrow.models.Item;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findByPublished(boolean published);
+    List<Item> findByAvailable(boolean available);
 
     List<Item> findByTitleContaining(String title);
 }

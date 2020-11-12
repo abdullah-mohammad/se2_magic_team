@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 public class User {
@@ -12,6 +13,10 @@ public class User {
     private long id;
     private String username;
     private String password;
+    private String email;
+    private String gender;
+    private String profilepicture;
+    private Date birthdate;
 
     public User() {
     }
@@ -20,6 +25,39 @@ public class User {
         this.username = _username;
         this.password = _password;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getProfilepicture() {
+        return profilepicture;
+    }
+
+    public void setProfilepicture(String profilepicture) {
+        this.profilepicture = profilepicture;
+    }
+
+    public Date getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
+    }
+
 
     public long getId() {
         return id;

@@ -52,7 +52,7 @@ public class ItemController {
     @PostMapping("/items")
     public ResponseEntity<Item> createItem(@RequestBody Item item) {
         try {
-            Item _item = itemRepository.save(new Item(item.getTitle(), item.getDescription(), item.isPublished()));
+            Item _item = itemRepository.save(new Item(item.getTitle(), item.getDescription(), item.isAvailable()));
             return new ResponseEntity<>(_item, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -67,7 +67,7 @@ public class ItemController {
             Item _item = itemData.get();
             _item.setTitle(item.getTitle());
             _item.setDescription(item.getDescription());
-            _item.setPublished(item.isPublished());
+            _item.setAvailable(item.isAvailable());
             return new ResponseEntity<>(itemRepository.save(_item), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -95,10 +95,10 @@ public class ItemController {
 
     }
 
-    @GetMapping("/items/published")
-    public ResponseEntity<List<Item>> findByPublished() {
+    @GetMapping("/items/available")
+    public ResponseEntity<List<Item>> findByAvailable() {
         try {
-            List<Item> items = itemRepository.findByPublished(true);
+            List<Item> items = itemRepository.findByAvailable(true);
 
             if (items.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
