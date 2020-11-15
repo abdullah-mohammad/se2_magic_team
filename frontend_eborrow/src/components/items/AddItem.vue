@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import ItemDataService from "../services/ItemDataService";
+import ItemDataService from "../../services/ItemDataService";
 
 export default {
   name: "add-item",

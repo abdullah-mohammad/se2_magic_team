@@ -14,22 +14,27 @@ export const router = new Router({
     {
       path: "/items",
       name: "items",
-      component: () => import("./components/ItemsList"),
+      component: () => import("./components/items/ItemsList"),
     },
     {
       path: "/items/:id",
       name: "item-details",
-      component: () => import("./components/Item"),
+      component: () => import("./components/items/Item"),
     },
     {
       path: "/add",
       name: "add",
-      component: () => import("./components/AddItem"),
+      component: () => import("./components/items/AddItem"),
     },
     {
       path: "/profile",
       name: "profile",
       component: () => import("./components/user/Profile"),
+    },
+    {
+      path: "/edit-profile/:id",
+      name: "edit-profile",
+      component: () => import("./components/user/EditProfile"),
     },
     {
       path: "/login",

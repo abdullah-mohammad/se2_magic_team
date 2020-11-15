@@ -1,10 +1,10 @@
 --insert some sample Data
-insert into user (username, password, email, gender, profilepicture, birthdate)
+insert into user (username, password, firstname, lastname, email, gender, profilepicture, birthdate)
 values
-('user', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE); -- corresponds to password:'password'
-insert into user (username, password, email, gender, profilepicture, birthdate)
+('user', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'User 1', 'isLastaName', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE); -- corresponds to password:'password'
+insert into user (username, password, firstname, lastname, email, gender, profilepicture, birthdate)
 values
-('user2', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE); -- corresponds to password:'password'
+('user2', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'User 2', 'isLastaName2', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE); -- corresponds to password:'password'
 
 
 

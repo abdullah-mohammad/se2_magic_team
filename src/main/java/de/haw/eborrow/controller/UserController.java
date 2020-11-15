@@ -1,5 +1,6 @@
 package de.haw.eborrow.controller;
 
+import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.security.SigninRequest;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -57,7 +60,7 @@ public class UserController {
             System.out.println(e);
             birthdate = null;
         }
-        User _user = applicationUserRepository.save(new User(userRequest.getUsername(), userRequest.getPassword(), userRequest.getEmail(), userRequest.getGender(), birthdate));
+        User _user = applicationUserRepository.save(new User(userRequest.getUsername(), userRequest.getPassword(), userRequest.getFirstname(), userRequest.getLastname(), userRequest.getEmail(), userRequest.getGender(), birthdate));
         return new ResponseEntity<>(_user, HttpStatus.CREATED);
     }
 
@@ -73,7 +76,42 @@ public class UserController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
 
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername()));
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getFirstname(), userDetails.getLastname(), userDetails.getEmail(), userDetails.getGender(), userDetails.getBirthdate(), userDetails.getProfilepicture()));
+
+    }
+
+    @PreAuthorize("permitAll()")
+    @PutMapping("/edit-user/{id}")
+    public ResponseEntity<User> editUser(@PathVariable("id") long id, @RequestBody User user) {
+        Optional<User> userData = applicationUserRepository.findById(id);
+        if (userData.isPresent()) {
+            User _user = userData.get();
+            _user.setUsername(user.getUsername());
+            _user.setEmail(user.getEmail());
+            _user.setFirstname(user.getFirstname());
+            _user.setLastname(user.getLastname());
+            _user.setGender(user.getGender());
+            _user.setBirthdate(user.getBirthdate());
+            return new ResponseEntity<User>(applicationUserRepository.save(_user), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getUser(@PathVariable("id") long id) {
+        try {
+            Optional<User> user = applicationUserRepository.findById(id);
+
+            if (user.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<User>(user.get(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
 }
