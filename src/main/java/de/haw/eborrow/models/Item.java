@@ -26,15 +26,17 @@ public class Item {
     private User user;
 
 
-    public Item(String title, String description, boolean available) {
+    public Item(String title, String description, String picture, boolean available) {
         this.title = title;
         this.description = description;
+        this.picture = picture;
         this.available = available;
     }
 
-    public Item(String title, String description, boolean available, User user) {
+    public Item(String title, String description, String picture, boolean available, User user) {
         this.title = title;
         this.description = description;
+        this.picture = picture;
         this.available = available;
         this.user = user;
     }

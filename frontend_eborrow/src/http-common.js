@@ -4,8 +4,8 @@ import store from "./store";
 export const http = axios.create({
   baseURL: "http://localhost:8080/",
   headers: {
-    "Content-type": "application/json",
-  },
+            "content-Type": 'application/json',
+          },
 });
 
 http.interceptors.request.use(

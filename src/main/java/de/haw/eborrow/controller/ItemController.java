@@ -4,16 +4,18 @@ import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.ItemRepository;
 import de.haw.eborrow.repository.UserRepository;
+import de.haw.eborrow.services.FilesStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin
@@ -27,6 +29,8 @@ public class ItemController {
     ItemRepository itemRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    FilesStorageService storageService;
 
     @GetMapping("/items")
     public ResponseEntity<List<Item>> getAllItems(@RequestParam(required = false) String title) {
@@ -59,17 +63,26 @@ public class ItemController {
         }
     }
 
-    @PostMapping("/items")
-    public ResponseEntity<Item> createItem(@RequestBody Map<String, Object> item) {
+    @PostMapping(value = "/items")
+    public ResponseEntity<Item> createItem(@RequestParam("title") String title,
+                                           @RequestParam("description") String description,
+                                           @RequestParam("available") String available,
+                                           @RequestParam("user") String userId,
+                                           @RequestParam(value = "fileImage", required = false) MultipartFile multipartFile) {
         try {
-            Long userid = Long.valueOf((String)item.get("user"));
-            User user = userRepository.getOne(userid);
-            String title = (String)item.get("title");
-            String description = (String)item.get("description");
-            boolean available = (boolean)item.get("available");
-            Item _item = itemRepository.save(new Item(title,description ,available , user));
+            Long _userId = Long.valueOf(userId);
+            User user = userRepository.getOne(_userId);
+            String fileName = "standerdItemImage.png";
+            if (multipartFile != null) {
+                fileName = userId + "_" + title + "_" + StringUtils.cleanPath(multipartFile.getOriginalFilename());
+                storageService.save(multipartFile, fileName);
+            }
+
+            boolean _available = Boolean.parseBoolean(available);
+            Item _item = itemRepository.save(new Item(title, description, fileName, _available, user));
             user.addItem(_item);
-            return new ResponseEntity<>(null, HttpStatus.CREATED);
+
+            return new ResponseEntity<>(_item, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -83,6 +96,7 @@ public class ItemController {
             Item _item = itemData.get();
             _item.setTitle(item.getTitle());
             _item.setDescription(item.getDescription());
+            _item.setPicture(item.getPicture());
             _item.setAvailable(item.isAvailable());
             return new ResponseEntity<>(itemRepository.save(_item), HttpStatus.OK);
         } else {
@@ -124,4 +138,6 @@ public class ItemController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }
