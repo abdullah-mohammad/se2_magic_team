@@ -1,5 +1,4 @@
 import AuthService from '../services/AuthService';
-import userDataService from '../services/UserDataService';
 
 const user = JSON.parse(localStorage.getItem('user'));
 const initialState = {user}
@@ -12,7 +11,7 @@ export const auth = {
       return AuthService.login(user).then(
         user => {
           commit('loginSuccess', user);
-          dispatch('setLoggedUserPass');
+          dispatch('user/setCurrentUser', user.id, {root:true})
           return Promise.resolve(user);
         },
         error => {
@@ -25,11 +24,7 @@ export const auth = {
       AuthService.logout();
       commit('logout');
     },
-    async setLoggedUserPass(context) {
-      const res = await userDataService.getUser(context.state.user.id);
-      context.commit('SET_LOGGED_USER_PASS', res.data);
-      return Promise.resolve(res.data);
-    }
+    
     // register({ commit }, user){
     //   return AuthService.register(user).then(
     //     user => {
@@ -47,9 +42,6 @@ export const auth = {
     },
     logout(state) {
       state.user = null;
-    },
-    SET_LOGGED_USER_PASS(state, pass) {
-      state.user = {...state.user, password: pass}
     }
   }
 };

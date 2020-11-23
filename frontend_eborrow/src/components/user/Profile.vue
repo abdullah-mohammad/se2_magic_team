@@ -19,8 +19,8 @@
                     <div class="d-flex flex-column align-items-center text-center">
                       <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
                       <div class="mt-3">
-                        <h4>{{currentUser.username}}</h4>
-                        <a :href="'edit-profile/' + currentUser.id" class="btn btn-primary">Edit</a>
+                        <h4>{{user.username}}</h4>
+                        <a :href="'edit-profile/' + user.id" class="btn btn-primary">Edit</a>
                         &nbsp;
                         <button class="btn btn-outline-danger">Delete</button>
                       </div>
@@ -36,7 +36,7 @@
                         <h6 class="mb-0">Full Name</h6>
                       </div>
                       <div class="col-sm-9 text-secondary">
-                        {{currentUser.firstname}} {{currentUser.lastname}}
+                        {{user.firstname}} {{user.lastname}}
                       </div>
                     </div>
                     <hr>
@@ -45,7 +45,7 @@
                         <h6 class="mb-0">Email</h6>
                       </div>
                       <div class="col-sm-9 text-secondary">
-                        {{currentUser.email}}
+                        {{user.email}}
                       </div>
                     </div>
                     <hr>
@@ -54,7 +54,7 @@
                         <h6 class="mb-0">Gender</h6>
                       </div>
                       <div class="col-sm-9 text-secondary">
-                        {{currentUser.gender}}
+                        {{user.gender}}
                       </div>
                     </div>
                     <hr>
@@ -63,11 +63,23 @@
                         <h6 class="mb-0">Birthdate</h6>
                       </div>
                       <div class="col-sm-9 text-secondary">
-                        {{currentUser.birthdate}}
+                        {{user.birthdate}}
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
+              <div class="card mt-3">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    
+                    <a :href="''" class="text-secondary">My tools</a>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                    
+                    <a :href="''" class="text-secondary">borrowed</a>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -76,18 +88,27 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
 export default {
   name: "Profile",
   computed: {
     currentUser() {
-      console.log("object", this.$store.state.auth.user)
       return this.$store.state.auth.user;
     },
+    ...mapState('user', {
+      user: state => state.user
+    }),
+  },
+  methods: {
+    ...mapActions({
+          setCurrentUser: "user/setCurrentUser",
+        })
   },
   mounted() {
     if (!this.currentUser) {
       this.$router.push("/login");
     }
+    this.setCurrentUser(this.currentUser.id)
   },
 };
 </script>

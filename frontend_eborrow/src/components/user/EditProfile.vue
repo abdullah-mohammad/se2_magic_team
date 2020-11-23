@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="container">
-      <div class="main-body">
+      <div v-if="currentUser" class="main-body">
             <!-- Breadcrumb -->
             <nav aria-label="breadcrumb" class="main-breadcrumb">
               <ol class="breadcrumb">
@@ -19,8 +19,9 @@
                     <div class="d-flex flex-column align-items-center text-center">
                       <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
                       <div class="mt-3">
-                        <h4>{{currentUser.username}}</h4>
-                        <a :href="'edit-profile/' + currentUser.id" class="btn btn-primary">Edit</a>
+                        <input type="email" class="form-control text-center" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"
+                                v-model="user.username"
+                          > <br>
                         &nbsp;
                         <button class="btn btn-outline-danger">Delete</button>
                       </div>
@@ -34,14 +35,22 @@
                     <form @submit.prevent="handleEditUser">
                         <div class="row">
                         <div class="col-sm-3">
-                            <h6 class="mb-0">Full Name</h6>
+                            <h6 class="mb-0">Firstname</h6>
                         </div>
                         <div class="col-sm-9 text-secondary">
                             <input type="text" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter email"
-                                v-model="currentUser.firstname"
-                            > <br>
+                                v-model="user.firstname"
+                            >
+                        </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Lastname</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
                             <input type="text" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter email"
-                                v-model="currentUser.lastname"
+                                v-model="user.lastname"
                             >
                         </div>
                         </div>
@@ -52,10 +61,32 @@
                         </div>
                         <div class="col-sm-9 text-secondary">
                             <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"
-                                v-model="currentUser.email"
+                                v-model="user.email"
                             >
                         </div>
                         </div>
+                        <hr>
+                         <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Old password</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          <input v-model="oldpass" type="password" class="form-control" placeholder="Enter old password">
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-default" type="button" @click="handleCheckOldPass">OK</button>
+                          </div>
+                        </div>
+                        </div>
+                        <hr>
+                         <div v-if="oldpassValid" class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">New password</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          <input v-model="newpass" type="password" class="form-control" placeholder="Enter old password">
+                        </div>
+                        </div>
+                        <div v-if="!oldpassValid && isChecked" class="text-danger">Your old password doesn't match!</div>
                         <hr>
                         <div class="row">
                         <div class="col-sm-3">
@@ -63,7 +94,7 @@
                         </div>
                         <div class="col-sm-9 text-secondary">
                             <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"
-                                v-model="currentUser.gender"
+                                v-model="user.gender"
                             >
                         </div>
                         </div>
@@ -74,59 +105,89 @@
                         </div>
                         <div class="col-sm-9 text-secondary">
                             <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"
-                                v-model="currentUser.birthdate"
+                                v-model="user.birthdate"
                             >
                         </div>
                         </div>
                         <p v-if="errMsge" class="text-danger">{{errMsge}}</p>
                         <input type="submit" class="btn btn-success" value="Save">
+                        &nbsp;
+                        <a @click="goBack()" class="btn btn-primary">Back</a>
                     </form>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <div v-else>
+            {{errMsge}}
+          </div>
       </div>
     </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-import User from '../../models/user';
+import { mapActions, mapState } from 'vuex';
+import User from '../../models/User';
 import userDataService from "../../services/UserDataService";
 
 export default {
     name: "edit-profile",
     data() {
         return {
-            errMsge: ""
+            errMsge: "",
+            oldpass:"",
+            oldpassValid: false,
+            isChecked:false,
+            newpass: ""
         }
     },
     computed: {
         currentUser() {
             return this.$store.state.auth.user;
         },
+        ...mapState('user', ['user'])
     },
     methods: {
         ...mapActions({
             logout: "auth/logout",
             login: "auth/login",
+            setCurrentUser: "user/setCurrentUser",
+            editUser: "user/editUser"
         }),
+        /* handleEditUser() {
+            const pass = this.newpass ? this.newpass : this.user.password;
+            const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
+            this.editUser(user);
+        } */
         handleEditUser() {
-            const user = new User(this.currentUser.username, this.currentUser.password, this.currentUser.firstname, this.currentUser.lastname, this.currentUser.email, this.currentUser.gender, this.currentUser.profilepicture, this.currentUser.birthdate)
-            console.log("BEISPIEL" , user)
+            const pass = this.newpass ? this.newpass : this.user.password;
+            const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
             userDataService.editUser(this.currentUser.id, user)
                 .then(res => {
                     console.log(res.data)
                     this.$router.push("/profile");
                 })
                 .catch(e => this.errMsge = e)
+        },
+        goBack() {
+          this.$router.push("/profile")
+        },
+        handleCheckOldPass() {
+          this.isChecked=true
+          userDataService.checkUserPass(this.currentUser.id, this.oldpass)
+            .then(res => {
+              console.log(res)
+              this.oldpassValid = res.data
+            })
+            .catch(e => this.errMsge = e)
         }
     },
   mounted() {
     if (!this.currentUser) {
       this.$router.push("/login");
     }
+    this.setCurrentUser(this.currentUser.id)
   },
 }
 </script>

@@ -1,6 +1,5 @@
 package de.haw.eborrow.controller;
 
-import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.security.SigninRequest;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
@@ -76,7 +74,7 @@ public class UserController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
 
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getFirstname(), userDetails.getLastname(), userDetails.getEmail(), userDetails.getGender(), userDetails.getBirthdate(), userDetails.getProfilepicture()));
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername()));
 
     }
 
@@ -87,6 +85,7 @@ public class UserController {
         if (userData.isPresent()) {
             User _user = userData.get();
             _user.setUsername(user.getUsername());
+            _user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             _user.setEmail(user.getEmail());
             _user.setFirstname(user.getFirstname());
             _user.setLastname(user.getLastname());
@@ -113,5 +112,12 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @PreAuthorize("permitAll()")
+    @PostMapping("/check-pass/{id}")
+    public boolean checkUserPass(@PathVariable("id") long id, @RequestBody String pass) {
+        String userCurrentPass = applicationUserRepository.getUserPass(id);
+        return bCryptPasswordEncoder.matches(pass, userCurrentPass);
     }
 }
