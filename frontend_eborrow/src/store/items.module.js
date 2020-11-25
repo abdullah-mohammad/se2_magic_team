@@ -3,7 +3,8 @@ import ItemDataService from "../services/ItemDataService";
 export const items = {
     namespaced: true,
     state: {
-        items: []
+        items: [],
+        currentItem: null
     },
     mutations: {
         SET_ITEMS(state, payload) {

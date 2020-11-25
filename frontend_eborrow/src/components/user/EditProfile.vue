@@ -92,7 +92,7 @@
 
 <script>
 import { mapActions } from 'vuex';
-import User from '../../models/user';
+import User from '../../models/User';
 import userDataService from "../../services/UserDataService";
 
 export default {

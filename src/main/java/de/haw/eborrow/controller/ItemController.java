@@ -4,17 +4,19 @@ import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.ItemRepository;
 import de.haw.eborrow.repository.UserRepository;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -53,6 +55,7 @@ public class ItemController {
         Optional<Item> itemData = itemRepository.findById(id);
 
         if (itemData.isPresent()) {
+            System.out.println(itemData.get());
             return new ResponseEntity<>(itemData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -123,5 +126,18 @@ public class ItemController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping(
+            value = "/items/get-img/",
+            produces = MediaType.IMAGE_JPEG_VALUE
+    )
+    public byte[] getImageWithMediaType(@RequestBody Map<String, Object> picPath) throws IOException {
+        //InputStream in = getClass().getClassLoader()
+                //.getResourceAsStream("/images/mahe.jpg");
+        System.out.println(picPath.get("pic"));
+        //InputStream in = new ClassPathResource("/images/"+picPath.get("pic")).getInputStream();
+        InputStream in = new ClassPathResource("/images/mahe.jpg").getInputStream();
+        return IOUtils.toByteArray(in);
     }
 }

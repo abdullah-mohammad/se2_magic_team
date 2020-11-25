@@ -1,6 +1,8 @@
 package de.haw.eborrow.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,6 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +26,7 @@ public class User {
     private String profilepicture;
     private Date birthdate;
 
-    @JsonManagedReference("user")
+    //@JsonManagedReference("user")
     @OneToMany(mappedBy="user")
     Set<Item> items = new HashSet();
 
