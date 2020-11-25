@@ -28,7 +28,6 @@ class ItemDataService {
   findByTitle(title) {
     return http.get(`/items?title=${title}`);
   }
-  
 }
 
 export default new ItemDataService();
