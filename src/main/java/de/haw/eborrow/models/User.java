@@ -1,6 +1,8 @@
 package de.haw.eborrow.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,18 +10,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String username;
     private String password;
+    private String firstname;
+    private String lastname;
     private String email;
     private String gender;
     private String profilepicture;
     private Date birthdate;
 
-    @JsonManagedReference("user")
     @OneToMany(mappedBy="user")
     Set<Item> items = new HashSet();
 
@@ -31,9 +37,11 @@ public class User {
         this.password = _password;
     }
 
-    public User(String _username, String _password, String _email, String _gender, Date _birthdate) {
+    public User(String _username, String _password, String _firstName, String _lastName, String _email, String _gender, Date _birthdate) {
         this.username = _username;
         this.password = _password;
+        this.firstname = _firstName;
+        this.lastname = _lastName;
         this.email = _email;
         this.gender = _gender;
         this.birthdate = _birthdate;
@@ -45,6 +53,22 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstName) {
+        this.firstname = firstName;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastName) {
+        this.lastname = lastName;
     }
 
     public String getGender() {

@@ -28,6 +28,10 @@ class ItemDataService {
   findByTitle(title) {
     return http.get(`/items?title=${title}`);
   }
+
+  getPicture(img) {
+    return http.get(`/items/get-img/${img}/`)
+  }
 }
 
 export default new ItemDataService();
