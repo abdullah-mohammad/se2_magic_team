@@ -1,8 +1,8 @@
 import { http } from "../http-common";
 
 class UserDataService {
-  editUser(id, user) {
-    return http.put(`/users/edit-user/${id}`, user);
+  editUser(id, data) {
+    return http.put(`/users/edit-user/${id}`, data);
   }
 
   getUser(id) {

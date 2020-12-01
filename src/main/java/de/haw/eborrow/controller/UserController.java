@@ -1,5 +1,6 @@
 package de.haw.eborrow.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.security.SigninRequest;
@@ -20,10 +21,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -80,22 +83,25 @@ public class UserController {
 
     @PreAuthorize("permitAll()")
     @PutMapping("/edit-user/{id}")
-    public ResponseEntity<User> editUser(@PathVariable("id") long id, @RequestBody User user) {
+    public ResponseEntity<User> editUser(@PathVariable("id") long id, @RequestBody Map<String,Object> body) throws ParseException {
         Optional<User> userData = applicationUserRepository.findById(id);
+        boolean shouldEditPass = (boolean) body.get("editPass");
         if (userData.isPresent()) {
             User _user = userData.get();
-            _user.setUsername(user.getUsername());
-            _user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            _user.setEmail(user.getEmail());
-            _user.setFirstname(user.getFirstname());
-            _user.setLastname(user.getLastname());
-            _user.setGender(user.getGender());
-            _user.setBirthdate(user.getBirthdate());
+            _user.setUsername((String) body.get("username"));
+            if (shouldEditPass)
+                _user.setPassword(bCryptPasswordEncoder.encode((String) body.get("password")));
+            _user.setEmail((String) body.get("email"));
+            _user.setFirstname((String) body.get("firstname"));
+            _user.setLastname((String) body.get("lastname"));
+            _user.setGender((String) body.get("gender"));
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+            Date date = formatter.parse(body.get("birthdate").toString().substring(0, body.get("birthdate").toString().length()-10));
+            _user.setBirthdate(date);
             return new ResponseEntity<User>(applicationUserRepository.save(_user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
 
     @PreAuthorize("permitAll()")

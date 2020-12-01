@@ -161,9 +161,11 @@ export default {
             this.editUser(user);
         } */
         handleEditUser() {
-            const pass = this.newpass ? this.newpass : this.user.password;
+            const pass = this.newpass != "" ? this.newpass : this.user.password;
             const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
-            userDataService.editUser(this.currentUser.id, user)
+            const editUserPass = this.newpass != "" ? true : false;
+            const data = {...user, editPass: editUserPass}
+            userDataService.editUser(this.currentUser.id, data)
                 .then(res => {
                     console.log(res.data)
                     this.$router.push("/profile");
@@ -188,6 +190,8 @@ export default {
       this.$router.push("/login");
     }
     this.setCurrentUser(this.currentUser.id)
+    this.isChecked = false
+    this.newpass = ""
   },
 }
 </script>
