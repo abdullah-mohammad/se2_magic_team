@@ -4,7 +4,6 @@ export const items = {
     namespaced: true,
     state: {
         items: [],
-        currentItem: null
     },
     mutations: {
         SET_ITEMS(state, payload) {

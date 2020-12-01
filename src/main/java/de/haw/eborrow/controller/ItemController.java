@@ -128,6 +128,21 @@ public class ItemController {
         }
     }
 
+    @GetMapping(
+            value = "/items/get-img/{pic:.+}",
+            produces = MediaType.IMAGE_JPEG_VALUE
+    )
+    public byte[] getImageWithMediaTyp(@PathVariable("pic") String pic) {
+        InputStream in = null;
+        try {
+            in = new ClassPathResource("/images/"+pic).getInputStream();
+            return IOUtils.toByteArray(in);
+        } catch (IOException e) {
+            //e.printStackTrace();
+            return null;
+        }
+    }
+
     @PostMapping(
             value = "/items/get-img/",
             produces = MediaType.IMAGE_JPEG_VALUE

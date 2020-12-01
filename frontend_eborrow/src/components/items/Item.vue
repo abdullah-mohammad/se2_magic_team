@@ -109,8 +109,9 @@
             <div class="panel-body">
                 <div :style="{display:'inline-block'}" class="col-md-6">
                     <div class="pro-img-details">
-                        <img src="https://via.placeholder.com/550x380/FFB6C1/000000" alt="">
-                        <!-- <img :src="currentPic" alt="img"> -->
+                        <img style="width: 100%;
+    object-fit: cover;
+    height: 380px;" onerror="this.onerror=null;this.src='http://placehold.it/700x300';" :src="getCurrentItemPicture" :alt="currentItem.picture">
                     </div>
                 </div>
                 <div :style="{display:'inline-block', verticalAlign: 'top'}" class="col-md-6">
@@ -122,7 +123,6 @@
                     <p>
                         {{currentItem.description}}
                     </p>
-                    {{currentPic}}
                     <div class="product_meta">
                         <span class="posted_in"> <strong>Owner:</strong> <a class="text-primary" rel="tag" href="#">{{currentItem.user.firstname}} {{currentItem.user.lastname}}</a> </span>
                     </div>
@@ -132,7 +132,8 @@
                     </div>
                     <br>
                     <p>
-                        <button class="btn btn-round btn-success" type="button"><i class="fa fa-shopping-cart"></i> Borrow</button>
+                        <button @click="navigateBack" class="btn btn-round btn-primary gs-btn-rounded gs-btn-blue" type="button"><i class="fa fa-chevron-left"></i> Back</button>
+                        <button class="btn btn-round btn-success gs-btn-rounded" type="button"><i class="fa fa-shopping-cart"></i> Borrow</button>
                     </p>
                 </div>
             </div>
@@ -147,18 +148,19 @@
 <script>
 import ItemDataService from "../../services/ItemDataService";
 
+const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
+
 export default {
   name: "item",
   data() {
     return {
       currentItem: null,
-      message: "",
-      currentPic: Object
+      message: ""
     };
   },
   computed: {
-    dataUrl() {
-      return this.currentPic
+    getCurrentItemPicture() {
+      return `${API_IMG_RESOURCE}${this.currentItem.picture}/`
     }
   },
   methods: {
@@ -167,26 +169,11 @@ export default {
         .then((response) => {
           this.currentItem = response.data;
           console.log(response.data)
-          /* const picPath = JSON.parse('{"pic":"'+response.data.picture+'"}');
-          this.getItemPicture(picPath) */
-          console.log(response.data);
         })
         .catch((e) => {
           console.log(e);
         });
     },
-
-    /* getItemPicture(path) {
-      ItemDataService.getPicture(path)
-        .then(res => {
-          console.log(res.data)
-          this.currentPic = 'data:image/jpeg;base64,';
-          console.log("FFF", process.env.BASE_URL)
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }, */
 
     updatePublished(status) {
       var data = {
@@ -226,6 +213,10 @@ export default {
         .catch((e) => {
           console.log(e);
         });
+    },
+
+    navigateBack() {
+      this.$router.go(-1)
     },
   },
   mounted() {

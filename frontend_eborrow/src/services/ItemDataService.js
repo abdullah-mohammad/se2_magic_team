@@ -29,8 +29,8 @@ class ItemDataService {
     return http.get(`/items?title=${title}`);
   }
 
-  getPicture(imgPath) {
-    return http.post("/items/get-img/", imgPath)
+  getPicture(img) {
+    return http.get(`/items/get-img/${img}/`)
   }
 }
 

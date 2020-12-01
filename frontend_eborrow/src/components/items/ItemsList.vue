@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="items.length > 0" class="list row">
-      <div class="col-md-8">
+      <!-- <div class="col-md-8">
         <div class="input-group mb-3">
           <input
             type="text"
@@ -17,34 +17,37 @@
             </button>
           </div>
         </div>
-      </div>
+      </div> -->
       
       <!-- Page Content -->
       <div class="container">
 
         <!-- Page Heading -->
-        <h1 class="my-4">Item
-          <small>list</small>
-        </h1>
+        <h2 class="my-4 gs-title">List of tools: </h2>
 
         <div v-for="(item) in items.slice(startLimit, endLimit)" :key="item.id">
           <!-- Item One -->
-          <div class="row">
-            <div class="col-md-7">
+          <div class="row gs-tool-card">
+            <div class="col-md-5">
               <a href="#">
-                <img class="img-fluid rounded mb-3 mb-md-0" src="http://placehold.it/700x300" alt="">
+                <img onerror="this.onerror=null;this.src='http://placehold.it/700x300';" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" :src="getItemPicture(item.picture)" alt=""> <!-- http://placehold.it/700x300 -->
               </a>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-7 gs-tool-card-infos img-fluid">
               <h3>{{item.title}}</h3>
-              <p>{{item.description}}</p>
-              <a class="btn btn-sm btn-primary" :href="'/items/' + item.id">See details</a> &nbsp;
-              <a class="btn btn-sm btn-outline-success" href="#">Borrow</a>
+              <VClamp class="p"
+                  :max-height="255"
+                >
+                  {{item.description}} {{item.description}}
+              </VClamp>
+              <!-- <p>{{item.description}}</p> -->
+              <div class="gs-tool-card-actions">
+                <router-link :to="{ path: '/items/'+ item.id}" class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details</router-link>
+                <router-link :to="{ path: '#'}" class="btn btn-sm btn-outline-success gs-btn-green .gs-a">Borrow</router-link>
+              </div>
             </div>
           </div>
           <!-- /.row -->
-
-          <hr>
         </div>
 
         <!-- Pagination -->
@@ -52,18 +55,18 @@
             page:1
             :page-count=getPageCount
             :container-class="'pagination justify-content-center'"
-            :page-class="'page-item'"
-            :prev-class="'page-item'"
-            :next-class="'page-item'"
-            :prev-link-class="'page-link'"
-            :next-link-class="'page-link'"
-            :page-link-class="'page-link'"
+            :page-class="'page-item gs-page-item'"
+            :prev-class="'page-item gs-page-item'"
+            :next-class="'page-item gs-page-item'"
+            :prev-link-class="'page-link gs-page-link'"
+            :next-link-class="'page-link gs-page-link'"
+            :page-link-class="'page-link gs-page-link'"
             :prev-text="'&laquo;'"
             :next-text="'&raquo;'"
             :click-handler="paginateCallback"
             >
         </paginate>
-        
+    
       </div>
       <!-- /.container -->
 
@@ -78,13 +81,16 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import Paginate from 'vuejs-paginate'
+import VClamp from 'vue-clamp'
 
 const MAX_NUMBER_ITEMS_PER_LIST = 5;
+const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
 
 export default {
   name: "items-list",
   components: {
-    Paginate
+    Paginate,
+    VClamp
   },
   data() {
     return {
@@ -106,6 +112,9 @@ export default {
       console.log(pageNum)
       this.startLimit = MAX_NUMBER_ITEMS_PER_LIST*(pageNum-1);
       this.endLimit = this.startLimit + MAX_NUMBER_ITEMS_PER_LIST;
+    },
+    getItemPicture(img) {
+      return `${API_IMG_RESOURCE}${img}/`
     }
   },
   mounted() {
