@@ -1,4 +1,5 @@
 import AuthService from '../services/AuthService';
+import userDataService from '../services/UserDataService';
 
 const user = JSON.parse(localStorage.getItem('user'));
 const initialState = {user}
@@ -42,6 +43,9 @@ export const auth = {
     },
     logout(state) {
       state.user = null;
+    },
+    SET_LOGGED_USER_PASS(state, pass) {
+      state.user = {...state.user, password: pass}
     }
   }
 };

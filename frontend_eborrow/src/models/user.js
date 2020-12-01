@@ -7,6 +7,6 @@ export default class User {
     this.email = email;
     this.gender = gender;
     this.profilepicture = profilepicture;
-    this.birthdate = birthdate;
+    this.birthdate = birthdate; 
   }
 }

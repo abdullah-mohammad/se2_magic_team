@@ -1,0 +1,162 @@
+/*
+    This is the main style of the Website
+*/
+
+/* Variable decalarations */
+:root {  
+    --orange1: #d17b58;
+    --orange2: #fbe5d8;
+    --orange3: #fdf4ef;
+    --gray1: #414243;
+    --gray2: #5e5e5e;
+    --green1: #88aa91;
+    --red1: #b35754;
+    --blue1: #57c6f2;
+}
+
+.gs-bg-orange-2, body {
+    background-color: var(--orange2)!important;
+}
+
+.gs-navbar-orange {
+    background-color: var(--orange2)!important;
+}
+
+.gs-navbar-orange .gs-navbar-brand {
+    color: var(--gray1)!important;
+}
+
+.gs-navbar-brand {
+    font-size: 1.7rem!important;
+    font-weight: 600;
+}
+
+.gs-navbar-orange .gs-navbar-nav {
+    background-color: var(--orange3)!important;
+    border-radius: 20px!important;
+    padding-left: 1.25%;
+    padding-right: 1.25%;
+}
+
+.gs-navbar-orange .gs-navbar-nav .gs-nav-link {
+    color: var(--gray2)!important;
+}
+
+.gs-navbar-orange .gs-navbar-nav .gs-nav-link:focus, .gs-navbar-orange .gs-navbar-nav .gs-nav-link:hover {
+    color: var(--green1)!important;
+}
+
+.gs-title {
+    color: var(--orange1)!important;
+}
+
+.gs-tool-card {
+    margin-bottom: 25px;
+    background-color: var(--orange3)!important;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    -webkit-box-shadow: 0 10px 6px -6px #777;
+     -moz-box-shadow: 0 10px 6px -6px rgba(119, 119, 119, 0.466);
+          box-shadow: 0 10px 6px -6px rgba(119, 119, 119, 0.466);
+    border-radius: .5rem;
+}
+
+.gs-tool-card h3, .gs-tool-card p {
+    color: var(--gray2)!important;
+}
+
+.gs-tool-card .gs-tool-card-infos {
+    /* border: solid 2px red; */
+    display: flex;
+    height: 225px;
+    flex-direction: column;
+}
+
+.gs-tool-card .gs-tool-card-infos p, .gs-tool-card .gs-tool-card-infos .p {
+    text-align: justify;
+    flex:1;
+    min-height: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: ellipsis;
+    /* border: solid 2px blue; */
+}
+
+.gs-tool-card-infos .gs-tool-card-actions {
+    /* border: solid 2px green; */
+    flex:0;
+}
+
+.gs-tool-card-infos .gs-tool-card-actions a, .gs-tool-card-infos .gs-tool-card-actions .gs-a {
+    margin: 5px;
+    border-radius: 1rem;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.gs-btn, .gs-btn-rounded {
+    margin: 5px!important;
+    padding-left: 15px!important;
+    padding-right: 15px!important;
+}
+
+.gs-btn-rounded {
+    border-radius: 1rem!important;
+}
+
+.gs-btn-blue {
+    color: #fff;
+    background-color: var(--blue1);
+    border-color: var(--blue1);
+}
+
+.gs-btn-green {
+    color: #fff;
+    background-color: var(--green1);
+    border-color: var(--green1);
+}
+
+.gs-fit-image{
+    width: 300px;
+    object-fit: cover;
+    height: 225px;
+}
+
+.gs-page-item.active .gs-page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: var(--orange1);
+    border-color: var(--orange1);
+}
+
+.gs-page-link {
+    position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: var(--orange1);
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+
+.gs-page-link:hover {
+    z-index: 2;
+    color: var(--orange1);
+    text-decoration: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.dropdown-menu {
+    left: 50% !important; transform: translateX(-50%) !important; top: 100% !important;
+}
+
+.gs-text-gray1 {
+    color: var(--gray1)!important;
+}
+
+.gs-text-gray2 {
+    color: var(--gray2)!important;
+}
