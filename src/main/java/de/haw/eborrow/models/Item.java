@@ -1,12 +1,15 @@
 package de.haw.eborrow.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +17,7 @@ public class Item {
 
     private String title;
 
+    @Column(length = 5000)
     private String description;
 
     private boolean available;
@@ -21,7 +25,6 @@ public class Item {
     private String picture;
 
     @ManyToOne
-    @JsonBackReference("user")
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -97,6 +100,7 @@ public class Item {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", available=" + available +
+                ", user=" + user.getId() +
                 '}';
     }
 }

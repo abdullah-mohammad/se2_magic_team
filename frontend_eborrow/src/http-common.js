@@ -29,7 +29,7 @@ http.interceptors.response.use(
   },
   function(error) {
     if (403 === error.response.status) {
-      window.location = "/login";
+      //window.location = "/login";
       return Promise.reject(error);
     }
     return Promise.reject(error);
