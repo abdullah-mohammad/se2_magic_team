@@ -27,6 +27,8 @@ public class User {
     private String profilepicture;
     private Date birthdate;
 
+
+    //@JsonManagedReference("user")
     @OneToMany(mappedBy="user")
     Set<Item> items = new HashSet();
 

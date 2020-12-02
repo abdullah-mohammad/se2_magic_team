@@ -7,8 +7,6 @@ values
 ('user2', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'User 2', 'isLastaName2', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE); -- corresponds to password:'password'
 
 
-
-
 insert into item (title, description, available, picture, user_id)
 values
 ( 'Rasenmaeher','Gutes Geraet, ich liebe es, liebst du es auch?', true, 'maeh.jpg', 1),

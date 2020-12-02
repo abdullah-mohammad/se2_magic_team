@@ -1,6 +1,9 @@
 package de.haw.eborrow.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -25,6 +28,7 @@ public class Item {
     private String picture;
 
     @ManyToOne
+    //@JsonBackReference("user")
     @JoinColumn(name = "user_id")
     private User user;
 

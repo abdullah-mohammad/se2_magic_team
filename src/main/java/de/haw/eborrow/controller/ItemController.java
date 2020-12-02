@@ -55,6 +55,7 @@ public class ItemController {
         Optional<Item> itemData = itemRepository.findById(id);
 
         if (itemData.isPresent()) {
+            System.out.println(itemData.get());
             return new ResponseEntity<>(itemData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -137,8 +138,9 @@ public class ItemController {
             in = new ClassPathResource("/images/"+pic).getInputStream();
             return IOUtils.toByteArray(in);
         } catch (IOException e) {
+            //e.printStackTrace();
             return null;
         }
     }
-
+    
 }
