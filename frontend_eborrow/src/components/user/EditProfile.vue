@@ -129,7 +129,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import User from '../../models/User';
+import User from '../../models/user';
 import userDataService from "../../services/UserDataService";
 
 export default {

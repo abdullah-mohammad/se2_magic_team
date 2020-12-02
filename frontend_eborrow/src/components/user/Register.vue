@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import User from "../../models/User";
+import User from "../../models/user";
 import authService from "../../services/AuthService";
 
 export default {
