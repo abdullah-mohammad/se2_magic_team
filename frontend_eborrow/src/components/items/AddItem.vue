@@ -1,30 +1,73 @@
 <template>
   <div class="submit-form">
+    <h1>add new item:</h1>
     <div v-if="!submitted">
       <div class="form-group">
         <label for="title">Title</label>
         <input
-          type="text"
-          class="form-control"
-          id="title"
-          required
-          v-model="item.title"
-          name="title"
+            type="text"
+            class="form-control"
+            id="title"
+            required
+            v-model="item.title"
+            name="title"
         />
       </div>
-
       <div class="form-group">
         <label for="description">Description</label>
-        <input
-          class="form-control"
-          id="description"
-          required
-          v-model="item.description"
-          name="description"
+        <textarea
+            class="form-control"
+            id="description"
+            required
+            v-model="item.description"
+            name="description"
         />
       </div>
-
-      <button @click="saveItem" class="btn btn-success">Submit</button>
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="description">available from</label>
+            <input
+                type="date"
+                class="form-control"
+                id="availableFrom"
+                required
+                v-model="item.availableFrom"
+                name="description"
+            />
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="availableTo">available to</label>
+            <input
+                type="date"
+                class="form-control"
+                id="availableTo"
+                required
+                v-model="item.availableTo"
+                name="availableTo"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="fileImage">Upload image</label>
+        <input
+            type="file"
+            @change="onImageUpload"
+            id="fileImage"
+            name="fileImage"
+            accept="image/png, image/jpeg"
+            ref="fileImage"
+        />
+      </div>
+      <div class="form-group">
+        <div id="preview">
+          <img v-if="url" :src="url"/>
+        </div>
+      </div>
+      <button @click="saveItem" class="btn btn-success">Share</button>
     </div>
 
     <div v-else>
@@ -45,34 +88,46 @@ export default {
         id: null,
         title: "",
         description: "",
+        fileImage: null,
         published: false,
+        availableFrom: false,
+        availableTo: false,
         user: this.$store.state.auth.user.id
       },
       submitted: false,
+      url: null,
     };
   },
   methods: {
     saveItem() {
-      var data = {
-        title: this.item.title,
-        description: this.item.description,
-        available: false,
-        user: String(this.item.user)
-      };
+      var data = new FormData();
+      data.append("title", this.item.title);
+      data.append("description", this.item.description);
+      data.append("description", this.item.description);
+      data.append("available", false);
+      data.append("user", String(this.$store.state.auth.user.id));
+      data.append("fileImage", this.item.fileImage);
 
       ItemDataService.create(data)
-        .then((response) => {
-          this.item.id = response.data.id;
-          this.submitted = true;
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+          .then((response) => {
+            this.item.id = response.data.id;
+            this.submitted = true;
+          })
+          .catch((e) => {
+            console.log(e);
+          });
     },
 
     newItem() {
       this.submitted = false;
       this.item = {};
+    },
+
+    // COMPLETED select image
+    onImageUpload(event) {
+      this.item.fileImage = event.target.files[0];
+      this.url = URL.createObjectURL(this.item.fileImage);
+      console.log(this.item.fileImage);
     },
   },
 };
@@ -82,5 +137,16 @@ export default {
 .submit-form {
   max-width: 300px;
   margin: auto;
+}
+
+#preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 100%;
+  max-height: 500px;
 }
 </style>
