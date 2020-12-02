@@ -2,11 +2,8 @@ package de.haw.eborrow.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonProperty;
-=======
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
->>>>>>> c31f1710f7f083826f555b2b421068c612912d9f
 
 import javax.persistence.*;
 import java.util.Date;

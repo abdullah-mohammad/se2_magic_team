@@ -22,9 +22,7 @@
                         <input type="email" class="form-control text-center" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"
                                 v-model="user.username"
                           > <br>
-                        <h4>{{currentUser.username}}</h4>
-                        <a :href="'edit-profile/' + currentUser.id" class="btn btn-primary">Edit</a>
-                        &nbsp;
+                        <h4>{{user.username}}</h4>
                         <button class="btn btn-outline-danger">Delete</button>
                       </div>
                     </div>
@@ -112,6 +110,7 @@
                         </div>
                         </div>
                         <p v-if="errMsge" class="text-danger">{{errMsge}}</p>
+                        <br>
                         <input type="submit" class="btn btn-success" value="Save">
                         &nbsp;
                         <a @click="goBack()" class="btn btn-primary">Back</a>

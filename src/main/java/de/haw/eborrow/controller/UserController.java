@@ -1,10 +1,7 @@
 package de.haw.eborrow.controller;
 
-<<<<<<< HEAD
 import com.fasterxml.jackson.core.JsonProcessingException;
-=======
 import de.haw.eborrow.models.Item;
->>>>>>> c31f1710f7f083826f555b2b421068c612912d9f
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.security.SigninRequest;
@@ -28,15 +25,12 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-<<<<<<< HEAD
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-=======
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
->>>>>>> c31f1710f7f083826f555b2b421068c612912d9f
 
 @CrossOrigin
 @RestController
@@ -89,24 +83,6 @@ public class UserController {
 
     }
 
-    @PutMapping("/edit-user/{id}")
-    public ResponseEntity<User> editUser(@PathVariable("id") long id, @RequestBody User user) {
-        Optional<User> userData = applicationUserRepository.findById(id);
-        if (userData.isPresent()) {
-            User _user = userData.get();
-            _user.setUsername(user.getUsername());
-            _user.setEmail(user.getEmail());
-            _user.setFirstname(user.getFirstname());
-            _user.setLastname(user.getLastname());
-            _user.setGender(user.getGender());
-            _user.setBirthdate(user.getBirthdate());
-            return new ResponseEntity<User>(applicationUserRepository.save(_user), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-    }
-
     @GetMapping("/user/{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") long id) {
         try {
@@ -136,29 +112,13 @@ public class UserController {
             _user.setFirstname((String) body.get("firstname"));
             _user.setLastname((String) body.get("lastname"));
             _user.setGender((String) body.get("gender"));
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
-            Date date = formatter.parse(body.get("birthdate").toString().substring(0, body.get("birthdate").toString().length()-10));
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+            Date date = formatter.parse(body.get("birthdate").toString());
             _user.setBirthdate(date);
             return new ResponseEntity<User>(applicationUserRepository.save(_user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-    @PreAuthorize("permitAll()")
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") long id) {
-        try {
-            Optional<User> user = applicationUserRepository.findById(id);
-
-            if (user.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<User>(user.get(), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
     }
 
     @PreAuthorize("permitAll()")
