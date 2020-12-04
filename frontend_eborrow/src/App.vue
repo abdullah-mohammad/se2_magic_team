@@ -2,7 +2,7 @@
   <div id="app" class="gs-bg-orange-2">
     <nav class="navbar navbar-expand navbar-dark bg-dark gs-navbar-orange">
       <div
-        class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2"
+          class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2"
       >
         <router-link to="/" class="navbar-brand gs-navbar-brand"><strong>GO</strong><span class="font-weight-light">SHARE</span></router-link>
         <div class="navbar-nav gs-navbar-nav mr-auto">
@@ -41,22 +41,36 @@
       <div v-if="currentUser" class="navbar-nav gs-navbar-nav ml-auto">
         <li class="nav-item gs-nav-item">
           <router-link v-on:click.native="logOut" to="/" class="nav-link gs-nav-link"
-            >Log out</router-link
-          >
+          >Log out
+          </router-link>
         </li>
       </div>
     </nav>
 
     <div class="container mt-3">
-      <router-view />
+      <router-view/>
+    </div>
+
+    <div class="footerWrap">
+      <nav>
+      <div class="footer">
+          <a> <router-link to="/aboutUs" > About us</router-link> </a>
+          <a><router-link to="/career" > Career </router-link></a>
+          <a href="#"><i class="fa fa-1x fa-instagram"></i></a>
+          <a href="#"><i class="fa fa-1.8x fa-twitter"></i></a>
+          <a href="#"><i class="fa fa-1.8x fa-facebook"></i></a>
+      </div>
+      </nav>
     </div>
 
   </div>
 </template>
 
 <script>
+
 export default {
   name: "app",
+
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
@@ -68,8 +82,35 @@ export default {
     },
   },
 };
+
 </script>
 
 <style>
+.footerWrap {
+  background-color:#ffffff ;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  padding: 10px;
+  color: #C55353 ;
+}
+a:hover {
+  opacity: 0.8;
+}
+
+a:link, a:visited {
+  color: #C55353;
+}
+
+.footer {
+  font-size: 1.1em;
+  text-align: center;
+}
+
+nav a {
+  text-decoration-line: none;
+  padding: 10px;
+}
+
   @import './assets/style.css';
 </style>
