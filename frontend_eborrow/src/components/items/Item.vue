@@ -116,15 +116,13 @@
                 </div>
                 <div :style="{display:'inline-block', verticalAlign: 'top'}" class="col-md-6">
                     <h4 class="pro-d-title">
-                        <a href="#" class="">
                             {{currentItem.title}}
-                        </a>
                     </h4>
                     <p>
                         {{currentItem.description}}
                     </p>
                     <div class="product_meta">
-                        <span class="posted_in"> <strong>Owner:</strong> <a class="text-primary" rel="tag" href="#">{{currentItem.user.firstname}} {{currentItem.user.lastname}}</a> </span>
+                        <span class="posted_in"> <strong>Owner:</strong> <router-link class="text-primary" rel="tag" :to="{ path: '/user/'+ currentItem.user.id}">{{currentItem.user.firstname}} {{currentItem.user.lastname}}</router-link> </span>
                     </div>
                     <div class="m-bot15"> <strong>Availability : </strong>
                       <span :class="{'text-success': currentItem.available, 'amount-old': !currentItem.available}">Yes</span>  

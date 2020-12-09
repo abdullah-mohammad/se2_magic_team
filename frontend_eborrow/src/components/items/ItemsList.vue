@@ -12,9 +12,9 @@
           <!-- Item One -->
           <div class="row gs-tool-card">
             <div class="col-md-5">
-              <a href="#">
+              <!-- <a href="#"> -->
                 <img onerror="this.onerror=null;this.src='http://placehold.it/700x300';" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" :src="getItemPicture(item.picture)" alt=""> <!-- http://placehold.it/700x300 -->
-              </a>
+              <!-- </a> -->
             </div>
             <div class="col-md-7 gs-tool-card-infos img-fluid">
               <h3>{{item.title}}</h3>
@@ -25,7 +25,7 @@
               </VClamp>
               <div class="gs-tool-card-actions">
                 <router-link :to="{ path: '/items/'+ item.id}" class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details</router-link>
-                <router-link :to="{ path: '#'}" class="btn btn-sm btn-outline-success gs-btn-green .gs-a">Borrow</router-link>
+                <router-link :to="{ path: '#'}" class="btn btn-sm btn-outline-danger gs-btn-red .gs-a">Borrow</router-link>
               </div>
             </div>
           </div>

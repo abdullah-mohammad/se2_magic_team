@@ -53,12 +53,12 @@
 
     <div class="footerWrap">
       <nav>
-      <div class="footer">
-          <a> <router-link to="/aboutUs" > About us</router-link> </a>
-          <a><router-link to="/career" > Career </router-link></a>
-          <a href="#"><i class="fa fa-1x fa-instagram"></i></a>
-          <a href="#"><i class="fa fa-1.8x fa-twitter"></i></a>
-          <a href="#"><i class="fa fa-1.8x fa-facebook"></i></a>
+      <div class="footer gs-footer">
+          <a class="gs-footer-link"> <router-link to="/aboutUs" > About us</router-link> </a>
+          <a class="gs-footer-link"><router-link to="/career" > Career </router-link></a>
+          <a class="gs-footer-link" href="#"><i class="fa fa-1x fa-instagram"></i></a>
+          <a class="gs-footer-link" href="#"><i class="fa fa-1.8x fa-twitter"></i></a>
+          <a class="gs-footer-link" href="#"><i class="fa fa-1.8x fa-facebook"></i></a>
       </div>
       </nav>
     </div>
@@ -86,6 +86,10 @@ export default {
 </script>
 
 <style>
+#app {
+  padding-bottom: 50px;
+}
+
 .footerWrap {
   background-color:#ffffff ;
   width: 100%;
@@ -98,9 +102,9 @@ a:hover {
   opacity: 0.8;
 }
 
-a:link, a:visited {
+/* a:link, a:visited {
   color: #C55353;
-}
+} */
 
 .footer {
   font-size: 1.1em;

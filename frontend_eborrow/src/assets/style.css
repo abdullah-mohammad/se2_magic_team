@@ -4,8 +4,11 @@
 
 /* Variable decalarations */
 :root {  
+    --c-light: #ffffff;
+    --c-red: #C55353;
+    --c-blue: #539AC5;
+
     --orange1: #d17b58;
-    --orange2: #fbe5d8;
     --orange3: #fdf4ef;
     --gray1: #414243;
     --gray2: #5e5e5e;
@@ -15,11 +18,11 @@
 }
 
 .gs-bg-orange-2, body {
-    background-color: var(--orange2)!important;
+    background-color: var(--c-light)!important;
 }
 
 .gs-navbar-orange {
-    background-color: var(--orange2)!important;
+    background-color: var(--c-light)!important;
 }
 
 .gs-navbar-orange .gs-navbar-brand {
@@ -32,7 +35,7 @@
 }
 
 .gs-navbar-orange .gs-navbar-nav {
-    background-color: var(--orange3)!important;
+    background-color: var(--c-light)!important;
     border-radius: 20px!important;
     padding-left: 1.25%;
     padding-right: 1.25%;
@@ -40,25 +43,35 @@
 
 .gs-navbar-orange .gs-navbar-nav .gs-nav-link {
     color: var(--gray2)!important;
+    font-size: 17px!important;
+    font-weight: 400!important;
 }
 
 .gs-navbar-orange .gs-navbar-nav .gs-nav-link:focus, .gs-navbar-orange .gs-navbar-nav .gs-nav-link:hover {
-    color: var(--green1)!important;
+    color: var(--c-red)!important;
 }
 
 .gs-title {
-    color: var(--orange1)!important;
+    color: var(--c-red)!important;
 }
 
 .gs-tool-card {
     margin-bottom: 25px;
-    background-color: var(--orange3)!important;
+    background-color: var(--c-light)!important;
     padding-top: 15px;
     padding-bottom: 15px;
-    -webkit-box-shadow: 0 10px 6px -6px #777;
+    /* -webkit-box-shadow: 0 10px 6px -6px #777;
      -moz-box-shadow: 0 10px 6px -6px rgba(119, 119, 119, 0.466);
-          box-shadow: 0 10px 6px -6px rgba(119, 119, 119, 0.466);
-    border-radius: .5rem;
+          box-shadow: 0 0 6px rgba(119, 119, 119, 0.466);
+    border-radius: .5rem; */
+}
+
+@keyframes hoverCardAnimation {
+    from {box-shadow: none;}
+    to {box-shadow: 0 0 6px rgba(119, 119, 119, 0.466);}
+}
+.gs-tool-card:hover {
+    animation: hoverCardAnimation 0.15s ease-out forwards;
 }
 
 .gs-tool-card h3, .gs-tool-card p {
@@ -107,8 +120,14 @@
 
 .gs-btn-blue {
     color: #fff;
-    background-color: var(--blue1);
-    border-color: var(--blue1);
+    background-color: var(--c-blue);
+    border-color: var(--c-blue);
+}
+
+.gs-btn-red {
+    color: #fff;
+    background-color: var(--c-red);
+    border-color: var(--c-red);
 }
 
 .gs-btn-green {
@@ -159,4 +178,8 @@
 
 .gs-text-gray2 {
     color: var(--gray2)!important;
+}
+
+.gs-footer .gs-footer-link > *, .gs-footer .gs-footer-link:visited {
+    color: var(--c-red)!important;
 }
