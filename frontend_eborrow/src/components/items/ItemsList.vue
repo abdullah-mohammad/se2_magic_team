@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="items.length > 0" class="list row">
-      
+
       <!-- Page Content -->
       <div class="container">
 
@@ -48,7 +48,7 @@
             :click-handler="paginateCallback"
             >
         </paginate>
-    
+
       </div>
       <!-- /.container -->
 
@@ -104,9 +104,9 @@ export default {
     this.setItems().then(() => {
       if(this.items.length > 0)
         this.paginateCallback(1);
-    }) 
+    })
   },
-  
+
 };
 </script>
 
