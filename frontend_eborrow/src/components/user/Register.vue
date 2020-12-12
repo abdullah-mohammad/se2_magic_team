@@ -1,56 +1,87 @@
 <template>
   <div class="col-md-12">
     <div class="card card-container">
-      <img
-        id="profile-img"
-        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-        class="profile-img-card"
-      />
+      <img id="profile-img" v-if="url" :src="url" class="profile-img-card"/>
       <form name="form" @submit.prevent="handleRegister">
         <div v-if="!successful">
           <div class="form-group">
             <label for="username">Username</label>
             <input
-              v-model="user.username"
-              type="text"
-              class="form-control"
-              name="username"
+                id="username"
+                v-model="user.username"
+                type="text"
+                class="form-control"
+                name="username"
             />
           </div>
           <div class="form-group">
             <label for="password">Password</label>
             <input
-              v-model="user.password"
-              type="password"
-              class="form-control"
-              name="password"
+                id="password"
+                v-model="user.password"
+                type="password"
+                class="form-control"
+                name="password"
+            />
+          </div>
+          <div class="form-group">
+            <label for="firstname">firstname</label>
+            <input
+                id="firstname"
+                v-model="user.firstname"
+                type="text"
+                class="form-control"
+                name="firstname"
+            />
+          </div>
+          <div class="form-group">
+            <label for="lastname">lastname</label>
+            <input
+                id="lastname"
+                v-model="user.lastname"
+                type="text"
+                class="form-control"
+                name="lastname"
             />
           </div>
           <div class="form-group">
             <label for="email">email</label>
             <input
-              v-model="user.email"
-              type="email"
-              class="form-control"
-              name="email"
+                id="email"
+                v-model="user.email"
+                type="email"
+                class="form-control"
+                name="email"
             />
           </div>
           <div class="form-group">
             <label for="gender">gender</label>
             <input
-              v-model="user.gender"
-              type="gender"
-              class="form-control"
-              name="gender"
+                id="gender"
+                v-model="user.gender"
+                type="gender"
+                class="form-control"
+                name="gender"
             />
           </div>
           <div class="form-group">
             <label for="birthdate">birthdate</label>
             <input
-              v-model="user.birthdate"
-              type="birthdate"
-              class="form-control"
-              name="gender"
+                id="birthdate"
+                v-model="user.birthdate"
+                type="date"
+                class="form-control"
+                name="birthdate"
+            />
+          </div>
+          <div class="form-group">
+            <label for="picture">picture</label>
+            <input
+                @change="onFileSelected"
+                type="file"
+                id="picture"
+                name="fileImage"
+                accept="image/png,image/jpeg"
             />
           </div>
 
@@ -58,15 +89,13 @@
             <button class="btn btn-primary btn-block">Sign Up</button>
           </div>
         </div>
-        <div v-if="successful">
-          Account created, nice to have you on board!
-        </div>
+        <div v-if="successful">Account created, nice to have you on board!</div>
       </form>
 
       <div
-        v-if="message"
-        class="alert"
-        :class="successful ? 'alert-success' : 'alert-danger'"
+          v-if="message"
+          class="alert"
+          :class="successful ? 'alert-success' : 'alert-danger'"
       >
         {{ message }}
       </div>
@@ -78,36 +107,55 @@
 import User from "../../models/user";
 import authService from "../../services/AuthService";
 
+
 export default {
   name: "Register",
+
   data() {
     return {
       user: new User(),
       submitted: false,
       successful: false,
       message: "",
+      selectedFile: null,
+      url: null,
     };
+
   },
   computed: {},
   mounted() {},
   methods: {
     handleRegister() {
       this.message = "";
-      console.log(this.user);
       this.submitted = true;
-      authService.register(this.user).then(
-        (data) => {
-          this.message = data.message;
-          this.successful = true;
-        },
-        (error) => {
-          this.message =
-            (error.response && error.response.data) ||
-            error.message ||
-            error.toString();
-          this.successful = false;
-        }
+
+      var userdata = new FormData();
+      userdata.append("username", this.user.username);
+      userdata.append("password", this.user.password);
+      userdata.append("firstname", this.user.firstname);
+      userdata.append("lastname", this.user.lastname);
+      userdata.append("email", this.user.email);
+      userdata.append("gender", this.user.gender);
+      userdata.append("birthdate", this.user.birthdate);
+      userdata.append("profilepicture", this.user.profilepicture);
+
+      authService.register(userdata).then(
+          (data) => {
+            this.message = data.message;
+            this.successful = true;
+          },
+          (error) => {
+            this.message =
+                (error.response && error.response.data) ||
+                error.message ||
+                error.toString();
+            this.successful = false;
+          }
       );
+    },
+    onFileSelected(event) {
+      this.user.profilepicture = event.target.files[0];
+      this.url = URL.createObjectURL(this.user.profilepicture);
     },
   },
 };

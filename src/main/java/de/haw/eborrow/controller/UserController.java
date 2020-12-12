@@ -1,18 +1,20 @@
 package de.haw.eborrow.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.security.SigninRequest;
 import de.haw.eborrow.security.SignupRequest;
 import de.haw.eborrow.security.jwt.JwtResponse;
 import de.haw.eborrow.security.jwt.JwtUtils;
+import de.haw.eborrow.services.FilesStorageService;
 import de.haw.eborrow.services.UserDetailsImpl;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,16 +22,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Timestamp;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
@@ -43,6 +47,9 @@ public class UserController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Autowired
+    FilesStorageService storageService;
+
     private UserRepository applicationUserRepository;
     private PasswordEncoder bCryptPasswordEncoder;
 
@@ -53,19 +60,28 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@RequestBody SignupRequest userRequest) {
-        userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
+    public ResponseEntity<User> signUp(@ModelAttribute SignupRequest userRequest) {
 
-        Date birthdate;
         try {
-            birthdate=new SimpleDateFormat("dd/MM/yyyy").parse(userRequest.getBirthdate());
-            logger.warn(birthdate.toString());
-        } catch (ParseException e) {
-            System.out.println(e);
-            birthdate = null;
+            userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
+            String fileName = "";
+            MultipartFile picture = userRequest.getProfilepicture();
+            if (picture != null) {
+                fileName = userRequest.getUsername() + "_" + StringUtils.cleanPath(
+                        Objects.requireNonNull(picture.getOriginalFilename()));
+                storageService.save(picture, fileName,"profilepictures/");
+            }
+            Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(userRequest.getBirthdate());
+            System.out.println(userRequest.getBirthdate());
+            System.out.println(birthdate.toString());
+            User _user = applicationUserRepository.save(new User(userRequest.getUsername(),
+                    userRequest.getPassword(), userRequest.getFirstname(), userRequest.getLastname()
+                    , userRequest.getEmail(), userRequest.getGender(), birthdate, fileName));
+
+            return new ResponseEntity<>(_user, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        User _user = applicationUserRepository.save(new User(userRequest.getUsername(), userRequest.getPassword(), userRequest.getFirstname(), userRequest.getLastname(), userRequest.getEmail(), userRequest.getGender(), birthdate));
-        return new ResponseEntity<>(_user, HttpStatus.CREATED);
     }
 
     @PostMapping("/signin")
@@ -126,5 +142,23 @@ public class UserController {
     public boolean checkUserPass(@PathVariable("id") long id, @RequestBody String pass) {
         String userCurrentPass = applicationUserRepository.getUserPass(id);
         return bCryptPasswordEncoder.matches(pass, userCurrentPass);
+    }
+
+    @GetMapping(
+            value = "/get-img/{pic:.+}",
+            produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE}
+    )
+    public byte[] getImageWithMediaTyp(@PathVariable("pic") String pic) {
+        InputStream in = null;
+        try {
+            in = storageService.load("/profilepictures/",pic).getInputStream();
+            return IOUtils.toByteArray(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }catch (RuntimeException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 }

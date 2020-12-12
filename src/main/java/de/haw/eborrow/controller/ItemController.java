@@ -155,10 +155,8 @@ public class ItemController {
         InputStream in = null;
         try {
             in = storageService.load("/items/",pic).getInputStream();
-            //in = new ClassPathResource("/images/"+pic).getInputStream();
             return IOUtils.toByteArray(in);
         } catch (IOException e) {
-            //e.printStackTrace();
             return null;
         }catch (RuntimeException e){
             return null;

@@ -1,6 +1,10 @@
 package de.haw.eborrow.security;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.validation.constraints.*;
+import java.util.Date;
 
 public class SignupRequest {
     @NotBlank
@@ -27,6 +31,8 @@ public class SignupRequest {
 
     @NotBlank
     private String birthdate;
+
+    private MultipartFile profilepicture;
 
     public String getUsername() {
         return username;
@@ -63,5 +69,13 @@ public class SignupRequest {
     public String getBirthdate() { return birthdate; }
 
     public void setBirthdate(String birthdate) { this.birthdate = birthdate; }
+
+    public MultipartFile getProfilepicture() {
+        return profilepicture;
+    }
+
+    public void setProfilepicture(MultipartFile profilepicture) {
+        this.profilepicture = profilepicture;
+    }
 
 }
