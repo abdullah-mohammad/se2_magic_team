@@ -7,47 +7,28 @@ export const items = {
     namespaced: true,
     state: {
         items: [],
+        loaded: false
     },
     mutations: {
         SET_ITEMS(state, payload) {
             state.items = payload;
+        },
+        SET_LOADED(state, value) {
+            state.loaded = value;
         }
     },
     actions: {
-        /* async setItems(context){
-            try {
-                const res = await ItemDataService.getAll(); // getItems
-                console.log("ZUUUM.", res.data[2].user.firstname)
-                let resultWithGeoCodes=res.data;
-                res.data.map(async (elem, i) => { // set Address Geocode of items owner for consuming "DistanceBetween" API
-                    const addr = elem.user.address ?
-                                    elem.user.address.street + ' ' + elem.user.address.streetNr + ', '
-                                        + elem.user.address.zipcode + ' ' + elem.user.address.city
-                                    : null
-                    // spread items Infos with AddrGeoCodes
-                    let geocode = null
-                    if(addr) await AddressDataService.getAddrGeoCode(addr).then(res=>geocode=res)
-                    resultWithGeoCodes[i] = {...elem, geocode: geocode}
-                })
-                context.commit('SET_ITEMS', resultWithGeoCodes);
-                //context.dispatch('setItemsDistance')
-                return Promise.resolve(resultWithGeoCodes);
-            } catch (e) {
-                console.log(e);
-                return Promise.reject(e);
-            }
-            
-        }, */
-
         async setItems(context){
             try {
+                context.commit('SET_LOADED', false);
                 // getItems
                 const res = await ItemDataService.getAll();
                 // setItemsInlineAdresses & geoCodes & distances from currentLocation
                 let itemsWithGeoCodes=res.data; // copy of the raw items
-                res.data.map((item,i) => {
+                let checker = itemsWithGeoCodes.length-1
+                res.data.map(async (item,i) => {
                     const userId = !isNaN(item.user) ? item.user : item.user.id
-                    UserDataService.getUserInlineAddress(userId) // set inlineAddress
+                    await UserDataService.getUserInlineAddress(userId) // set inlineAddress
                         .then(async addrRes => {
                             let geocode = null;
                             // set geoCodes 
@@ -67,21 +48,19 @@ export const items = {
                         .catch(e => {
                             console.log("Error setItemsInlineAddresses & geoCodes", e)
                         })
-
+                        
+                    if(checker--==0) {
+                        context.commit('SET_LOADED', true);
+                        console.log("DER", itemsWithGeoCodes)
+                    }
                 })
-                console.log("PRIM Ende", itemsWithGeoCodes)
-                context.commit('SET_ITEMS', res.data);
-                return Promise.resolve(res.data);
+                //console.log("PRIM Ende", itemsWithGeoCodes)
+                context.commit('SET_ITEMS', itemsWithGeoCodes);
+                return Promise.resolve(itemsWithGeoCodes);
             } catch (e) {
                 console.log(e);
                 return Promise.reject(e);
-            }
-            
+            }     
         },
-
-        /* setItemsDistance({state, dispatch}) {
-            console.log("main",dispatch('getGeoCodeLocationsAsArray'))
-            console.log("MUMU:", state.items)
-        },  */
     },
 };
