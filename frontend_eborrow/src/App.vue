@@ -97,6 +97,7 @@ export default {
   bottom: 0px;
   padding: 10px;
   color: #C55353 ;
+  z-index: 100;
 }
 a:hover {
   opacity: 0.8;

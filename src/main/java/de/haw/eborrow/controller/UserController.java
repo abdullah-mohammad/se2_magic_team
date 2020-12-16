@@ -1,7 +1,5 @@
 package de.haw.eborrow.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.security.SigninRequest;

@@ -12,6 +12,10 @@ class UserDataService {
   checkUserPass(id, pass) {
     return http.post(`/users/check-pass/${id}`, pass)
   }
+
+  getUserInlineAddress(id) {
+    return http.get(`/users/user-address/${id}`);
+  }
 }
 
 export default new UserDataService();
