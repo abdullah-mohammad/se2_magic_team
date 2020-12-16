@@ -103,7 +103,6 @@ export default {
       var data = new FormData();
       data.append("title", this.item.title);
       data.append("description", this.item.description);
-      data.append("description", this.item.description);
       data.append("available", false);
       data.append("user", String(this.$store.state.auth.user.id));
       data.append("fileImage", this.item.fileImage);
@@ -121,9 +120,9 @@ export default {
     newItem() {
       this.submitted = false;
       this.item = {};
+      this.url = null;
     },
 
-    // COMPLETED select image
     onImageUpload(event) {
       this.item.fileImage = event.target.files[0];
       this.url = URL.createObjectURL(this.item.fileImage);

@@ -24,8 +24,8 @@ public class User {
     private String lastname;
     private String email;
     private String gender;
-    private String profilepicture;
     private Date birthdate;
+    private String profilepicture;
 
 
     //@JsonManagedReference("user")
@@ -40,7 +40,7 @@ public class User {
         this.password = _password;
     }
 
-    public User(String _username, String _password, String _firstName, String _lastName, String _email, String _gender, Date _birthdate) {
+    public User(String _username, String _password, String _firstName, String _lastName, String _email, String _gender, Date _birthdate,String _profilepicture) {
         this.username = _username;
         this.password = _password;
         this.firstname = _firstName;
@@ -48,6 +48,7 @@ public class User {
         this.email = _email;
         this.gender = _gender;
         this.birthdate = _birthdate;
+        this.profilepicture = _profilepicture;
     }
 
     public String getEmail() {

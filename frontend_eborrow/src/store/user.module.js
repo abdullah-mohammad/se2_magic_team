@@ -9,7 +9,7 @@ export const user = {
   },
   mutations: {
     SET_CURRENT_USER(state, editedUser) {
-        console.log("KOMMISCH", editedUser)
+        //console.log("KOMMISCH", editedUser)
       state.user = editedUser
     },
     SET_ERR_MSG(state, msg) {

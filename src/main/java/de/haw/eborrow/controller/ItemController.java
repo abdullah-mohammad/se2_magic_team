@@ -1,6 +1,7 @@
 package de.haw.eborrow.controller;
 
 import de.haw.eborrow.models.Item;
+import de.haw.eborrow.models.ItemDTO;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.ItemRepository;
 import de.haw.eborrow.repository.UserRepository;
@@ -69,22 +70,25 @@ public class ItemController {
 
 
     @PostMapping(value = "/items")
-    public ResponseEntity<Item> createItem(@RequestParam("title") String title,
-                                           @RequestParam("description") String description,
-                                           @RequestParam("available") String available,
-                                           @RequestParam("user") String userId,
-                                           @RequestParam(value = "fileImage", required = false) MultipartFile multipartFile) {
+    public ResponseEntity<Item> createItem(@ModelAttribute ItemDTO itemDTO) {
+
+
         try {
-            Long _userId = Long.valueOf(userId);
+            String title = itemDTO.getTitle();
+            String description = itemDTO.getDescription();
+            boolean available = Boolean.parseBoolean(itemDTO.getAvailable());
+            Long _userId = Long.valueOf(itemDTO.getUser());
             User user = userRepository.getOne(_userId);
-            String fileName = "standerdItemImage.jpg";
-            if (multipartFile != null) {
-                fileName = userId + "_" + title + "_" + StringUtils.cleanPath(multipartFile.getOriginalFilename());
-                storageService.save(multipartFile, fileName);
+            MultipartFile image = itemDTO.getFileImage();
+            String fileName = "";
+            if (image != null) {
+                fileName = itemDTO.getUser() + "_" + itemDTO.getTitle() + "_" +
+                        StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
+                String directory = "items/";
+                storageService.save(image, fileName,directory);
             }
 
-            boolean _available = Boolean.parseBoolean(available);
-            Item _item = itemRepository.save(new Item(title, description, fileName, _available, user));
+            Item _item = itemRepository.save(new Item(title, description, fileName, available, user));
             user.addItem(_item);
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);
@@ -145,15 +149,16 @@ public class ItemController {
 
     @GetMapping(
             value = "/items/get-img/{pic:.+}",
-            produces = MediaType.IMAGE_JPEG_VALUE
+            produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE}
     )
     public byte[] getImageWithMediaTyp(@PathVariable("pic") String pic) {
         InputStream in = null;
         try {
-            in = new ClassPathResource("/images/"+pic).getInputStream();
+            in = storageService.load("/items/",pic).getInputStream();
             return IOUtils.toByteArray(in);
         } catch (IOException e) {
-            //e.printStackTrace();
+            return null;
+        }catch (RuntimeException e){
             return null;
         }
     }
