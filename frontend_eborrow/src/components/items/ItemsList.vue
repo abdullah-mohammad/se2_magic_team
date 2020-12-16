@@ -90,6 +90,14 @@ export default {
     ...mapActions({
       setItems: "items/setItems"
     }),
+    getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.showPosition);
+      } else { 
+        document.getElementById("demo").innerHTML = "Geolocation is not supported by this browser.";
+      }
+    },
+    showPosition(position){this.position=position},
     paginateCallback: function (pageNum){
       console.log(pageNum)
       this.startLimit = MAX_NUMBER_ITEMS_PER_LIST*(pageNum-1);
@@ -105,6 +113,7 @@ export default {
       if(this.items.length > 0)
         this.paginateCallback(1);
     }) 
+
   },
   
 };

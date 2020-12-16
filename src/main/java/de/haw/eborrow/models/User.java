@@ -32,6 +32,10 @@ public class User {
     @OneToMany(mappedBy="user")
     Set<Item> items = new HashSet();
 
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
+
     public User() {
     }
 
@@ -40,7 +44,7 @@ public class User {
         this.password = _password;
     }
 
-    public User(String _username, String _password, String _firstName, String _lastName, String _email, String _gender, Date _birthdate) {
+    public User(String _username, String _password, String _firstName, String _lastName, String _email, String _gender, Date _birthdate, Address address) {
         this.username = _username;
         this.password = _password;
         this.firstname = _firstName;
@@ -48,6 +52,7 @@ public class User {
         this.email = _email;
         this.gender = _gender;
         this.birthdate = _birthdate;
+        this.address = address;
     }
 
     public String getEmail() {
@@ -121,6 +126,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public void addItem(Item item ){

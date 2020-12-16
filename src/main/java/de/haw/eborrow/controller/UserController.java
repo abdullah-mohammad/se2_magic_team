@@ -1,8 +1,10 @@
 package de.haw.eborrow.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import de.haw.eborrow.models.Address;
 import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
+import de.haw.eborrow.repository.AddressRepository;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.security.SigninRequest;
 import de.haw.eborrow.security.SignupRequest;
@@ -44,12 +46,15 @@ public class UserController {
     JwtUtils jwtUtils;
 
     private UserRepository applicationUserRepository;
+    private AddressRepository addressRepository;
     private PasswordEncoder bCryptPasswordEncoder;
 
     public UserController(UserRepository applicationUserRepository,
-                          PasswordEncoder bCryptPasswordEncoder) {
+                          PasswordEncoder bCryptPasswordEncoder,
+                          AddressRepository addressRepository) {
         this.applicationUserRepository = applicationUserRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.addressRepository = addressRepository;
     }
 
     @PostMapping("/signup")
@@ -57,6 +62,8 @@ public class UserController {
         userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
 
         Date birthdate;
+        //TODO: Adress Felder in Signup Form
+        Optional<Address> address = addressRepository.findById(1L);
         try {
             birthdate=new SimpleDateFormat("dd/MM/yyyy").parse(userRequest.getBirthdate());
             logger.warn(birthdate.toString());
@@ -64,7 +71,7 @@ public class UserController {
             System.out.println(e);
             birthdate = null;
         }
-        User _user = applicationUserRepository.save(new User(userRequest.getUsername(), userRequest.getPassword(), userRequest.getFirstname(), userRequest.getLastname(), userRequest.getEmail(), userRequest.getGender(), birthdate));
+        User _user = applicationUserRepository.save(new User(userRequest.getUsername(), userRequest.getPassword(), userRequest.getFirstname(), userRequest.getLastname(), userRequest.getEmail(), userRequest.getGender(), birthdate, address.get()));
         return new ResponseEntity<>(_user, HttpStatus.CREATED);
     }
 
@@ -126,5 +133,21 @@ public class UserController {
     public boolean checkUserPass(@PathVariable("id") long id, @RequestBody String pass) {
         String userCurrentPass = applicationUserRepository.getUserPass(id);
         return bCryptPasswordEncoder.matches(pass, userCurrentPass);
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/user-address/{id}")
+    public ResponseEntity<String> getUserInlineAddress(@PathVariable("id") long id) {
+        try {
+            String inlineAddr = applicationUserRepository.getUserAddress(id);
+
+            if (inlineAddr==null) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<String>(inlineAddr, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }

@@ -1,10 +1,16 @@
 --insert some sample Data
-insert into user (username, password, firstname, lastname, email, gender, profilepicture, birthdate)
+insert into address (street, streetnumber, zipcode, city, country)
 values
-('user', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'User 1', 'isLastaName', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE); -- corresponds to password:'password'
-insert into user (username, password, firstname, lastname, email, gender, profilepicture, birthdate)
+( 'Gärtnerhof','8', 25462, 'Rellingen', 'Deutschland'),
+( 'Berliner Tor','5', 20099, 'Hamburg', 'Deutschland');
+
+
+insert into user (username, password, firstname, lastname, email, gender, profilepicture, birthdate, address_id)
 values
-('user2', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'User 2', 'isLastaName2', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE); -- corresponds to password:'password'
+('user', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'User 1', 'isLastaName', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE, 1); -- corresponds to password:'password'
+insert into user (username, password, firstname, lastname, email, gender, profilepicture, birthdate, address_id)
+values
+('user2', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'User 2', 'isLastaName2', 'user@using.com', 'w', 'userpic.png', CURRENT_DATE, 2); -- corresponds to password:'password'
 
 
 insert into item (title, description, available, picture, user_id)
