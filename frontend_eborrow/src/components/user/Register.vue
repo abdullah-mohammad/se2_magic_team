@@ -154,8 +154,12 @@ export default {
       );
     },
     onFileSelected(event) {
-      this.user.profilepicture = event.target.files[0];
-      this.url = URL.createObjectURL(this.user.profilepicture);
+      if (event.target.files[0] != null) {
+        this.user.profilepicture = event.target.files[0];
+        this.url = URL.createObjectURL(this.user.profilepicture);
+      }else{
+        this.url = null;
+      }
     },
   },
 };
