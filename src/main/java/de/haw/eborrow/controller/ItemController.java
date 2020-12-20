@@ -70,8 +70,8 @@ public class ItemController {
 
 
     @PostMapping(value = "/items")
-    public ResponseEntity<Item> createItem(@ModelAttribute ItemDTO itemDTO) {
-
+    public ResponseEntity<Item> createItem(@ModelAttribute ItemDTO itemDTO,@RequestParam(value = "fileImage",
+            required = false) MultipartFile picture) {
 
         try {
             String title = itemDTO.getTitle();
@@ -79,13 +79,12 @@ public class ItemController {
             boolean available = Boolean.parseBoolean(itemDTO.getAvailable());
             Long _userId = Long.valueOf(itemDTO.getUser());
             User user = userRepository.getOne(_userId);
-            MultipartFile image = itemDTO.getFileImage();
             String fileName = "";
-            if (image != null) {
+            if (picture != null) {
                 fileName = itemDTO.getUser() + "_" + itemDTO.getTitle() + "_" +
-                        StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
+                        StringUtils.cleanPath(Objects.requireNonNull(picture.getOriginalFilename()));
                 String directory = "items/";
-                storageService.save(image, fileName,directory);
+                storageService.save(picture, fileName,directory);
             }
 
             Item _item = itemRepository.save(new Item(title, description, fileName, available, user));

@@ -32,8 +32,6 @@ public class SignupRequest {
     @NotBlank
     private String birthdate;
 
-    private MultipartFile profilepicture;
-
     public String getUsername() {
         return username;
     }
@@ -69,13 +67,5 @@ public class SignupRequest {
     public String getBirthdate() { return birthdate; }
 
     public void setBirthdate(String birthdate) { this.birthdate = birthdate; }
-
-    public MultipartFile getProfilepicture() {
-        return profilepicture;
-    }
-
-    public void setProfilepicture(MultipartFile profilepicture) {
-        this.profilepicture = profilepicture;
-    }
 
 }

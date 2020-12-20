@@ -60,20 +60,18 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@ModelAttribute SignupRequest userRequest) {
+    public ResponseEntity<User> signUp(@ModelAttribute SignupRequest userRequest,@RequestParam(value = "profilepicture",
+            required = false) MultipartFile  profilepicture) {
 
         try {
             userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
             String fileName = "";
-            MultipartFile picture = userRequest.getProfilepicture();
-            if (picture != null) {
+            if (profilepicture != null) {
                 fileName = userRequest.getUsername() + "_" + StringUtils.cleanPath(
-                        Objects.requireNonNull(picture.getOriginalFilename()));
-                storageService.save(picture, fileName,"profilepictures/");
+                        Objects.requireNonNull(profilepicture.getOriginalFilename()));
+                storageService.save(profilepicture, fileName,"profilepictures/");
             }
             Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(userRequest.getBirthdate());
-            System.out.println(userRequest.getBirthdate());
-            System.out.println(birthdate.toString());
             User _user = applicationUserRepository.save(new User(userRequest.getUsername(),
                     userRequest.getPassword(), userRequest.getFirstname(), userRequest.getLastname()
                     , userRequest.getEmail(), userRequest.getGender(), birthdate, fileName));
@@ -144,6 +142,7 @@ public class UserController {
         return bCryptPasswordEncoder.matches(pass, userCurrentPass);
     }
 
+
     @GetMapping(
             value = "/get-img/{pic:.+}",
             produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE}
@@ -153,10 +152,7 @@ public class UserController {
         try {
             in = storageService.load("/profilepictures/",pic).getInputStream();
             return IOUtils.toByteArray(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }catch (RuntimeException e){
+        } catch (IOException | RuntimeException e) {
             e.printStackTrace();
             return null;
         }

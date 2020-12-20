@@ -124,9 +124,12 @@ export default {
     },
 
     onImageUpload(event) {
-      this.item.fileImage = event.target.files[0];
-      this.url = URL.createObjectURL(this.item.fileImage);
-      console.log(this.item.fileImage);
+      if (event.target.files[0] != null) {
+        this.item.fileImage = event.target.files[0];
+        this.url = URL.createObjectURL(this.item.fileImage);
+      }else{
+        this.url = null;
+      }
     },
   },
 };
