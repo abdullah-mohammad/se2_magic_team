@@ -1,12 +1,6 @@
 package de.haw.eborrow.models;
 
-import org.springframework.data.annotation.Transient;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 public class ItemDTO {
 
@@ -21,8 +15,6 @@ public class ItemDTO {
 
     @NotBlank
     private String user;
-
-
 
     public String getTitle() {
         return title;
@@ -55,6 +47,4 @@ public class ItemDTO {
     public void setUser(String user) {
         this.user = user;
     }
-
-
 }

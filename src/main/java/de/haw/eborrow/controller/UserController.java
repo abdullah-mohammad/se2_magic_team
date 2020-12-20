@@ -147,17 +147,12 @@ public class UserController {
             value = "/get-img/{pic:.+}",
             produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE}
     )
-    @PreAuthorize("permitAll()")
     public byte[] getImageWithMediaTyp(@PathVariable("pic") String pic) {
-        System.out.println(pic);
         InputStream in = null;
         try {
             in = storageService.load("/profilepictures/",pic).getInputStream();
             return IOUtils.toByteArray(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }catch (RuntimeException e){
+        } catch (IOException | RuntimeException e) {
             e.printStackTrace();
             return null;
         }
