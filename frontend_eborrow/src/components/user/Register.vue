@@ -139,6 +139,14 @@ export default {
       userdata.append("birthdate", this.user.birthdate);
       userdata.append("profilepicture", this.user.profilepicture);
 
+      
+      var object = {};
+      userdata.forEach(function(value, key){
+          object[key] = value;
+      });
+      var json = JSON.stringify(object);
+      console.log(json);
+
       authService.register(userdata).then(
           (data) => {
             this.message = data.message;
