@@ -23,15 +23,7 @@ export const auth = {
     logout({ commit }) {
       AuthService.logout();
       commit('logout');
-    },
-    
-    // register({ commit }, user){
-    //   return AuthService.register(user).then(
-    //     user => {
-    //       return Promise.resolve(user)
-    //     }
-    //   )
-    // }
+    }
   },
   mutations: {
     loginSuccess(state, user) {

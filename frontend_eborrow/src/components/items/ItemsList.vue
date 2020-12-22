@@ -95,7 +95,6 @@ export default {
       setItems: "items/setItems"
     }),
     paginateCallback: function (pageNum) {
-      console.log(pageNum)
       this.startLimit = MAX_NUMBER_ITEMS_PER_LIST * (pageNum - 1);
       this.endLimit = this.startLimit + MAX_NUMBER_ITEMS_PER_LIST;
     },

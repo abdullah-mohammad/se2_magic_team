@@ -79,6 +79,7 @@ export default {
   methods: {
     logOut() {
       this.$store.dispatch("auth/logout");
+      this.$store.dispatch("user/deleteUser");
     },
   },
 };
