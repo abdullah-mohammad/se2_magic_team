@@ -96,6 +96,10 @@ public class UserController {
         return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getFirstname(), userDetails.getLastname(), userDetails.getEmail(), userDetails.getGender(), userDetails.getBirthdate(), userDetails.getProfilepicture()));
 
     }
+    @GetMapping("/try")
+    public ResponseEntity<List<User>> getAllUsers() {
+            return (ResponseEntity<List<User>>) applicationUserRepository.findAll();
+    }
 
     @GetMapping("/user/{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") long id) {

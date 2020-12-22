@@ -1,10 +1,7 @@
 package de.haw.eborrow.security;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
-import java.util.Date;
 
 public class SignupRequest {
     @NotBlank
