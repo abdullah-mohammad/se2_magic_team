@@ -155,7 +155,7 @@ class ItemControllerTest {
 		//erstelle Konto fuer einen neuen Nutzer
 		MvcResult ungesignedUser = mvc.perform(MockMvcRequestBuilders.post("/users/signup")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("username", "ALAA")
+				.param("username", "ALAA2") // ALAA2 weil sonst 2 user mit gleichem namen existieren können
 				.param("password", "password")
 				.param("firstname", "fritz")
 				.param("lastname", "tester")
@@ -167,7 +167,7 @@ class ItemControllerTest {
 				.andReturn();
 		assertEquals(201, ungesignedUser.getResponse().getStatus());
 
-		String loginData = "{\"username\":\"ALAA\",\"password\":\"password\"}";
+		String loginData = "{\"username\":\"ALAA2\",\"password\":\"password\"}";
 		MvcResult unloggedUser = mvc.perform(MockMvcRequestBuilders.post("/users/signin")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
