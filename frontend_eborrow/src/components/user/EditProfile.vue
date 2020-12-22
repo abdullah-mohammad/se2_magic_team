@@ -156,19 +156,13 @@ export default {
             setCurrentUser: "user/setCurrentUser",
             editUser: "user/editUser"
         }),
-        /* handleEditUser() {
-            const pass = this.newpass ? this.newpass : this.user.password;
-            const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
-            this.editUser(user);
-        } */
         handleEditUser() {
             const pass = this.newpass != "" ? this.newpass : this.user.password;
             const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
             const editUserPass = this.newpass != "" ? true : false;
             const data = {...user, editPass: editUserPass}
             userDataService.editUser(this.currentUser.id, data)
-                .then(res => {
-                    console.log(res.data)
+                .then(() => {
                     this.$router.push("/profile");
                 })
                 .catch(e => this.errMsge = e)
@@ -180,7 +174,6 @@ export default {
           this.isChecked=true
           userDataService.checkUserPass(this.currentUser.id, this.oldpass)
             .then(res => {
-              console.log(res)
               this.oldpassValid = res.data
             })
             .catch(e => this.errMsge = e)

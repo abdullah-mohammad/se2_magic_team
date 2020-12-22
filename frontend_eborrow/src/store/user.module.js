@@ -1,19 +1,20 @@
-import User from "../models/user";
 import userDataService from "../services/UserDataService";
 
 export const user = {
   namespaced: true,
   state: {
-      user: User,
+      user: undefined,
       errMsg: ""
   },
   mutations: {
     SET_CURRENT_USER(state, editedUser) {
-        //console.log("KOMMISCH", editedUser)
       state.user = editedUser
     },
     SET_ERR_MSG(state, msg) {
         state.errMsg = msg
+    }, 
+    logout(state){
+      state.user = undefined;
     }
   },
   actions: {
@@ -21,13 +22,11 @@ export const user = {
     editUser(context, editedUser) {
       userDataService.editUser(editedUser.id, editedUser)
         .then(res => {
-            console.log(res.data)
             context.commit('SET_CURRENT_USER', editedUser)
             return Promise.resolve(res.data)
         })
         .catch(err => {
-            //context.setErrMsg(err)
-            console.log("eroor", err)
+            console.log("error", err)
             return Promise.reject(err)
         })
     },
@@ -41,6 +40,14 @@ export const user = {
                 context.setErrMsg(err)
                 return Promise.reject(err)
             })
-    }
+    },
+    deleteUser({ commit }) {
+      commit('logout');
+    },
   },
+  getters: {
+    getCurrentUser: state => {
+      return state?.user;
+    }
+  }
 };

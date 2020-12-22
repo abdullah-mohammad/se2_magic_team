@@ -111,8 +111,7 @@ export default {
     }),
     deleteUser() {
       userDataService.delete(this.currentUser.id)
-          .then((response) => {
-            console.log(response.data);
+          .then(() => {
             this.$router.push({name: "login"});
           })
           .catch((e) => {
