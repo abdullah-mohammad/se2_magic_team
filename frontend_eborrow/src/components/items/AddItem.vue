@@ -110,7 +110,7 @@ export default {
       data.append("title", this.item.title);
       data.append("description", this.item.description);
       data.append("available", false);
-      data.append("user", String(this.currentUser));
+      data.append("user", String(this.getCurrentUser.id));
       data.append("fileImage", this.item.fileImage);
 
       ItemDataService.create(data)
