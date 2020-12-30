@@ -40,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //These are not UNIT tests! These are more of integration tests
 
 import java.util.Date;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,9 +56,6 @@ class ItemControllerTest {
 	@Autowired
 	private MockMvc mvc;
 
-	@Autowired
-
-
 	@Test
 	void getAllItems() throws Exception {
 		RequestBuilder request = MockMvcRequestBuilders.get("/items");
@@ -72,32 +70,42 @@ class ItemControllerTest {
 				.andReturn();
 
 		assertNull(result.getResponse().getErrorMessage());
-
 		assertEquals(200, result.getResponse().getStatus());
 	}
 
-	//ToDo: DAS HIER IST EIN BEISPIEL
+
 	@Test
 	void getItemById() throws Exception {
-		RequestBuilder request = MockMvcRequestBuilders.get("/items/1");
-		//TESTCASE 1: and Expect - pruefen, ob id wirklich 1 ist
-		MvcResult result = mvc.perform(request).andExpect(jsonPath("$.id", is(1))).andReturn();
+		int id = 1;
+		RequestBuilder request = MockMvcRequestBuilders.get("/items/"+id);
 
-		//TESTCASE 2:assert - pruefen, ob error message gleich null ist --> keine Fehler auftreten
+		MvcResult result = mvc.perform(request).andExpect(jsonPath("$.id", is(id))).andReturn();
+
 		assertNull(result.getResponse().getErrorMessage());
-
-		//TESTCASE 3:assert - pruefen, ob http status 200 ist : erfolgreich
 		assertEquals(200, result.getResponse().getStatus());
 	}
 
 	@Test
 	void createItem() throws Exception {
 
-		//erstelle Konto fuer einen neuen Nutzer
+		char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+		StringBuilder name = new StringBuilder(5);
+		Random randomN = new Random();
+		for (int i = 0; i < 5; i++) {
+			char c = chars[randomN.nextInt(chars.length)];
+			name.append(c);
+		}
+		StringBuilder pass = new StringBuilder(5);
+		Random randomP = new Random();
+		for (int i = 0; i < 5; i++) {
+			char c = chars[randomP.nextInt(chars.length)];
+			pass.append(c);
+		}
+
 		MvcResult ungesignedUser = mvc.perform(MockMvcRequestBuilders.post("/users/signup")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("username", "ALAA")
-				.param("password", "password")
+				.param("username", String.valueOf(name))
+				.param("password", String.valueOf(pass))
 				.param("firstname", "fritz")
 				.param("lastname", "tester")
 				.param("email", "user@domain.com")
@@ -106,11 +114,9 @@ class ItemControllerTest {
 				.accept(MediaType.APPLICATION_JSON)
 		)
 				.andReturn();
-		assertEquals(201, ungesignedUser.getResponse().getStatus());
-		assertNull(ungesignedUser.getResponse().getErrorMessage());
 
-		//Login von erstellten Konto
-		String loginData = "{\"username\":\"ALAA\",\"password\":\"password\"}";
+
+		String loginData = "{\"username\":\""+String.valueOf(name)+"\",\"password\":\""+String.valueOf(pass)+"\"}";
 		MvcResult ungeloggedUser = mvc.perform(MockMvcRequestBuilders.post("/users/signin")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
@@ -118,25 +124,25 @@ class ItemControllerTest {
 		)
 				.andReturn();
 
-		assertEquals(200, ungeloggedUser.getResponse().getStatus());
-		assertNull(ungeloggedUser.getResponse().getErrorMessage());
-
-		//hier extrahieren wir den AccessToken von dem Response - wir brauchen das, weil der Nutzer darf leider nicht einfach so
-		//neuen Werkzeug erstellen - unser System brauch dafuer einen Token
 
 		String accessToken = JsonPath.read(ungeloggedUser.getResponse().getContentAsString(), "$.accessToken");
 
-		//auch extrahieren wir den Id von dem Nutzer, der automatisch generiert wurde
 		String userId = Integer.toString(JsonPath.read(ungeloggedUser.getResponse().getContentAsString(), "$.id"));
 
-		//jetzt erzeugt der Nutzer einen neune Werkzeug
+		char[] chars1 = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+		StringBuilder nameItem = new StringBuilder(5);
+		Random randomI = new Random();
+		for (int i = 0; i < 5; i++) {
+			char c = chars[randomI.nextInt(chars.length)];
+			nameItem.append(c);
+		}
 
 		MvcResult neuenWerkzeug = mvc.perform(MockMvcRequestBuilders.post("/items")
 				.header("Authorization", "Bearer " + accessToken)
-				.param("title", "TEst")
+				.param("title", String.valueOf(nameItem))
 				.param("description", "test")
 				.param("available", "true")
-				.param("user", "3")
+				.param("user", userId)
 		)
 				.andReturn();
 
@@ -152,11 +158,24 @@ class ItemControllerTest {
 	@Test
 	void deleteItem() throws Exception {
 
-		//erstelle Konto fuer einen neuen Nutzer
+		char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+		StringBuilder name = new StringBuilder(5);
+		Random randomN = new Random();
+		for (int i = 0; i < 5; i++) {
+			char c = chars[randomN.nextInt(chars.length)];
+			name.append(c);
+		}
+		StringBuilder pass = new StringBuilder(5);
+		Random randomP = new Random();
+		for (int i = 0; i < 5; i++) {
+			char c = chars[randomP.nextInt(chars.length)];
+			pass.append(c);
+		}
+
 		MvcResult ungesignedUser = mvc.perform(MockMvcRequestBuilders.post("/users/signup")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("username", "ALAA2") // ALAA2 weil sonst 2 user mit gleichem namen existieren können
-				.param("password", "password")
+				.param("username", String.valueOf(name))
+				.param("password", String.valueOf(pass))
 				.param("firstname", "fritz")
 				.param("lastname", "tester")
 				.param("email", "user@domain.com")
@@ -165,22 +184,32 @@ class ItemControllerTest {
 				.accept(MediaType.APPLICATION_JSON)
 		)
 				.andReturn();
-		assertEquals(201, ungesignedUser.getResponse().getStatus());
 
-		String loginData = "{\"username\":\"ALAA2\",\"password\":\"password\"}";
-		MvcResult unloggedUser = mvc.perform(MockMvcRequestBuilders.post("/users/signin")
+
+		String loginData = "{\"username\":\""+String.valueOf(name)+"\",\"password\":\""+String.valueOf(pass)+"\"}";
+		MvcResult ungeloggedUser = mvc.perform(MockMvcRequestBuilders.post("/users/signin")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.content(loginData)
 		)
 				.andReturn();
 
-		String accessToken = JsonPath.read(unloggedUser.getResponse().getContentAsString(), "$.accessToken");
-		String userId = Integer.toString(JsonPath.read(unloggedUser.getResponse().getContentAsString(), "$.id"));
+
+		String accessToken = JsonPath.read(ungeloggedUser.getResponse().getContentAsString(), "$.accessToken");
+
+		String userId = Integer.toString(JsonPath.read(ungeloggedUser.getResponse().getContentAsString(), "$.id"));
+
+		char[] chars1 = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+		StringBuilder nameItem = new StringBuilder(5);
+		Random randomI = new Random();
+		for (int i = 0; i < 5; i++) {
+			char c = chars[randomI.nextInt(chars.length)];
+			nameItem.append(c);
+		}
 
 		MvcResult neuenWerkzeug = mvc.perform(MockMvcRequestBuilders.post("/items")
 				.header("Authorization", "Bearer " + accessToken)
-				.param("title", "Test")
+				.param("title", String.valueOf(nameItem))
 				.param("description", "test")
 				.param("available", "true")
 				.param("user", userId)
@@ -189,7 +218,7 @@ class ItemControllerTest {
 
 		MvcResult allItems = mvc.perform(MockMvcRequestBuilders.get("/items")).andReturn();
 		String itemsJsonasString = allItems.getResponse().getContentAsString();
-		Pattern pattern = Pattern.compile("id\":(\\d),\"title\":\"Test");
+		Pattern pattern = Pattern.compile("id\":(\\d),\"title\":\""+String.valueOf(nameItem)+"\"");
 		Matcher matcher = pattern.matcher(itemsJsonasString);
 		String itemId = null;
 
@@ -208,12 +237,13 @@ class ItemControllerTest {
 
 	@Test
 	void deleteAllItems() {
+
 	}
 
 	@Test
 	void findByAvailable() throws Exception {
 		RequestBuilder request = MockMvcRequestBuilders.get("/items/available");
-		//hier pruefe ich, ob ALLE Elemente, die ich mit dem json kriege, den Parameter "available" gleich true haben
+
 		MvcResult result = mvc.perform(request)
 				.andExpect(jsonPath("$[*].available").value(Matchers.not(false)))
 				.andReturn();

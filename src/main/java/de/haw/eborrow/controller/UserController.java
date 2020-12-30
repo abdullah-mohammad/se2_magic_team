@@ -64,6 +64,9 @@ public class UserController {
             required = false) MultipartFile  profilepicture) {
 
         try {
+            if (userRequest.getPassword().length()<5){
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
             userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
             String fileName = "";
             if (profilepicture != null) {
