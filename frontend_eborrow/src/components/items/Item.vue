@@ -31,8 +31,8 @@
                       <span :class="{'amount-old text-dark': currentItem.available, 'pro-price text-danger': !currentItem.available}"> No</span>
                     </div>
                     <br>
-                    <p>
-                        <button @click="navigateBack" class="btn btn-round btn-primary gs-btn-rounded gs-btn-blue" type="button"><i class="fa fa-chevron-left"></i> Back</button>
+                  <button @click="navigateBack" class="btn btn-round btn-primary gs-btn-rounded gs-btn-blue" type="button"><i class="fa fa-chevron-left"></i> Back</button>
+                  <p v-if="!this.$store.state.auth.user" >
                         <button class="btn btn-round btn-success gs-btn-rounded" type="button"><i class="fa fa-shopping-cart"></i> Borrow</button>
                     </p>
                 </div>

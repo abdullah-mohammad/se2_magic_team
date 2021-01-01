@@ -56,6 +56,16 @@ export const router = new Router({
       name: "register",
       component: () => import("./components/Career"),
     },
+    {
+      path: "/myitems",
+      name: "myitems",
+      component: () => import("./components/items/MyItems"),
+    },
+    {
+      path: "/editItem/:id",
+      name: "editItem",
+      component: () => import("./components/items/EditItem"),
+    }
 
   ],
 });

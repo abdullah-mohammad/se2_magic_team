@@ -5,6 +5,7 @@ class ItemDataService {
     return http.get("/items");
   }
 
+
   get(id) {
     return http.get(`/items/${id}`);
   }
@@ -31,6 +32,12 @@ class ItemDataService {
 
   getPicture(img) {
     return http.get(`/items/get-img/${img}/`)
+  }
+  // getMyGegenstaende(){
+  //   return http.get(`/items/user/1`)
+  // }
+  getMyGegenstaende(id){
+    return http.get(`/items/user/${id}`)
   }
 }
 

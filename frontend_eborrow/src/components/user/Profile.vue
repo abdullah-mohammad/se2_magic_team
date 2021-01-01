@@ -22,7 +22,7 @@
                        width="150">
                   <div class="mt-3">
                     <h4>{{ user.username }}</h4>
-                    <a :href="'edit-profile/' + user.id" class="btn btn-primary">Edit</a>
+                    <a :href="'edit-profile/'+ user.id" class="btn btn-primary">Edit</a>
                     &nbsp;
                     <button class="btn btn-outline-danger" @click="deleteUser">Delete</button>
                   </div>
@@ -75,7 +75,7 @@
             <ul class="list-group list-group-flush">
               <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
 
-                <a :href="''" class="text-secondary">My tools</a>
+                <a :href="'myitems/'" class="text-secondary">My tools</a>
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
 

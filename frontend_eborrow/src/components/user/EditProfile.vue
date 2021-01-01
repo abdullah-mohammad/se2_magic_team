@@ -39,8 +39,7 @@
                         </div>
                         <div class="col-sm-9 text-secondary">
                             <input type="text" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter email"
-                                v-model="user.firstname"
-                            >
+                                v-model="user.firstname">
                         </div>
                         </div>
                         <hr>
@@ -112,7 +111,6 @@
                         <p v-if="errMsge" class="text-danger">{{errMsge}}</p>
                         <br>
                         <input type="submit" class="btn btn-success" value="Save">
-                        &nbsp;
                         <a @click="goBack()" class="btn btn-primary">Back</a>
                     </form>
                   </div>

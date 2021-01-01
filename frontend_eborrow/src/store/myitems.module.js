@@ -1,34 +1,21 @@
 import ItemDataService from "../services/ItemDataService";
 
-export const items = {
+export const myitems = {
     namespaced: true,
     state: {
-        items: []
+        myitems: [],
+        currentItem: null
     },
     mutations: {
-        SET_ITEMS(state, payload) {
-            state.items = payload;
-        },
         SET_MY_ITEMS(state, payload) {
-            state.items = payload;
+            state.myitems = payload;
         },
-        GET_ITEM(state, payload) {
-            state.items = payload;
+        SET_CURRENT_ITEM(state, payload) {
+            state.currentItem = payload;
         }
     },
     actions: {
-        async setItems(context){
-            try {
-                const res = await ItemDataService.getAll();
-                context.commit('SET_ITEMS', res.data);
-                return Promise.resolve(res.data);
-            } catch (e) {
-                console.log(e);
-                return Promise.reject(e);
-            }
-
-        },
-        async setMyItems(id,context){
+        async setMyItems(context,id){
             try {
                 const res = await ItemDataService.getMyGegenstaende(id);
                 context.commit('SET_MY_ITEMS', res.data);
@@ -39,11 +26,10 @@ export const items = {
             }
 
         },
-
-        async getItem(id,context){
+        async setCurrentItem(context,id){
             try {
                 const res = await ItemDataService.get(id);
-                context.commit('GET_ITEM', res.data);
+                context.commit('SET_CURRENT_ITEM', res.data);
                 return Promise.resolve(res.data);
             } catch (e) {
                 console.log(e);

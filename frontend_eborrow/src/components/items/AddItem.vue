@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!getCurrentUser">
-      If you <router-link to="/login">log in</router-link>, you can add you items to share them. 
+      If you <router-link to="/login">log in</router-link>, you can add you items to share them.
     </div>
   <div class="submit-form" v-else>
     <h1>add new item:</h1>
