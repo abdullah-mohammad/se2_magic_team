@@ -48,15 +48,19 @@ export const router = new Router({
     },
     {
       path: "/aboutUs",
-      name: "register",
+      name: "aboutUs",
       component: () => import("./components/AboutUs"),
     },
     {
       path: "/career",
-      name: "register",
+      name: "career",
       component: () => import("./components/Career"),
     },
-
+    {
+      path: "/borrow/:id",
+      name: "borrow",
+      component: () => import("./components/ItemBorrow"),
+    },
   ],
 });
 
