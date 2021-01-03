@@ -1,7 +1,6 @@
 package de.haw.eborrow.models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import java.util.*;
@@ -20,6 +19,7 @@ public class User {
     private String lastname;
     private String email;
     private String gender;
+    @JsonFormat(pattern="yyyy-MM-dd" , shape = JsonFormat.Shape.STRING , timezone="Europe/Zagreb")
     private Date birthdate;
     private String profilepicture;
 
