@@ -1,14 +1,10 @@
 package de.haw.eborrow.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @JsonIdentityInfo(
@@ -28,9 +24,15 @@ public class User {
     private String profilepicture;
 
 
+
+
+
     //@JsonManagedReference("user")
     @OneToMany(mappedBy="user")
     Set<Item> items = new HashSet();
+
+    @OneToMany(mappedBy="user")
+    private List<Borrow> borrowedItems = new ArrayList<>();
 
     public User() {
     }
@@ -127,5 +129,9 @@ public class User {
     public void addItem(Item item ){
         this.items.add(item);
 //        item.setUser(this);
+    }
+
+    public void addItemToBorrowedItems(Borrow borrow){
+        this.borrowedItems.add(borrow);
     }
 }
