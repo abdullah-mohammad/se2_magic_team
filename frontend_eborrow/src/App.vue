@@ -30,19 +30,22 @@
             </li>
           </div>
         </li>
-        <!-- <li class="nav-item gs-nav-item">
-          <router-link to="/register" class="nav-link gs-nav-link" style="width:5rem;">Sign Up</router-link>
-        </li>
-        <li class="nav-item gs-nav-item">
-          <router-link to="/login" class="nav-link gs-nav-link">Login</router-link>
-        </li> -->
       </div>
 
-      <div v-if="currentUser" class="navbar-nav gs-navbar-nav ml-auto">
-        <li class="nav-item gs-nav-item">
-          <router-link v-on:click.native="logOut" to="/" class="nav-link gs-nav-link"
-          >Log out
-          </router-link>
+<div v-if="currentUser" class="navbar-nav navbar-expand-lg gs-navbar-nav ml-auto">
+        <li class="nav-item gs-nav-item dropdown">
+          <a class="nav-link gs-nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="fa fa-user-o"></span>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li class="dropdown-item nav-item gs-nav-item">
+              <router-link to="/" class="nav-link gs-nav-link" v-on:click.native="logOut">Log Out</router-link>
+            </li>
+            <div class="dropdown-divider"></div>
+            <li class="dropdown-item nav-item gs-nav-item">
+              <router-link to="/profile" class="nav-link gs-nav-link">Profile</router-link>
+            </li>
+          </div>
         </li>
       </div>
     </nav>
