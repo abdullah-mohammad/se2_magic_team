@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -35,6 +37,8 @@ public class Item {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy="user")
+    private List<Borrow> borrowedItems = new ArrayList<>();
 
     public Item(String title, String description, String picture,boolean available) {
         this.title = title;
@@ -100,6 +104,10 @@ public class Item {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public void addItemToBorrowedItems(Borrow borrow){
+        this.borrowedItems.add(borrow);
     }
 
     @Override

@@ -101,6 +101,7 @@ public class ItemController {
             String title = itemDTO.getTitle();
             String description = itemDTO.getDescription();
             boolean available = Boolean.parseBoolean(itemDTO.getAvailable());
+
             Long _userId = Long.valueOf(itemDTO.getUser());
             User user = userRepository.getOne(_userId);
             String fileName = "";

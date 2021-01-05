@@ -28,7 +28,7 @@
                 <router-link :to="{ path: '/items/'+ item.id}"
                              class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details
                 </router-link>
-                <router-link :to="{ path: '#'}" class="btn btn-sm btn-outline-danger gs-btn-red .gs-a">Borrow
+                <router-link  :to="{ path: '/borrow/' + item.id}" class="btn btn-sm btn-outline-danger gs-btn-red .gs-a">Borrow
                 </router-link>
               </div>
             </div>

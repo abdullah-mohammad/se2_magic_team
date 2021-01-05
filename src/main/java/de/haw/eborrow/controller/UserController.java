@@ -64,6 +64,9 @@ public class UserController {
             required = false) MultipartFile  profilepicture) {
 
         try {
+            if (userRequest.getPassword().length()<5){
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
             userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
             String fileName = "";
             if (profilepicture != null) {
@@ -130,9 +133,15 @@ public class UserController {
             _user.setFirstname((String) body.get("firstname"));
             _user.setLastname((String) body.get("lastname"));
             _user.setGender((String) body.get("gender"));
-            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
-            Date date = formatter.parse(body.get("birthdate").toString());
-            _user.setBirthdate(date);
+
+            System.out.println("String birthdate"+body.get("birthdate"));
+            Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(body.get("birthdate").toString());
+            System.out.println("Date burthdate"+birthdate);
+         //   Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").parse(body.get("birthdate").toString());
+
+            //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            //Date date = formatter.parse(body.get("birthdate").toString());
+            _user.setBirthdate(birthdate);
             return new ResponseEntity<User>(applicationUserRepository.save(_user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

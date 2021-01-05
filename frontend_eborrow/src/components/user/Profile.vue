@@ -64,8 +64,8 @@
                   <div class="col-sm-3">
                     <h6 class="mb-0">Birthdate</h6>
                   </div>
-                  <div class="col-sm-9 text-secondary">
-                    {{ user.birthdate }}
+                  <div class="col-sm-9 text-secondar" type="date" >
+                           {{ user.birthdate }}
                   </div>
                 </div>
               </div>
@@ -97,6 +97,12 @@ const API_IMG_RESOURCE = "http://localhost:8080/users/get-img/";
 
 export default {
   name: "Profile",
+  data(){
+    return {
+      birthdate :this.currentUser.birthdate,
+       dateVal : new Date(),
+    }
+  },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;

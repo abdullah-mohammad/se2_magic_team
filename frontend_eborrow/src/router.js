@@ -48,12 +48,12 @@ export const router = new Router({
     },
     {
       path: "/aboutUs",
-      name: "register",
+      name: "aboutUs",
       component: () => import("./components/AboutUs"),
     },
     {
       path: "/career",
-      name: "register",
+      name: "career",
       component: () => import("./components/Career"),
     },
     {
@@ -65,8 +65,13 @@ export const router = new Router({
       path: "/editItem/:id",
       name: "editItem",
       component: () => import("./components/items/EditItem"),
-    }
+    },
 
+    {
+      path: "/borrow/:id",
+      name: "borrow",
+      component: () => import("./components/ItemBorrow"),
+    },
   ],
 });
 
