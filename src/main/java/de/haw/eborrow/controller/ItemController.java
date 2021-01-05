@@ -131,7 +131,7 @@ public class ItemController {
             _item.setAvailable(item.isAvailable());
             String fileName = "";
             if (picture != null) {
-                fileName = item.getUser() + "_" + item.getTitle() + "_" +
+                fileName = item.getUser().getId() + "_" + item.getTitle() + "_" +
                         StringUtils.cleanPath(Objects.requireNonNull(picture.getOriginalFilename()));
                 String directory = "items/";
                 storageService.save(picture, fileName,directory);
