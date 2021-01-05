@@ -15,7 +15,7 @@ class ItemDataService {
   }
 
   update(id, data) {
-    return http.put(`/items/${id}`, data);
+    return http.put(`/items/editItem/${id}`, data);
   }
 
   delete(id) {
@@ -33,9 +33,7 @@ class ItemDataService {
   getPicture(img) {
     return http.get(`/items/get-img/${img}/`)
   }
-  // getMyGegenstaende(){
-  //   return http.get(`/items/user/1`)
-  // }
+
   getMyGegenstaende(id){
     return http.get(`/items/user/${id}`)
   }

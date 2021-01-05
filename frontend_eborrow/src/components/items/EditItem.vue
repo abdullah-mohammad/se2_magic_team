@@ -1,75 +1,78 @@
 <template>
-  <div class="container">
-    <div>
-      <!-- Page Heading -->
-      <nav aria-label="breadcrumb" class="main-breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item"><a href="javascript:void(0)">Item</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Edit Item</li>
-        </ol>
-        <div class="col-md-8">
-          <div class="card mt-3">
-            <div class="card-body">
-
-              <div class="row">
-                <div class="col-sm-3">
-                  <h6 class="mb-0">new Title</h6>
-                </div>
-                <div class="col-sm-9 text-secondary">
-                  <input type="text" class="form-control"  placeholder="Enter a new Title"
-                         v-model="currentItem.title">
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-sm-3">
-                  <h6 class="mb-0">new Description</h6>
-                </div>
-                <div class="col-sm-9 text-secondary">
-                  <input type="text" class="form-control"  placeholder="Enter a new Desc."
-                         v-model="currentItem.description">
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-sm-3">
-                  <h6 class="mb-0">Available</h6>
-                </div>
-                <div class="col-sm-9 text-secondary">
-                  <input type="text" class="form-control" placeholder="" v-model="currentItem.available">
-                </div>
-
-              </div>
-
-              <div class="row">
-                <div class="col-sm-3">
-                  <h6 class="mb-0">new Photo</h6>
-                </div>
-                <div class="form-group">
-                  <label for="fileImage">Upload image</label>
-                  <input
-                      type="file"
-                      @change="onImageUpload"
-                      id="fileImage"
-                      name="fileImage"
-                      accept="image/png, image/jpeg"
-                      ref="fileImage"
-                  />
-                </div>
-                <div class="form-group">
-                  <div id="preview">
-                    <img v-if="!url" :src="getItemPicture(currentItem.picture)" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
-                    <img v-else  :src="url" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
+  <div v-if="currentItem">
+    <div class="container">
+      <div>
+        <!-- Page Heading -->
+        <nav aria-label="breadcrumb" class="main-breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Item</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Item</li>
+          </ol>
+          <div class="col-md-8">
+            <div class="card mt-3">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">new Title</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary">
+                    <input type="text" class="form-control" placeholder="Enter a new Title"
+                           v-model="currentItem.title">
                   </div>
                 </div>
+
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">new Description</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary">
+                    <input type="text" class="form-control" placeholder="Enter a new Desc."
+                           v-model="currentItem.description">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">Available</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary">
+                    <input type="text" class="form-control" placeholder="" v-model="currentItem.available">
+                  </div>
+
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">new Photo</h6>
+                  </div>
+                  <div class="form-group">
+                    <label for="fileImage">Upload image</label>
+                    <input
+                        type="file"
+                        @change="onImageUpload"
+                        id="fileImage"
+                        name="fileImage"
+                        accept="image/png, image/jpeg"
+                        ref="fileImage"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <div id="preview">
+                      <img v-if="!url" :src="getCurrentItemPicture"
+                           class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
+                      <img v-else :src="url" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
+                    </div>
+                  </div>
+                </div>
+                <button @click="updateItem" id="massege" class="btn btn-success">Save</button>
+                <a @click="goBack()" class="btn btn-primary">Back</a>
               </div>
-              <input @click="updateItem" class="btn btn-success" value="Save">
-              <a @click="goBack()" class="btn btn-primary">Back</a>
             </div>
           </div>
-        </div>
-      </nav>
+
+        </nav>
+      </div>
     </div>
   </div>
 </template>
@@ -83,23 +86,24 @@ export default {
   name: "editItem",
   data() {
     return {
-      url:null,
-      message: "",
+      url: null,
+      message: "edited",
       currentItem: null,
       fileImage: null,
     };
   },
   computed: {
+
     getCurrentItemPicture() {
       return `${API_IMG_RESOURCE}${this.currentItem.picture}/`
-    },
-
-    currentUser() {
-      return this.$store.state.auth.user;
     },
     ...mapGetters('user', ['getCurrentUser']),
   },
   methods: {
+
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
     getItem(id) {
       ItemDataService.get(id)
           .then((response) => {
@@ -110,77 +114,45 @@ export default {
             console.log(e);
           });
     },
-  getItemPicture(img) {
-    if (img != null && img !== "" && img !== undefined) {
-      return API_IMG_RESOURCE + img;
-    }else{
-      return "http://placehold.it/700x300";
-    }
-  },
+    getItemPicture(img) {
+      if (img != null && img !== "" && img !== undefined) {
+        return API_IMG_RESOURCE + img;
+      } else {
+        return "http://placehold.it/700x300";
+      }
+    },
     onImageUpload(event) {
       if (event.target.files[0] != null) {
         this.fileImage = event.target.files[0];
         this.url = URL.createObjectURL(this.fileImage);
-      }else{
+      } else {
         this.url = null;
       }
     },
-    /*...mapActions({
-      setCurrentItem: "myitems/setCurrentItem",
-    }),*/
+
     goBack() {
       this.$router.push("/myitems")
     },
-
-
-    /*updatePublished(status) {
-      var data = {
-        id: this.currentItem.id,
-        title: this.currentItem.title,
-        description: this.currentItem.description,
-        published: status,
-      };
-
-      ItemDataService.update(this.currentItem.id, data)
-          .then((response) => {
-            this.currentItem.published = status;
-            console.log(response.data);
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-    },*/
-
     updateItem() {
       var data = new FormData();
       data.append("id", this.currentItem.id);
       data.append("title", this.currentItem.title);
       data.append("description", this.currentItem.description);
+      data.append("picture", this.currentItem.picture);
       data.append("available", this.currentItem.available);
-      data.append("user", this.currentItem.user);
+      data.append("user", String(this.currentItem.user.id));
       data.append("fileImage", this.fileImage);
-
+      confirm("Do you really want to edit this Item?");
       ItemDataService.update(this.currentItem.id, data)
           .then((response) => {
             console.log(response.data);
             this.message = "The item was updated successfully!";
+
           })
           .catch((e) => {
             console.log(e);
           });
     },
-
-    deleteItem() {
-      ItemDataService.delete(this.currentItem.id)
-          .then((response) => {
-            console.log(response.data);
-            this.$router.push({name: "items"});
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-    },
-
     navigateBack() {
       this.$router.go(-1)
     },

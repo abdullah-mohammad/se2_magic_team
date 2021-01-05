@@ -57,6 +57,23 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(root.toFile());
     }
+    @Override
+    public void delete(String directory, String name) {
+        try {
+            Path pathWithDir = Paths.get(root.toString() + directory);
+            Path file = pathWithDir.resolve(name);
+            Resource resource = new UrlResource(file.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                FileSystemUtils.deleteRecursively(file);
+            } else {
+                throw new RuntimeException("Could not find the file!");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public Stream<Path> loadAll() {

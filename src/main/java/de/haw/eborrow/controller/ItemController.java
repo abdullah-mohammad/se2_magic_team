@@ -120,14 +120,13 @@ public class ItemController {
         }
     }
 
-    @PutMapping("/items/{id}")
+    @PutMapping("/items/editItem/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable("id") long id, @ModelAttribute Item item,@RequestParam(value = "fileImage",
             required = false) MultipartFile picture ) {
         Optional<Item> itemData = itemRepository.findById(id);
-        System.out.println(item);
         if (itemData.isPresent()) {
             Item _item = itemData.get();
-            _item.setTitle(item.getTitle());
+            _item.setTitle(  item.getTitle());
             _item.setDescription(item.getDescription());
             _item.setAvailable(item.isAvailable());
             String fileName = "";
@@ -139,6 +138,7 @@ public class ItemController {
                 item.setPicture(fileName);
             }
             _item.setPicture(item.getPicture());
+
             return new ResponseEntity<>(itemRepository.save(_item), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -148,6 +148,11 @@ public class ItemController {
     @DeleteMapping("/items/{id}")
     public ResponseEntity<HttpStatus> deleteItem(@PathVariable("id") long id) {
         try {
+            Item item = itemRepository.getOne(id);
+            String picture = item.getPicture();
+            if (picture != ""){
+                storageService.delete("/items/",picture);
+            }
             itemRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

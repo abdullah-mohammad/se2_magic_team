@@ -10,7 +10,7 @@
 
         <div v-for="(item) in myitems.slice(startLimit, endLimit)" :key="item.id">
           <!-- Item One -->
-          <div  class="row gs-tool-card">
+          <div class="row gs-tool-card">
             <div class="col-md-5">
               <!-- <a href="#"> -->
               <img :src="getItemPicture(item.picture)" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt="">
@@ -29,9 +29,11 @@
                              class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">see details
                 </router-link>
                 <router-link :to="{ path: '/editItem/'+item.id}"
-                             class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">Edit This Item </router-link>
-<!--                <a :href="'editItem/'" class="btn btn-sm btn-rounded btn-primary gs-btn-green .gs-a">Edit My Item</a>-->
-                <button class="btn btn-outline-danger gs-btn-rounded gs-btn-red .gs-a" @click="deleteItem">Delete</button>
+                             class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">Edit This Item
+                </router-link>
+                <button class="btn btn-outline-danger gs-btn-rounded gs-btn-red .gs-a" @click="deleteItem(item.id)">
+                  Delete
+                </button>
               </div>
             </div>
           </div>
@@ -59,7 +61,6 @@
       <!-- /.container -->
 
     </div>
-
     <div v-else>
       <p :style="{color:'red'}">Sorry, there is no data 😢</p>
     </div>
@@ -67,10 +68,11 @@
 </template>
 
 <script>
-import {mapActions, mapGetters,mapState} from 'vuex';
+import {mapActions, mapGetters, mapState} from 'vuex';
 import Paginate from 'vuejs-paginate';
 import VClamp from 'vue-clamp';
 import ItemDataService from "@/services/ItemDataService";
+
 
 const MAX_NUMBER_ITEMS_PER_LIST = 5;
 const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
@@ -80,6 +82,7 @@ export default {
   components: {
     Paginate,
     VClamp
+
   },
   data() {
     return {
@@ -89,8 +92,8 @@ export default {
     };
   },
   computed: {
-     ...mapGetters('user',['getCurrentUser']),
-      currentUser() {
+    ...mapGetters('user', ['getCurrentUser']),
+    currentUser() {
       return this.$store.state.auth.user;
     }
     ,
@@ -108,19 +111,21 @@ export default {
       this.startLimit = MAX_NUMBER_ITEMS_PER_LIST * (pageNum - 1);
       this.endLimit = this.startLimit + MAX_NUMBER_ITEMS_PER_LIST;
     },
-    deleteItem() {
-      ItemDataService.delete(this.item.id)
-          .then(() => {
-            this.$router.push({name: "login"});
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+    deleteItem(id) {
+      if (confirm("Do you really want to delete?")) {
+        ItemDataService.delete(id)
+            .then(() => {
+              this.setMyItems(this.currentUser.id);
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+      }
     },
     getItemPicture(img) {
       if (img != null && img !== "" && img !== undefined) {
         return API_IMG_RESOURCE + img;
-      }else{
+      } else {
         return "http://placehold.it/700x300";
       }
     }
