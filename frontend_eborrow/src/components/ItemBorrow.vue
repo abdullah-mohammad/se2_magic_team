@@ -127,8 +127,7 @@ export default {
       };
       console.log(this.currentUser);
       BorrowDataService.create(data).then(() => {
-        this.currentItem.available = false;
-        this.updateItem(); // es muss item notAvailable gemacht werden
+        this.updateItem();
         this.submitted = true;
       }).catch((e) => {
         this.submitted = false;
@@ -136,8 +135,15 @@ export default {
       })
     },
     updateItem() {
-      //TODO es gibt ein error response wenn man item updatet??? in backend bitte update item fixen.
-      ItemDataService.update(this.currentItem.id, this.currentItem)
+      var data = new FormData();
+      data.append("id", this.currentItem.id);
+      data.append("title", this.currentItem.title);
+      data.append("description", this.currentItem.description);
+      data.append("picture", this.currentItem.picture);
+      data.append("available", false);
+      data.append("user", String(this.currentItem.user.id));
+
+      ItemDataService.update(this.currentItem.id, data)
           .then((response) => {
             console.log(response.data);
           })
