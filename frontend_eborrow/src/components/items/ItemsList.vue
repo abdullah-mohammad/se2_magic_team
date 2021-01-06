@@ -5,6 +5,10 @@
       <!-- Page Content -->
       <div v-else class="container">
 
+      <!-- Filter -->
+      <FilterItem />
+      <!-- Filter -->
+
         <!-- Page Heading -->
         <h2 class="my-4 gs-title">List of tools: </h2>
 
@@ -65,6 +69,7 @@
 import { mapActions, mapState } from 'vuex';
 import Paginate from 'vuejs-paginate'
 import VClamp from 'vue-clamp'
+import FilterItem from './filter/FilterItem'
 
 const MAX_NUMBER_ITEMS_PER_LIST = 5;
 const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
@@ -73,7 +78,8 @@ export default {
   name: "items-list",
   components: {
     Paginate,
-    VClamp
+    VClamp,
+    FilterItem
   },
   data() {
     return {
@@ -106,6 +112,9 @@ export default {
     },
     getItemPicture(img) {
       return `${API_IMG_RESOURCE}${img}/`
+    },
+    handleSearchItems() {
+      alert("true")
     }
   },
   mounted() {

@@ -360,9 +360,9 @@ background:#eee;
     display: block;
     margin-bottom: 10px;
 }
-.product_meta a, .pro-price{
-    /* color:#fc5959 ; */
-}
+/* .product_meta a, .pro-price{
+    color:#fc5959 ;
+} */
 
 .pro-price, .amount-old {
     font-size: 18px;

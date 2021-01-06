@@ -7,7 +7,9 @@ export const items = {
     namespaced: true,
     state: {
         items: [],
-        loaded: false
+        loaded: false,
+        filter: false,
+        filteredItems: []
     },
     mutations: {
         SET_ITEMS(state, payload) {
@@ -15,6 +17,10 @@ export const items = {
         },
         SET_LOADED(state, value) {
             state.loaded = value;
+        },
+        FILTER_ITEMS(state, value) {
+            state.filteredItems = state.items.filter(function (item) { return item.title.includes(value); });
+            console.log("FILT. ", state.filteredItems)
         }
     },
     actions: {
@@ -62,5 +68,11 @@ export const items = {
                 return Promise.reject(e);
             }     
         },
+
+        filterItems(context, payload) {
+            var PATTERN = payload.I_want_to_borrow;
+            context.commit('FILTER_ITEMS', PATTERN);
+        }
+
     },
 };
