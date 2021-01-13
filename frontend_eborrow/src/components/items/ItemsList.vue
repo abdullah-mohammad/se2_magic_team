@@ -1,7 +1,14 @@
 <template>
   <div>
     <div v-if="items.length > 0" class="list row">
-      <div v-if="!loaded">Loading filter from current postion...</div>
+      <div v-if="!loaded">
+          <atom-spinner
+            :animation-duration="1000"
+            :size="60"
+            :color="'#ff1d5e'"
+          />
+        Loading filter from current postion...
+        </div>
       <!-- Page Content -->
       <div v-else class="container">
 
@@ -74,6 +81,7 @@ import { mapActions, mapState } from 'vuex';
 import Paginate from 'vuejs-paginate'
 import VClamp from 'vue-clamp'
 import FilterItem from './filter/FilterItem'
+import {AtomSpinner} from 'epic-spinners'
 
 const MAX_NUMBER_ITEMS_PER_LIST = 5;
 const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
@@ -83,7 +91,8 @@ export default {
   components: {
     Paginate,
     VClamp,
-    FilterItem
+    FilterItem,
+    AtomSpinner
   },
   data() {
     return {
