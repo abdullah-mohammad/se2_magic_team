@@ -83,18 +83,15 @@ public class UserController {
                         Objects.requireNonNull(profilepicture.getOriginalFilename()));
                 storageService.save(profilepicture, fileName,"profilepictures/");
             }
-            Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(userRequest.getBirthdate());
+            birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(userRequest.getBirthdate());
             User _user = applicationUserRepository.save(new User(userRequest.getUsername(),
                     userRequest.getPassword(), userRequest.getFirstname(), userRequest.getLastname()
-                    , userRequest.getEmail(), userRequest.getGender(), birthdate, fileName));
+                    , userRequest.getEmail(), userRequest.getGender(), birthdate, fileName, null));
 
             return new ResponseEntity<>(_user, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        User _user = applicationUserRepository.save(new User(userRequest.getUsername(), userRequest.getPassword(), userRequest.getFirstname(), userRequest.getLastname(), userRequest.getEmail(), userRequest.getGender(), birthdate, address.get()));
-        return new ResponseEntity<>(_user, HttpStatus.CREATED);
     }
 
     @PostMapping("/signin")
@@ -174,14 +171,14 @@ public class UserController {
         try {
             String inlineAddr = applicationUserRepository.getUserAddress(id);
 
-            if (inlineAddr==null) {
+            if (inlineAddr == null) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity<String>(inlineAddr, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
+    }
 
     @GetMapping(
             value = "/get-img/{pic:.+}",

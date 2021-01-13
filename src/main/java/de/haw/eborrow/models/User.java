@@ -23,10 +23,6 @@ public class User {
     private Date birthdate;
     private String profilepicture;
 
-
-
-
-
     //@JsonManagedReference("user")
     @OneToMany(mappedBy="user")
     Set<Item> items = new HashSet();
