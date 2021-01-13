@@ -34,6 +34,10 @@ class ItemDataService {
     return http.get(`/items/get-img/${img}/`)
   }
 
+  filter(data) {
+    return http.post("/items/filter", data);
+  }
+  
   getMyGegenstaende(id){
     return http.get(`/items/user/${id}`)
   }

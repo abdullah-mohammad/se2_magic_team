@@ -1,9 +1,13 @@
 <template>
   <div>
     <div v-if="items.length > 0" class="list row">
-
+      <div v-if="!loaded">Loading filter from current postion...</div>
       <!-- Page Content -->
-      <div class="container">
+      <div v-else class="container">
+
+      <!-- Filter -->
+      <FilterItem />
+      <!-- Filter -->
 
         <!-- Page Heading -->
         <h2 class="my-4 gs-title">List of tools: </h2>
@@ -25,6 +29,7 @@
                 {{ item.description }}
               </VClamp>
               <div class="gs-tool-card-actions">
+                <span v-if="item.distance != Infinity" class="text-muted">{{item.distance}} km from you </span> &nbsp;
                 <router-link :to="{ path: '/items/'+ item.id}"
                              class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details
                 </router-link>
@@ -65,9 +70,10 @@
 </template>
 
 <script>
-import {mapActions, mapState} from 'vuex';
-import Paginate from 'vuejs-paginate';
-import VClamp from 'vue-clamp';
+import { mapActions, mapState } from 'vuex';
+import Paginate from 'vuejs-paginate'
+import VClamp from 'vue-clamp'
+import FilterItem from './filter/FilterItem'
 
 const MAX_NUMBER_ITEMS_PER_LIST = 5;
 const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
@@ -76,7 +82,8 @@ export default {
   name: "items-list",
   components: {
     Paginate,
-    VClamp
+    VClamp,
+    FilterItem
   },
   data() {
     return {
@@ -85,7 +92,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('items', ['items']),
+    ...mapState('items', ['items', 'loaded']),
     getPageCount() { // total pages
       return this.items.length / MAX_NUMBER_ITEMS_PER_LIST;
     },

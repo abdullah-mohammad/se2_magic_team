@@ -1,6 +1,10 @@
 package de.haw.eborrow.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import de.haw.eborrow.models.Address;
+import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
+import de.haw.eborrow.repository.AddressRepository;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.security.SigninRequest;
 import de.haw.eborrow.security.SignupRequest;
@@ -51,18 +55,23 @@ public class UserController {
     FilesStorageService storageService;
 
     private UserRepository applicationUserRepository;
+    private AddressRepository addressRepository;
     private PasswordEncoder bCryptPasswordEncoder;
 
     public UserController(UserRepository applicationUserRepository,
-                          PasswordEncoder bCryptPasswordEncoder) {
+                          PasswordEncoder bCryptPasswordEncoder,
+                          AddressRepository addressRepository) {
         this.applicationUserRepository = applicationUserRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.addressRepository = addressRepository;
     }
 
     @PostMapping("/signup")
     public ResponseEntity<User> signUp(@ModelAttribute SignupRequest userRequest,@RequestParam(value = "profilepicture",
             required = false) MultipartFile  profilepicture) {
-
+        Date birthdate;
+        //TODO: Adress Felder in Signup Form
+        Optional<Address> address = addressRepository.findById(1L);
         try {
             if (userRequest.getPassword().length()<5){
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -83,6 +92,9 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        User _user = applicationUserRepository.save(new User(userRequest.getUsername(), userRequest.getPassword(), userRequest.getFirstname(), userRequest.getLastname(), userRequest.getEmail(), userRequest.getGender(), birthdate, address.get()));
+        return new ResponseEntity<>(_user, HttpStatus.CREATED);
     }
 
     @PostMapping("/signin")
@@ -154,6 +166,21 @@ public class UserController {
         String userCurrentPass = applicationUserRepository.getUserPass(id);
         return bCryptPasswordEncoder.matches(pass, userCurrentPass);
     }
+
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/user-address/{id}")
+    public ResponseEntity<String> getUserInlineAddress(@PathVariable("id") long id) {
+        try {
+            String inlineAddr = applicationUserRepository.getUserAddress(id);
+
+            if (inlineAddr==null) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<String>(inlineAddr, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
 
     @GetMapping(
