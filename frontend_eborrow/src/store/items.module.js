@@ -74,6 +74,8 @@ export const items = {
                     if(checker--==0) {
                         context.commit('SET_LOADED', true);
                         console.log("DER", itemsWithGeoCodes)
+                        /* if(itemsWithGeoCodes[0].distance)
+                            itemsWithGeoCodes.sort((a,b) => (a.distance > b.distance) ? 1 : ((b.distance > a.distance) ? -1 : 0)); */
                     }
                 })
                 //console.log("PRIM Ende", itemsWithGeoCodes)

@@ -28,7 +28,7 @@
                   {{item.description}}
               </VClamp>
               <div class="gs-tool-card-actions">
-                <span class="text-muted">{{item.distance}} km from you </span> &nbsp;
+                <span v-if="item.distance != Infinity" class="text-muted">{{item.distance}} km from you </span> &nbsp;
                 <router-link :to="{ path: '/items/'+ item.id}" class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details</router-link>
                 <router-link :to="{ path: '#'}" class="btn btn-sm btn-outline-danger gs-btn-red .gs-a">Borrow</router-link>
               </div>
