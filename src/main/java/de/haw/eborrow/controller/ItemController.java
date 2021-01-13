@@ -93,6 +93,25 @@ public class ItemController {
         }
     }
 
+
+    @PostMapping(value = "/items/filter")
+    public ResponseEntity<List<Item>> filterItemList(@RequestParam("title") String title,
+                                           @RequestParam("from") String from,
+                                           @RequestParam("till") String till)
+    {
+        try {
+            List<Item> items = itemRepository.filterItemListBy(title);
+            if (items.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            System.out.println("Hier"+items.toString());
+            return new ResponseEntity<>(items, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     @PutMapping("/items/{id}")
     public ResponseEntity<Item> updateTutorial(@PathVariable("id") long id, @RequestBody Item item) {
         Optional<Item> itemData = itemRepository.findById(id);

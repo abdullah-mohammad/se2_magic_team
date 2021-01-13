@@ -1,7 +1,7 @@
 import { http } from "../http-common";
 import axios from "axios";
 
-const API_KEY = "5b3ce3597851110001cf6248a72ec6b86a2e4902968e37256e9b83cf"
+const API_KEY = "5b3ce3597851110001cf624859a6e685342d4601a83be0371b407be9"
 
 class AddressDataService {
 

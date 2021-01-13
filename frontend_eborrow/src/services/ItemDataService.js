@@ -32,6 +32,10 @@ class ItemDataService {
   getPicture(img) {
     return http.get(`/items/get-img/${img}/`)
   }
+
+  filter(data) {
+    return http.post("/items/filter", data);
+  }
 }
 
 export default new ItemDataService();

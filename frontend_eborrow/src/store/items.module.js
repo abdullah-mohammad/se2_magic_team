@@ -17,21 +17,27 @@ export const items = {
         },
         SET_LOADED(state, value) {
             state.loaded = value;
-        },
-        FILTER_ITEMS(state, value) {
-            state.filteredItems = state.items.filter(function (item) { return item.title.includes(value); });
-            console.log("FILT. ", state.filteredItems)
         }
     },
     actions: {
-        async setItems(context){
+        async setItems(context, filterData=null){
             try {
                 context.commit('SET_LOADED', false);
                 // getItems
-                const res = await ItemDataService.getAll();
+                const res = (filterData) ? await ItemDataService.filter(filterData) : await ItemDataService.getAll();
+                if(!res.data) {
+                    context.commit('SET_ITEMS', []);
+                    return
+                }
                 // setItemsInlineAdresses & geoCodes & distances from currentLocation
                 let itemsWithGeoCodes=res.data; // copy of the raw items
                 let checker = itemsWithGeoCodes.length-1
+                // init another source if search/filter location is set
+                let filterLocationInGeocode = null
+                if(filterData && filterData.get('where'))
+                    {
+                        await AddressDataService.getAddrGeoCode(filterData.get('where')).then(geoCodeRes=>filterLocationInGeocode=geoCodeRes)
+                    }
                 res.data.map(async (item,i) => {
                     const userId = !isNaN(item.user) ? item.user : item.user.id
                     await UserDataService.getUserInlineAddress(userId) // set inlineAddress
@@ -40,21 +46,31 @@ export const items = {
                             // set geoCodes 
                             await AddressDataService.getAddrGeoCode(addrRes.data).then(geoCodeRes=>geocode=geoCodeRes)
                             // getDistances
-                            await getUserCurrentCoordinates().then(async (position) => {
-                                const source = [position.coords.longitude, position.coords.latitude]
+                            if(filterData && filterData.get('where')) {
+                                const source = filterLocationInGeocode
                                 const destination = geocode
                                 await AddressDataService.getDistanceFromLocation(source, destination)
                                     .then(distRes => {
                                         // spread items Infos with AddrGeoCodes...
                                         itemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: geocode, distance: distRes}
                                     })
-                            })
+                            } else {
+                                await getUserCurrentCoordinates().then(async (position) => {
+                                    const source = [position.coords.longitude, position.coords.latitude]
+                                    const destination = geocode
+                                    await AddressDataService.getDistanceFromLocation(source, destination)
+                                        .then(distRes => {
+                                            // spread items Infos with AddrGeoCodes...
+                                            itemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: geocode, distance: distRes}
+                                        })
+                                })
+                            }
                             //console.log("object,", userId+" : "+addrRes.data+" : "+geocode)
                         })
                         .catch(e => {
                             console.log("Error setItemsInlineAddresses & geoCodes", e)
                         })
-                        
+                    
                     if(checker--==0) {
                         context.commit('SET_LOADED', true);
                         console.log("DER", itemsWithGeoCodes)
@@ -70,8 +86,8 @@ export const items = {
         },
 
         filterItems(context, payload) {
-            var PATTERN = payload.I_want_to_borrow;
-            context.commit('FILTER_ITEMS', PATTERN);
+            context.commit('SET_LOADED', false);
+            console.log(payload)
         }
 
     },
