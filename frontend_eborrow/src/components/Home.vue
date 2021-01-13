@@ -26,19 +26,19 @@
     <div class="row">
       <div class="col-sm-3">
         <label class="col form-label">I want to borrow:</label>
-        <input type="text" class="col form-control" placeholder="" value="" required="" :v-model="whatToBorrow">
+        <input type="text" class="col form-control" placeholder="" value="" required="" v-model="I_want_to_borrow">
       </div>
       <div class="col-sm-2">
         <label class="col form-label">From</label>
-        <input type="date" class="col form-control" placeholder="" value="" required="" v-model="von">
+        <input type="date" class="col form-control" placeholder="" value="" required="" v-model="from">
       </div>
       <div class="col-sm-2">
         <label class="col form-label">Till</label>
-        <input type="date" class="col form-control" placeholder="" value="" required="" v-model="bis">
+        <input type="date" class="col form-control" placeholder="" value="" required="" v-model="till">
       </div>
       <div class="col-sm-3">
         <label class="col form-label">Where:</label>
-        <input type="text" class="col form-control" placeholder="" value="" required="" v-model="wo">
+        <input type="text" class="col form-control" placeholder="" value="" required="" v-model="where">
       </div>
       <div class="col-sm-2">
         <label class="col form-label">GO</label>
@@ -54,8 +54,16 @@
       </div>
     </div>
     <br>
+    <div v-if="!loaded">
+          <atom-spinner
+            :animation-duration="1000"
+            :size="60"
+            :color="'#ff1d5e'"
+          />
+        Loading filter from current postion...
+        </div>
     <div class="row" v-if="showItems" @submit="itemsSuchen">
-      <div v-for="(item) in myItems" :key="item.id">
+      <div v-for="(item) in items" :key="item.id">
         <!-- Item One -->
         <div class="row gs-tool-card">
           <div class="col-md-5">
@@ -72,6 +80,7 @@
               {{ item.description }}
             </VClamp>
                         <div class="gs-tool-card-actions">
+                          <span v-if="item.distance != Infinity" class="text-muted">{{item.distance}} km from you </span> &nbsp;
                           <router-link :to="{ path: '/items/'+ item.id}"
                                        class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details
                           </router-link>
@@ -107,10 +116,7 @@
 import {mapActions, mapState} from 'vuex';
 import Paginate from 'vuejs-paginate';
 import VClamp from 'vue-clamp';
-
-import ItemDataService from "../services/ItemDataService";
-import BorrowDataService from "../services/BorrowDataService";
-//import {mapState} from 'vuex';
+import {AtomSpinner} from 'epic-spinners'
 
 const MAX_NUMBER_ITEMS_PER_LIST = 5;
 const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
@@ -123,27 +129,26 @@ export default {
 
   components: {
     Paginate,
-    VClamp
+    VClamp,
+    AtomSpinner
   },
   data() {
     return {
       myItems: [],
       showItems: false,
-      whatToBorrow: "",
-      wo: "",
-      //von: "",
-      //bis: "",
+      I_want_to_borrow: "",
+      where: "",
+      from: "",
+      till: "",
       startLimit: 0,
       endLimit: 0,
 
       currentItem: null,
-      von: null,
-      bis: null,
       submitted: false,
     };
   },
   computed: {
-    ...mapState('items', ['items']),
+    ...mapState('items', ['items', 'loaded']),
     getPageCount() { // total pages
       return this.items.length / MAX_NUMBER_ITEMS_PER_LIST;
     },
@@ -173,86 +178,20 @@ export default {
     },
 
     itemsSuchen() {
-      // this.myItems = this.items.filter(i =>
-      //     i.getTitle().includes(this.whatToBorrow.toString())
-      // );
-      //this.myItems = this.items.filter(i => i.title.startsWith(this.whatToBorrow));
-      //this.items.filter(i => console.log(i.title))
-      this.myItems.push(this.items.find(i => i.title.startsWith(this.whatToBorrow)));
-
-      console.log(this.items);
-      console.log(this.myItems);
-
-      // this.myItems = this.items.filter(i =>
-      //     i
-      //         .title
-      //         .startsWith(this.whatToBorrow)
-      // );
-
-      // ItemDataService.getAll()
-      //     .then((res) => {
-      //       //this.myItems =
-      //       res.data.filter(i => i.title.startsWith(this.whatToBorrow)).forEach(item => this.myItems.push(item));
-      //       console.log(res)
-      //       console.log(this.myItems)
-      //     })
-      //     .catch((e) => {
-      //       console.log(e);
-      //     });
-    },
-
-    getItem(id) {
-      ItemDataService.get(id)
-          .then((response) => {
-            this.currentItem = response.data;
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-    },
-    navigateBack() {
-      this.$router.go(-1)
-    },
-
-    borrowItem() {
-      var data = {
-        itemId: this.currentItem.id,
-        userId: this.currentUser.id,
-        borrowFrom: this.borrowFrom,
-        borrowTo: this.borrowTo,
-      };
-      console.log(this.currentUser);
-      BorrowDataService.create(data).then(() => {
-        this.updateItem();
-        this.submitted = true;
-      }).catch((e) => {
-        this.submitted = false;
-        console.log(e);
-      })
-    },
-    updateItem() {
-      var data = new FormData();
-      data.append("id", this.currentItem.id);
-      data.append("title", this.currentItem.title);
-      data.append("description", this.currentItem.description);
-      data.append("picture", this.currentItem.picture);
-      data.append("available", false);
-      data.append("user", String(this.currentItem.user.id));
-
-      ItemDataService.update(this.currentItem.id, data)
-          .then((response) => {
-            console.log(response.data);
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-    },
-    getCurrentItemPicture(img) {
-      if (img != null && img !== "" && img !== undefined) {
-        return API_IMG_RESOURCE + img;
-      } else {
-        return "http://placehold.it/700x300";
-      }
+        var data = new FormData();
+        data.append("title", this.I_want_to_borrow);
+        data.append("from", this.from);
+        data.append("till", this.till);
+        data.append("where", this.where);
+        if(this.I_want_to_borrow.trim() || this.from.trim() || this.till.trim() || this.where.trim()) {
+                this.setItems(data)
+                        .then((response) => {
+                            console.log(response)
+                        })
+                        .catch((e) => {
+                            console.log(e);
+                        });
+            }
     },
 
   },
