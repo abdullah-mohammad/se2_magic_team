@@ -46,6 +46,32 @@ export const router = new Router({
       name: "register",
       component: () => import("./components/user/Register"),
     },
+    {
+      path: "/aboutUs",
+      name: "aboutUs",
+      component: () => import("./components/AboutUs"),
+    },
+    {
+      path: "/career",
+      name: "career",
+      component: () => import("./components/Career"),
+    },
+    {
+      path: "/myitems",
+      name: "myitems",
+      component: () => import("./components/items/MyItems"),
+    },
+    {
+      path: "/editItem/:id",
+      name: "editItem",
+      component: () => import("./components/items/EditItem"),
+    },
+
+    {
+      path: "/borrow/:id",
+      name: "borrow",
+      component: () => import("./components/ItemBorrow"),
+    },
   ],
 });
 

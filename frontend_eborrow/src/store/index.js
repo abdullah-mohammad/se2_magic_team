@@ -3,6 +3,8 @@ import Vuex from 'vuex';
 
 import { auth } from './auth.module';
 import { items } from './items.module';
+import { myitems } from './myitems.module';
+
 import { user } from './user.module';
 
 Vue.use(Vuex);
@@ -11,6 +13,7 @@ export default new Vuex.Store({
   modules: {
     auth,
     items,
+    myitems,
     user
   }
 });

@@ -28,18 +28,19 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public void save(MultipartFile file,String fileName) {
+    public void save(MultipartFile file,String fileName,String directory) {
         try {
-            Files.copy(file.getInputStream(), this.root.resolve(fileName));
+            Files.copy(file.getInputStream(), this.root.resolve(directory + fileName));
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
     }
 
     @Override
-    public Resource load(String filename) {
+    public Resource load(String directory, String filename) {
         try {
-            Path file = root.resolve(filename);
+            Path pathWithDir = Paths.get(root.toString() + directory);
+            Path file = pathWithDir.resolve(filename);
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
@@ -55,6 +56,23 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     @Override
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(root.toFile());
+    }
+    @Override
+    public void delete(String directory, String name) {
+        try {
+            Path pathWithDir = Paths.get(root.toString() + directory);
+            Path file = pathWithDir.resolve(name);
+            Resource resource = new UrlResource(file.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                FileSystemUtils.deleteRecursively(file);
+            } else {
+                throw new RuntimeException("Could not find the file!");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

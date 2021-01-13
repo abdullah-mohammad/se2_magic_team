@@ -1,6 +1,7 @@
 package de.haw.eborrow.controller;
 
 import de.haw.eborrow.models.Item;
+import de.haw.eborrow.models.ItemDTO;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.ItemRepository;
 import de.haw.eborrow.repository.UserRepository;
@@ -54,6 +55,30 @@ public class ItemController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("/items/user/{id}")
+    public ResponseEntity<List<Item>> getItemsByUserId(@PathVariable("id")long id) {
+        try {
+            System.out.println(id);
+            long userId = Long.valueOf(id);
+            Optional<User> user = userRepository.findById(userId);
+            if (!user.isPresent()) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            System.out.println(user);
+            List<Item> items = new ArrayList<>();
+
+            itemRepository.findAll().stream().filter(item -> item.getUser().equals(user.get())).forEach(items::add);
+            System.out.println(items);
+
+            if (items.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(items, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/items/{id}")
     public ResponseEntity<Item> getItemById(@PathVariable("id") long id) {
@@ -69,22 +94,25 @@ public class ItemController {
 
 
     @PostMapping(value = "/items")
-    public ResponseEntity<Item> createItem(@RequestParam("title") String title,
-                                           @RequestParam("description") String description,
-                                           @RequestParam("available") String available,
-                                           @RequestParam("user") String userId,
-                                           @RequestParam(value = "fileImage", required = false) MultipartFile multipartFile) {
+    public ResponseEntity<Item> createItem(@ModelAttribute ItemDTO itemDTO,@RequestParam(value = "fileImage",
+            required = false) MultipartFile picture) {
+
         try {
-            Long _userId = Long.valueOf(userId);
+            String title = itemDTO.getTitle();
+            String description = itemDTO.getDescription();
+            boolean available = Boolean.parseBoolean(itemDTO.getAvailable());
+
+            Long _userId = Long.valueOf(itemDTO.getUser());
             User user = userRepository.getOne(_userId);
-            String fileName = "standerdItemImage.jpg";
-            if (multipartFile != null) {
-                fileName = userId + "_" + title + "_" + StringUtils.cleanPath(multipartFile.getOriginalFilename());
-                storageService.save(multipartFile, fileName);
+            String fileName = "";
+            if (picture != null) {
+                fileName = itemDTO.getUser() + "_" + itemDTO.getTitle() + "_" +
+                        StringUtils.cleanPath(Objects.requireNonNull(picture.getOriginalFilename()));
+                String directory = "items/";
+                storageService.save(picture, fileName,directory);
             }
 
-            boolean _available = Boolean.parseBoolean(available);
-            Item _item = itemRepository.save(new Item(title, description, fileName, _available, user));
+            Item _item = itemRepository.save(new Item(title, description, fileName, available, user));
             user.addItem(_item);
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);
@@ -112,15 +140,25 @@ public class ItemController {
     }
 
 
-    @PutMapping("/items/{id}")
-    public ResponseEntity<Item> updateTutorial(@PathVariable("id") long id, @RequestBody Item item) {
+    @PutMapping("/items/editItem/{id}")
+    public ResponseEntity<Item> updateItem(@PathVariable("id") long id, @ModelAttribute Item item,@RequestParam(value = "fileImage",
+            required = false) MultipartFile picture ) {
         Optional<Item> itemData = itemRepository.findById(id);
-
         if (itemData.isPresent()) {
             Item _item = itemData.get();
-            _item.setTitle(item.getTitle());
+            _item.setTitle(  item.getTitle());
             _item.setDescription(item.getDescription());
             _item.setAvailable(item.isAvailable());
+            String fileName = "";
+            if (picture != null) {
+                fileName = item.getUser().getId() + "_" + item.getTitle() + "_" +
+                        StringUtils.cleanPath(Objects.requireNonNull(picture.getOriginalFilename()));
+                String directory = "items/";
+                storageService.save(picture, fileName,directory);
+                item.setPicture(fileName);
+            }
+            _item.setPicture(item.getPicture());
+
             return new ResponseEntity<>(itemRepository.save(_item), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -130,6 +168,11 @@ public class ItemController {
     @DeleteMapping("/items/{id}")
     public ResponseEntity<HttpStatus> deleteItem(@PathVariable("id") long id) {
         try {
+            Item item = itemRepository.getOne(id);
+            String picture = item.getPicture();
+            if (picture != ""){
+                storageService.delete("/items/",picture);
+            }
             itemRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -164,15 +207,16 @@ public class ItemController {
 
     @GetMapping(
             value = "/items/get-img/{pic:.+}",
-            produces = MediaType.IMAGE_JPEG_VALUE
+            produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE}
     )
     public byte[] getImageWithMediaTyp(@PathVariable("pic") String pic) {
         InputStream in = null;
         try {
-            in = new ClassPathResource("/images/"+pic).getInputStream();
+            in = storageService.load("/items/",pic).getInputStream();
             return IOUtils.toByteArray(in);
         } catch (IOException e) {
-            //e.printStackTrace();
+            return null;
+        }catch (RuntimeException e){
             return null;
         }
     }

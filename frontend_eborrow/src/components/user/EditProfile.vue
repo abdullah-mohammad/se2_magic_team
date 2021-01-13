@@ -39,8 +39,7 @@
                         </div>
                         <div class="col-sm-9 text-secondary">
                             <input type="text" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter email"
-                                v-model="user.firstname"
-                            >
+                                v-model="user.firstname">
                         </div>
                         </div>
                         <hr>
@@ -99,20 +98,28 @@
                         </div>
                         </div>
                         <hr>
+
                         <div class="row">
                         <div class="col-sm-3">
                             <h6 class="mb-0">Birthdate</h6>
+                            <!-- {{user.birthdate}} -->
+                            <!-- <button @click="birthdateEdite" class="btn btn-outline-danger">birthdateEdite</button> -->
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"
+                        <!-- <div v-if= "birthdateEdite" class="col-sm-9 text-secondary">
+                            <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Birthdate"
                                 v-model="user.birthdate"
                             >
-                        </div>
+                        </div> -->
+                        <!-- <div class="col-sm-9 text-secondar" type="date" >
+                           {{ (new Date (user.birthdate).toLocaleString()).substring(0,(new Date (user.birthdate).toLocaleString()).toString().length-10) }}
+                        </div> -->
+                         <input  id="birthdate" v-model="user.birthdate" type="date"  class="form-control" name="birthdate"
+            />
+
                         </div>
                         <p v-if="errMsge" class="text-danger">{{errMsge}}</p>
                         <br>
                         <input type="submit" class="btn btn-success" value="Save">
-                        &nbsp;
                         <a @click="goBack()" class="btn btn-primary">Back</a>
                     </form>
                   </div>
@@ -156,19 +163,26 @@ export default {
             setCurrentUser: "user/setCurrentUser",
             editUser: "user/editUser"
         }),
-        /* handleEditUser() {
-            const pass = this.newpass ? this.newpass : this.user.password;
-            const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
-            this.editUser(user);
-        } */
+       formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [day, month, year].join('-');
+},
         handleEditUser() {
             const pass = this.newpass != "" ? this.newpass : this.user.password;
-            const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
+            const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture,this.user.birthdate)
             const editUserPass = this.newpass != "" ? true : false;
             const data = {...user, editPass: editUserPass}
             userDataService.editUser(this.currentUser.id, data)
-                .then(res => {
-                    console.log(res.data)
+                .then(() => {
                     this.$router.push("/profile");
                 })
                 .catch(e => this.errMsge = e)
@@ -180,7 +194,6 @@ export default {
           this.isChecked=true
           userDataService.checkUserPass(this.currentUser.id, this.oldpass)
             .then(res => {
-              console.log(res)
               this.oldpassValid = res.data
             })
             .catch(e => this.errMsge = e)

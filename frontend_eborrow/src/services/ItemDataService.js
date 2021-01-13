@@ -5,6 +5,7 @@ class ItemDataService {
     return http.get("/items");
   }
 
+
   get(id) {
     return http.get(`/items/${id}`);
   }
@@ -14,7 +15,7 @@ class ItemDataService {
   }
 
   update(id, data) {
-    return http.put(`/items/${id}`, data);
+    return http.put(`/items/editItem/${id}`, data);
   }
 
   delete(id) {
@@ -35,6 +36,10 @@ class ItemDataService {
 
   filter(data) {
     return http.post("/items/filter", data);
+  }
+  
+  getMyGegenstaende(id){
+    return http.get(`/items/user/${id}`)
   }
 }
 

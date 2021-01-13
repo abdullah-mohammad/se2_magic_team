@@ -1,5 +1,9 @@
 <template>
-  <div class="submit-form">
+  <div>
+    <div v-if="!getCurrentUser">
+      If you <router-link to="/login">log in</router-link>, you can add you items to share them.
+    </div>
+  <div class="submit-form" v-else>
     <h1>add new item:</h1>
     <div v-if="!submitted">
       <div class="form-group">
@@ -75,10 +79,12 @@
       <button class="btn btn-success" @click="newItem">Add</button>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
 import ItemDataService from "../../services/ItemDataService";
+import { mapGetters } from 'vuex';
 
 export default {
   name: "add-item",
@@ -92,20 +98,19 @@ export default {
         published: false,
         availableFrom: false,
         availableTo: false,
-        user: this.$store.state.auth.user.id
       },
       submitted: false,
       url: null,
     };
   },
+  computed: mapGetters('user',['getCurrentUser']),
   methods: {
     saveItem() {
       var data = new FormData();
       data.append("title", this.item.title);
       data.append("description", this.item.description);
-      data.append("description", this.item.description);
       data.append("available", false);
-      data.append("user", String(this.$store.state.auth.user.id));
+      data.append("user", String(this.getCurrentUser.id));
       data.append("fileImage", this.item.fileImage);
 
       ItemDataService.create(data)
@@ -121,13 +126,16 @@ export default {
     newItem() {
       this.submitted = false;
       this.item = {};
+      this.url = null;
     },
 
-    // COMPLETED select image
     onImageUpload(event) {
-      this.item.fileImage = event.target.files[0];
-      this.url = URL.createObjectURL(this.item.fileImage);
-      console.log(this.item.fileImage);
+      if (event.target.files[0] != null) {
+        this.item.fileImage = event.target.files[0];
+        this.url = URL.createObjectURL(this.item.fileImage);
+      }else{
+        this.url = null;
+      }
     },
   },
 };

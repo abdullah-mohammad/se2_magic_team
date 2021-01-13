@@ -1,5 +1,6 @@
 package de.haw.eborrow.security;
 
+
 import javax.validation.constraints.*;
 
 public class SignupRequest {

@@ -17,6 +17,12 @@ export const items = {
         },
         SET_LOADED(state, value) {
             state.loaded = value;
+        },
+        SET_MY_ITEMS(state, payload) {
+            state.items = payload;
+        },
+        GET_ITEM(state, payload) {
+            state.items = payload;
         }
     },
     actions: {
@@ -87,9 +93,27 @@ export const items = {
             }     
         },
 
-        filterItems(context, payload) {
-            context.commit('SET_LOADED', false);
-            console.log(payload)
+        async setMyItems(id,context){
+            try {
+                const res = await ItemDataService.getMyGegenstaende(id);
+                context.commit('SET_MY_ITEMS', res.data);
+                return Promise.resolve(res.data);
+            } catch (e) {
+                console.log(e);
+                return Promise.reject(e);
+            }
+
+        },
+
+        async getItem(id,context){
+            try {
+                const res = await ItemDataService.get(id);
+                context.commit('GET_ITEM', res.data);
+                return Promise.resolve(res.data);
+            } catch (e) {
+                console.log(e);
+                return Promise.reject(e);
+            }
         }
 
     },

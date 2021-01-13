@@ -17,20 +17,24 @@
           <div class="row gs-tool-card">
             <div class="col-md-5">
               <!-- <a href="#"> -->
-                <img onerror="this.onerror=null;this.src='http://placehold.it/700x300';" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" :src="getItemPicture(item.picture)" alt=""> <!-- http://placehold.it/700x300 -->
+              <img :src="getItemPicture(item.picture)" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt="">
+              <!-- http://placehold.it/700x300 -->
               <!-- </a> -->
             </div>
             <div class="col-md-7 gs-tool-card-infos img-fluid">
-              <h3>{{item.title}}</h3>
+              <h3>{{ item.title }}</h3>
               <VClamp class="p"
-                  :max-height="255"
-                >
-                  {{item.description}}
+                      :max-height="255"
+              >
+                {{ item.description }}
               </VClamp>
               <div class="gs-tool-card-actions">
                 <span v-if="item.distance != Infinity" class="text-muted">{{item.distance}} km from you </span> &nbsp;
-                <router-link :to="{ path: '/items/'+ item.id}" class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details</router-link>
-                <router-link :to="{ path: '#'}" class="btn btn-sm btn-outline-danger gs-btn-red .gs-a">Borrow</router-link>
+                <router-link :to="{ path: '/items/'+ item.id}"
+                             class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details
+                </router-link>
+                <router-link  :to="{ path: '/borrow/' + item.id}" class="btn btn-sm btn-outline-danger gs-btn-red .gs-a">Borrow
+                </router-link>
               </div>
             </div>
           </div>
@@ -51,9 +55,9 @@
             :prev-text="'&laquo;'"
             :next-text="'&raquo;'"
             :click-handler="paginateCallback"
-            >
+        >
         </paginate>
-    
+
       </div>
       <!-- /.container -->
 
@@ -97,35 +101,26 @@ export default {
     ...mapActions({
       setItems: "items/setItems"
     }),
-    getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(this.showPosition);
-      } else { 
-        document.getElementById("demo").innerHTML = "Geolocation is not supported by this browser.";
-      }
-    },
-    showPosition(position){this.position=position},
-    paginateCallback: function (pageNum){
-      console.log(pageNum)
-      this.startLimit = MAX_NUMBER_ITEMS_PER_LIST*(pageNum-1);
+    paginateCallback: function (pageNum) {
+      this.startLimit = MAX_NUMBER_ITEMS_PER_LIST * (pageNum - 1);
       this.endLimit = this.startLimit + MAX_NUMBER_ITEMS_PER_LIST;
     },
     getItemPicture(img) {
-      return `${API_IMG_RESOURCE}${img}/`
-    },
-    handleSearchItems() {
-      alert("true")
+      if (img != null && img !== "" && img !== undefined) {
+        return API_IMG_RESOURCE + img;
+      }else{
+        return "http://placehold.it/700x300";
+      }
     }
   },
   mounted() {
     // this is call of promise: so make sure that data has been fetched before pursuiving...
     this.setItems().then(() => {
-      if(this.items.length > 0)
+      if (this.items.length > 0)
         this.paginateCallback(1);
-    }) 
-
+    })
   },
-  
+
 };
 </script>
 

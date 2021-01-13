@@ -143,7 +143,8 @@
 }
 
 .gs-page-item.active .gs-page-link {
-    z-index: 3;
+    position: page;
+    z-index: auto;
     color: #fff;
     background-color: var(--orange1);
     border-color: var(--orange1);

@@ -1,14 +1,9 @@
 package de.haw.eborrow.models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @JsonIdentityInfo(
@@ -24,8 +19,12 @@ public class User {
     private String lastname;
     private String email;
     private String gender;
-    private String profilepicture;
+    @JsonFormat(pattern="yyyy-MM-dd" , shape = JsonFormat.Shape.STRING , timezone="Europe/Zagreb")
     private Date birthdate;
+    private String profilepicture;
+
+
+
 
 
     //@JsonManagedReference("user")
@@ -35,6 +34,8 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
+    @OneToMany(mappedBy="user")
+    private List<Borrow> borrowedItems = new ArrayList<>();
 
     public User() {
     }
@@ -44,7 +45,7 @@ public class User {
         this.password = _password;
     }
 
-    public User(String _username, String _password, String _firstName, String _lastName, String _email, String _gender, Date _birthdate, Address address) {
+    public User(String _username, String _password, String _firstName, String _lastName, String _email, String _gender, Date _birthdate,String _profilepicture, Address address) {
         this.username = _username;
         this.password = _password;
         this.firstname = _firstName;
@@ -53,6 +54,7 @@ public class User {
         this.gender = _gender;
         this.birthdate = _birthdate;
         this.address = address;
+        this.profilepicture = _profilepicture;
     }
 
     public String getEmail() {
@@ -139,5 +141,9 @@ public class User {
     public void addItem(Item item ){
         this.items.add(item);
 //        item.setUser(this);
+    }
+
+    public void addItemToBorrowedItems(Borrow borrow){
+        this.borrowedItems.add(borrow);
     }
 }
