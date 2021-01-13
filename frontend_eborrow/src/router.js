@@ -9,7 +9,7 @@ export const router = new Router({
     {
       path: "/",
       name: "home",
-      component: () => import("./components/HelloWorld"),
+      component: () => import("./components/Home"),
     },
     {
       path: "/items",
