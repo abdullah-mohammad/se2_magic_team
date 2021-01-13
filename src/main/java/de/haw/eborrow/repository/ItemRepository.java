@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import de.haw.eborrow.models.Item;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Temporal;
 import org.springframework.data.repository.query.Param;
 
+import javax.persistence.TemporalType;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificationExecutor<Item> {
@@ -30,4 +33,20 @@ public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificat
             " FROM Item i" +
             " WHERE LOWER(i.title) LIKE LOWER(CONCAT('%',:title,'%'))")
     List<Item> filterItemListBy(@Param("title") String title);
+
+    @Query("SELECT i FROM Item i" +
+            "    WHERE LOWER(i.title) LIKE LOWER(CONCAT('%',:title,'%')) AND i.id NOT IN (" +
+            "            SELECT b.item.id  FROM Borrow  b" +
+            "            WHERE :fromD <= b.borrowTo AND :tillD >= b.borrowFrom" +
+            "    )")
+    List<Item> filterItemListBy(@Param("title") String title, @Param("fromD") @Temporal(TemporalType.TIMESTAMP) Date fromD, @Param("tillD") @Temporal(TemporalType.TIMESTAMP) Date tillD);
+
+
+    @Query("SELECT i FROM Item i" +
+            "    WHERE LOWER(i.title) LIKE LOWER(CONCAT('%',:title,'%')) AND i.id NOT IN (" +
+            "            SELECT b.item.id  FROM Borrow  b" +
+            "            WHERE :fromD >= b.borrowFrom AND :fromD <= b.borrowTo" +
+            "    )")
+    List<Item> filterItemListBy(@Param("title") String title, @Param("fromD") @Temporal(TemporalType.TIMESTAMP) Date date);
+
 }

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @CrossOrigin
@@ -128,11 +129,27 @@ public class ItemController {
                                            @RequestParam("till") String till)
     {
         try {
-            List<Item> items = itemRepository.filterItemListBy(title);
+            List<Item> items = new ArrayList<>();
+            if (!from.equals("") && !till.equals("")) {
+                Date fromD = new SimpleDateFormat("yyyy-MM-dd").parse(from);
+                Date tillD = new SimpleDateFormat("yyyy-MM-dd").parse(till);
+                items = itemRepository.filterItemListBy(title, fromD, tillD);
+                System.out.println(items);
+            } else if (!from.equals("") || !till.equals("")){
+                if (!from.equals("")) {
+                    Date fromD = new SimpleDateFormat("yyyy-MM-dd").parse(from);
+                    items = itemRepository.filterItemListBy(title, fromD);
+                }else {
+                    Date tillD = new SimpleDateFormat("yyyy-MM-dd").parse(till);
+                    items = itemRepository.filterItemListBy(title, tillD);
+                }
+            }
+            else {
+                items = itemRepository.filterItemListBy(title);
+            }
             if (items.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            System.out.println("Hier"+items.toString());
             return new ResponseEntity<>(items, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
