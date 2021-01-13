@@ -1,5 +1,5 @@
 <template>
-    <div style="position: relative; margin: auto; width: 130%; left: calc(50% - 65%);" class="container text-center">
+    <div id="filter-item-component" style="position: relative; margin: auto; width: 130%; left: calc(50% - 65%);" class="container text-center">
         <div class="row">
             <div class="form-group col-md-3">
                 <input type="text" name="search-item-title" class="textboxstyle" id="search-item-title" placeholder="I want to borrow" 
