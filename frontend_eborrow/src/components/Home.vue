@@ -1,48 +1,60 @@
 <template>
-  <div class="hello">
-    <br>
-    <br>
-    <br>
-    <br>
-    <div class="row">
-      <div class="col-sm-6">
-        <h2 style="">
-          <b>
-            Buy only what you need.
-          </b>
-        </h2>
+  <div id="home-block" class="pt-md-5 mt-md-5">
+      <!-- Landing-Text -->
+      <div class="row pt-md-5 mt-md-3 pb-md-3">
+        <div class="col-sm-6">
+          <h2 style="font-family: 'GoShareFont'">
+            <b>
+              Buy only what you need.
+            </b>
+          </h2>
+        </div>
+        <div class="col-sm-6">
+          <p style="font-family: 'GoShareFont'; font-weight: 100; line-height:2">
+            The world without unnecessary purchases.
+            Discover the sharing possibilities of your
+            community.
+          </p>
+        </div>
       </div>
-      <div class="col-sm-6">
-        <p>
-          The world without unnecessary purchases.
-          Discover the sharing possibilities of your
-          community.
-        </p>
-      </div>
-    </div>
+      <!-- Landing-Text -->
 
     <br>
-
-    <div class="row">
+    <div class="mt-md-3"></div>
+    <div id="home-bg-img-left" class="d-none d-md-block"></div>
+    <!-- Search-Block -->
+      <div class="row">
       <div class="col-sm-3">
         <label class="col form-label">I want to borrow:</label>
-        <input type="text" class="col form-control" placeholder="" value="" required="" v-model="I_want_to_borrow">
+        <input type="text" class="col form-control gs-search-input" placeholder="" value="" required="" v-model="I_want_to_borrow">
       </div>
       <div class="col-sm-2">
         <label class="col form-label">From</label>
-        <input type="date" class="col form-control" placeholder="" value="" required="" v-model="from">
+        <input type="date" class="col form-control gs-search-input" placeholder="" value="" required="" v-model="from">
       </div>
       <div class="col-sm-2">
         <label class="col form-label">Till</label>
-        <input type="date" class="col form-control" placeholder="" value="" required="" v-model="till">
+        <input type="date" class="col form-control gs-search-input" placeholder="" value="" required="" v-model="till">
       </div>
       <div class="col-sm-3">
         <label class="col form-label">Where:</label>
-        <input type="text" class="col form-control" placeholder="" value="" required="" v-model="where">
+        <input type="text" class="col form-control gs-search-input" placeholder="" value="" required="" v-model="where">
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-2 d-none d-sm-block">
         <label class="col form-label">GO</label>
-        <button class="col btn btn-primary" type="submit" @click.once="showItems = !showItems" @click="itemsSuchen">
+        <button style="border-radius: 50%; width: 45px; height: 45px; margin-top:-3px; box-shadow: 1px 2px 7px rgba(119, 119, 119, 0.466);" class="col btn btn-primary" type="submit" @click.once="showItems = !showItems" @click="itemsSuchen">
+          <b>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search"
+                 viewBox="0 0 16 16">
+              <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+          </b>
+        </button>
+      </div>
+      <div class="col-sm-2 d-sm-none d-md-none d-lg-none d-xl-none text-center">
+        <label class="col form-label"></label>
+        <button style="width:100px" class="col btn btn-primary" type="submit" @click.once="showItems = !showItems" @click="itemsSuchen">
           <b>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search"
                  viewBox="0 0 16 16">
@@ -53,6 +65,9 @@
         </button>
       </div>
     </div>
+  <!-- Search-Block -->
+  <div id="home-bg-img-right" class="d-none d-md-block"></div>
+
     <br>
     <div v-if="!loaded">
           <atom-spinner
@@ -61,9 +76,10 @@
             :color="'#ff1d5e'"
           />
         Loading filter from current postion...
-        </div>
-    <div class="row" v-if="showItems" @submit="itemsSuchen">
-      <div v-for="(item) in items" :key="item.id">
+      </div>
+    <div class="container">
+      <div class="row" v-if="showItems" @submit="itemsSuchen">
+      <div style="width: 100%;" v-for="(item) in items" :key="item.id">
         <!-- Item One -->
         <div class="row gs-tool-card">
           <div class="col-md-5">
@@ -108,6 +124,7 @@
       >
       </paginate>
 
+    </div>
     </div>
   </div>
 </template>
