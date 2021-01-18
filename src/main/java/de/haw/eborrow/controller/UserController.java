@@ -24,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
@@ -96,16 +97,24 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody SigninRequest signinRequest) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword())
-        );
+        try{
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword())
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        String jwt = jwtUtils.generateJwtToken(auth);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            String jwt = jwtUtils.generateJwtToken(auth);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+            UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
 
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getFirstname(), userDetails.getLastname(), userDetails.getEmail(), userDetails.getGender(), userDetails.getBirthdate(), userDetails.getProfilepicture()));
+            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getFirstname(), userDetails.getLastname(), userDetails.getEmail(), userDetails.getGender(), userDetails.getBirthdate(), userDetails.getProfilepicture()));
+
+        }catch (AuthenticationException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
 
     }
     @GetMapping("/try")

@@ -12,6 +12,9 @@
                 type="text"
                 class="form-control"
                 name="username"
+                required
+                maxlength="30"
+                minlength="4"
             />
           </div>
           <div class="form-group">
@@ -22,6 +25,9 @@
                 type="password"
                 class="form-control"
                 name="password"
+                required
+                maxlength="30"
+                minlength="5"
             />
           </div>
           <div class="form-group">
@@ -32,6 +38,9 @@
                 type="text"
                 class="form-control"
                 name="firstname"
+                required
+                maxlength="30"
+                minlength="1"
             />
           </div>
           <div class="form-group">
@@ -42,6 +51,9 @@
                 type="text"
                 class="form-control"
                 name="lastname"
+                required
+                maxlength="30"
+                minlength="1"
             />
           </div>
           <div class="form-group">
@@ -52,6 +64,9 @@
                 type="email"
                 class="form-control"
                 name="email"
+                required
+                maxlength="30"
+                minlength="5"
             />
           </div>
           <div class="form-group">
@@ -123,52 +138,115 @@ export default {
 
   },
   computed: {},
-  mounted() {},
+  mounted() {
+  },
   methods: {
     handleRegister() {
       this.message = "";
       this.submitted = true;
+      if (!this.validUserData()) {
+        var userdata = new FormData();
+        userdata.append("username", this.user.username);
+        userdata.append("password", this.user.password);
+        userdata.append("firstname", this.user.firstname);
+        userdata.append("lastname", this.user.lastname);
+        userdata.append("email", this.user.email);
+        userdata.append("gender", this.user.gender);
+        userdata.append("birthdate", this.user.birthdate);
+        userdata.append("profilepicture", this.user.profilepicture);
 
-      var userdata = new FormData();
-      userdata.append("username", this.user.username);
-      userdata.append("password", this.user.password);
-      userdata.append("firstname", this.user.firstname);
-      userdata.append("lastname", this.user.lastname);
-      userdata.append("email", this.user.email);
-      userdata.append("gender", this.user.gender);
-      userdata.append("birthdate", this.user.birthdate);
-      userdata.append("profilepicture", this.user.profilepicture);
 
-      
-      var object = {};
-      userdata.forEach(function(value, key){
+        var object = {};
+        userdata.forEach(function (value, key) {
           object[key] = value;
-      });
-      var json = JSON.stringify(object);
-      console.log(json);
+        });
+        var json = JSON.stringify(object);
+        console.log(json);
 
-      authService.register(userdata).then(
-          (data) => {
-            this.message = data.message;
-            this.successful = true;
-          },
-          (error) => {
-            this.message =
-                (error.response && error.response.data) ||
-                error.message ||
-                error.toString();
-            this.successful = false;
-          }
-      );
+        authService.register(userdata).then(
+            (data) => {
+              this.message = data.message;
+              this.successful = true;
+            },
+            () => {
+              this.message = "";
+
+              this.successful = false;
+            }
+        );
+      }
     },
     onFileSelected(event) {
       if (event.target.files[0] != null) {
         this.user.profilepicture = event.target.files[0];
         this.url = URL.createObjectURL(this.user.profilepicture);
-      }else{
+      } else {
         this.url = null;
       }
     },
+    validUserData() {
+      var isValid = false
+      if (this.user.username === undefined || this.user.username === "") {
+        this.message += "please fill in your username. \n";
+        isValid = true;
+      }
+      if (this.user.password === undefined || this.user.password === "") {
+        this.message += "please fill in your password. \n";
+        isValid = true;
+      }
+      if (this.user.password && !this.validPassword(this.user.password)) {
+        this.message += "Password is invalid: the password must contain at least:\n" +
+            " 1 lowercase alphabetical character,\n" +
+            " 1 uppercase alphabetical character,\n" +
+            " 1 numeric character,\n" +
+            " 1 special character\n" +
+            " and must be eight characters or longer. (Example!!123!!) \n";
+        isValid = true;
+      }
+
+      if (this.user.firstname === undefined || this.user.firstname === "") {
+        this.message += "please fill in your firstname. \n"
+        isValid = true;
+      }
+      if (this.user.lastname === undefined || this.user.lastname === "") {
+        this.message += "please fill in your lastname.\n"
+        isValid = true;
+      }
+      if (this.user.email === undefined || this.user.email === "") {
+        this.message += "please fill in your email.\n"
+        isValid = true;
+      }
+      if (this.user.email && !this.validEmail(this.user.email)) {
+        this.message += "E-Mail Address is invalid.\n";
+        isValid = true;
+      }
+      if (this.user.gender === undefined || this.user.gender === "") {
+        this.message += "please choose your gender.\n";
+        isValid = true;
+      }
+
+      if (this.user.birthdate === undefined) {
+        this.message += "please choose your birthdate.\n";
+        isValid = true;
+      }
+
+
+      return isValid;
+    },
+    /** Validate an e-mail address.
+     * @param email Input to be checked if it is a valid e-mail expression.
+     * @returns 'true' if the e-mail check was successful, 'false' otherwise. */
+    validEmail(email) {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    },
+    /** Validate an password.
+     * @param email Input to be checked if it is a valid password expression.
+     * @returns 'true' if the password check was successful, 'false' otherwise. */
+    validPassword(password) {
+      var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&]).{5,}$/;
+      return re.test(password);
+    }
   },
 };
 </script>

@@ -2,34 +2,40 @@
   <div class="col-md-12">
     <div class="card card-container">
       <img
-        id="profile-img"
-        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-        class="profile-img-card"
+          id="profile-img"
+          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+          class="profile-img-card"
       />
       <form name="form" @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="username">Username</label>
           <input
-            v-model="user.username"
-            type="text"
-            class="form-control"
-            name="username"
+              v-model="user.username"
+              type="text"
+              class="form-control"
+              name="username"
+              required
+              maxlength="30"
+              minlength="4"
           />
         </div>
         <div class="form-group">
           <label for="password">Password</label>
           <input
-            v-model="user.password"
-            type="password"
-            class="form-control"
-            name="password"
+              v-model="user.password"
+              type="password"
+              class="form-control"
+              name="password"
+              required
+              maxlength="30"
+              minlength="5"
           />
         </div>
         <div class="form-group">
           <button class="btn btn-primary btn-block" :disabled="loading">
             <span
-              v-show="loading"
-              class="spinner-border spinner-border-sm"
+                v-show="loading"
+                class="spinner-border spinner-border-sm"
             ></span>
             <span>Login</span>
           </button>
@@ -57,27 +63,33 @@ export default {
     };
   },
   computed: {},
-  created() {},
+  created() {
+  },
   methods: {
     handleLogin() {
-      this.loading = true;
+      this.message = "";
+      if (this.user.username === undefined || this.user.username === "") {
+        this.message += "please fill in your username.\n"
+      }
+      if (this.user.password === undefined || this.user.password === "") {
+        this.message += "please fill in your password.\n"
+      }
+
       if (this.user.username && this.user.password) {
+        this.loading = true;
         this.$store.dispatch("auth/login", this.user).then(
-          () => {
-            this.$router.push("/profile");
-          },
-          (error) => {
-            this.loading = false;
-            this.message =
-              (error.response && error.response.data) ||
-              error.message ||
-              error.toString();
-          }
-        );
+            () => {
+              this.$router.push("/profile");
+            }
+        ).catch(() => {
+          this.loading = false;
+          this.message = "Login data does not match, please try again.";
+        })
       }
     },
   },
-};
+}
+;
 </script>
 
 <style scoped>
