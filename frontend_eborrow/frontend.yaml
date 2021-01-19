@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service:  goshare-frontend
+  name:  goshare-frontend
+spec:
+  selector:
+    matchLabels:
+      app: goshare
+      service: goshare-frontend
+  template:
+    metadata:
+      labels:
+        app: goshare
+        service: goshare-frontend
+    spec:
+      containers:
+      - image: git.haw-hamburg.de:5005/acq573/se2_magic_team:frontend
+        name: goshare-frontend
+        ports:
+          - containerPort: 80
+            protocol: TCP
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/usr/sbin/nginx","-s","quit"]
+      imagePullSecrets:
+        - name: se2deploysecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: goshare-frontend
+  name: goshare-frontend
+spec:
+  ports:
+  - name: http
+    port: 80 
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: goshare
+    service: goshare-frontend
+  type: ClusterIP
