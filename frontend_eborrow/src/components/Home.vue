@@ -119,7 +119,7 @@ import VClamp from 'vue-clamp';
 import {AtomSpinner} from 'epic-spinners'
 
 const MAX_NUMBER_ITEMS_PER_LIST = 5;
-const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
+const API_IMG_RESOURCE = process.env.VUE_APP_API_URL+"items/get-img/";
 
 export default {
   name: "Home",

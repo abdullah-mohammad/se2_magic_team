@@ -13,7 +13,7 @@
         <div class="image-container">
           <img src="MM.jpeg" alt="MM" width="250" height="333" class="img-about">
         </div>
-        <p>Matthias Mildenberger - System Architect</p>
+        <p>Matthias Mildenberger - System Architecto</p>
       </div>
 
       <div class="col-5">

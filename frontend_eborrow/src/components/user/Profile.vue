@@ -93,7 +93,7 @@
 import {mapActions, mapState} from 'vuex';
 import userDataService from '../../services/UserDataService'
 
-const API_IMG_RESOURCE = "http://localhost:8080/users/get-img/";
+const API_IMG_RESOURCE = process.env.VUE_APP_API_URL+"users/get-img/";
 
 export default {
   name: "Profile",
@@ -125,11 +125,13 @@ export default {
           });
     },
     getUserPicture(img) {
+
       if (img != undefined) {
         // TODO es muss das Bild richtig gelesen werden.
         // ich habe damit auch versucht es wird daten geliefert aber nicht geklappt
         // wenn man das Bild in img zeigen möchte.
         // userDataService.getPicture(img);
+        console.log(`${API_IMG_RESOURCE}${img}/`);
         return `${API_IMG_RESOURCE}${img}/`
       }
     },
