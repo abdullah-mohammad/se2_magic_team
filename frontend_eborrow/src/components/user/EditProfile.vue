@@ -221,7 +221,7 @@
                 return [day, month, year].join('-');
             },
             handleEditUser() {
-                if (!this.validUserData() && this.handleCheckOldPass()) {
+                if (!this.validEditUserData() && this.handleCheckOldPass()) {
                     const pass = this.newpass != "" ? this.newpass : this.user.password;
                     const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
                     const editUserPass = this.newpass != "" ? true : false;
@@ -234,7 +234,7 @@
                 }
             },
 
-            validUserData() {
+            validEditUserData() {
 
                 this.messageUsername = "";
                 this.messageOldPass = "";

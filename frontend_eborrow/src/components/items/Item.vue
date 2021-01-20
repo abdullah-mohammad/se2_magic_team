@@ -39,7 +39,7 @@
                         type="button"><i class="fa fa-chevron-left"></i> Back
                 </button>
                 <!--<button class="btn btn-round btn-success gs-btn-rounded" type="button"><i class="fa fa-shopping-cart"></i> Borrow</button>-->
-                <router-link :to="{ path: '/borrow/' + currentItem.id}" class="btn btn-round btn-success gs-btn-rounded">
+                <router-link  v-if="currentItem.user.id!==currentUser.id" :to="{ path: '/borrow/' + currentItem.id}" class="btn btn-round btn-success gs-btn-rounded">
                   <i class="fa fa-shopping-cart"></i> Borrow
                 </router-link>
               </p>
@@ -55,7 +55,7 @@
 
 <script>
 import ItemDataService from "../../services/ItemDataService";
-
+import {mapState} from 'vuex';
 const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
 
 export default {
@@ -69,7 +69,13 @@ export default {
   computed: {
     getCurrentItemPicture() {
       return `${API_IMG_RESOURCE}${this.currentItem.picture}/`
-    }
+    },
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+    ...mapState('user', {
+      user: state => state.user
+    }),
   },
   methods: {
     getItem(id) {

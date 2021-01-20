@@ -19,7 +19,14 @@
                   <div class="col-sm-9 text-secondary">
                     <input type="text" class="form-control" placeholder="Enter a new Title"
                            v-model="currentItem.title">
+                    <div v-if="messageNewTitle"
+                         class="alert"
+                         :class="successful ? 'alert-success' : 'alert-danger'">
+                      {{ messageNewTitle }}
+                    </div>
                   </div>
+
+
                 </div>
 
                 <div class="row">
@@ -29,7 +36,14 @@
                   <div class="col-sm-9 text-secondary">
                     <input type="text" class="form-control" placeholder="Enter a new Desc."
                            v-model="currentItem.description">
+                    <div v-if="messageNewDescription"
+                         class="alert"
+                         :class="successful ? 'alert-success' : 'alert-danger'">
+                      {{ messageNewDescription }}
+                    </div>
                   </div>
+
+
                 </div>
 
                 <div class="row">
@@ -39,7 +53,11 @@
                   <div class="col-sm-9 text-secondary">
                     <input type="text" class="form-control" placeholder="" v-model="currentItem.available">
                   </div>
-
+                 <!-- <div v-if="messageAvailableFrom"
+                       class="alert"
+                       :class="successful ? 'alert-success' : 'alert-danger'">
+                    {{ messageAvailableFrom }}
+                  </div>-->
                 </div>
 
                 <div class="row">
@@ -90,6 +108,11 @@ export default {
       message: "edited",
       currentItem: null,
       fileImage: null,
+      messageNewTitle:"",
+      messageNewDescription:"",
+      //messageAvailableFrom:"",
+      //messageAvailableTo:"",
+
     };
   },
   computed: {
@@ -134,27 +157,73 @@ export default {
       this.$router.push("/myitems")
     },
     updateItem() {
-      var data = new FormData();
-      data.append("id", this.currentItem.id);
-      data.append("title", this.currentItem.title);
-      data.append("description", this.currentItem.description);
-      data.append("picture", this.currentItem.picture);
-      data.append("available", this.currentItem.available);
-      data.append("user", String(this.currentItem.user.id));
-      data.append("fileImage", this.fileImage);
-      confirm("Do you really want to edit this Item?");
-      ItemDataService.update(this.currentItem.id, data)
-          .then((response) => {
-            console.log(response.data);
-            this.message = "The item was updated successfully!";
 
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+      if(!this.validEditItemData()) {
+        var data = new FormData();
+        data.append("id", this.currentItem.id);
+        data.append("title", this.currentItem.title);
+        data.append("description", this.currentItem.description);
+        data.append("picture", this.currentItem.picture);
+        data.append("available", this.currentItem.available);
+        data.append("user", String(this.currentItem.user.id));
+        data.append("fileImage", this.fileImage);
+        confirm("Do you really want to edit this Item?");
+        ItemDataService.update(this.currentItem.id, data)
+                .then((response) => {
+                  console.log(response.data);
+                  this.message = "The item was updated successfully!";
+
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
+      }
     },
     navigateBack() {
       this.$router.go(-1)
+    },
+
+    validEditItemData() {
+
+      this.messageNewTitle = "";
+      this.messageNewDescription = "";
+      //this.messageAvailableFrom = "";
+     // this.messageAvailableTo = "";
+
+      var isInvalid = false
+
+      if (this.currentItem.title === undefined || this.currentItem.title === "") {
+        this.messageNewTitle = "please fill in the titel. \n";
+        isInvalid = true;
+      }
+      if (this.currentItem.title && (this.currentItem.title.length < 3 || this.currentItem.title.length > 40)) {
+        this.messageNewTitle = "Length is out of bound. \n";
+        isInvalid = true;
+      }
+      if (this.currentItem.description === undefined || this.currentItem.description === "") {
+        this.messageNewDescription = "please fill in the description. \n";
+        isInvalid = true;
+      }
+      if (this.currentItem.description && (this.currentItem.description.length < 3 || this.currentItem.description.length > 200)) {
+        this.messageNewDescription = "Length is out of bound. \n";
+        isInvalid = true;
+      }
+
+     /* if (!this.currentItem.availableFrom) {
+        this.messageAvailableFrom = "please choose the start date. \n";
+        isInvalid = true;
+      }
+
+      if (!this.currentItem.availableTo) {
+        this.messageAvailableTo = "please choose the end date. \n";
+        isInvalid = true;
+      }
+*/
+      if (this.item.availableFrom > this.item.availableTo) {
+        this.messageAvailableFrom += "start date can not be earlier than end date. \n";
+        isInvalid = true;
+      }
+      return isInvalid
     },
   },
   mounted() {

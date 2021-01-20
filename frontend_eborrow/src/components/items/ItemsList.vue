@@ -40,7 +40,7 @@
                 <router-link :to="{ path: '/items/'+ item.id}"
                              class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details
                 </router-link>
-                <router-link  :to="{ path: '/borrow/' + item.id}" class="btn btn-sm btn-outline-danger gs-btn-red .gs-a">Borrow
+                <router-link  v-if = "item.user.id!==currentUser.id" :to="{ path: '/borrow/' + item.id}" class="btn btn-sm btn-outline-danger gs-btn-red .gs-a">Borrow
                 </router-link>
               </div>
             </div>
@@ -105,6 +105,12 @@ export default {
     getPageCount() { // total pages
       return this.items.length / MAX_NUMBER_ITEMS_PER_LIST;
     },
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+    ...mapState('user', {
+      user: state => state.user
+    }),
   },
   methods: {
     ...mapActions({
