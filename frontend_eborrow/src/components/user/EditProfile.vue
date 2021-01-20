@@ -94,8 +94,7 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <input v-model="oldpass" type="password" class="form-control"
-                                                   placeholder="Enter old password"
-                                                   @change="handleCheckOldPass">
+                                                   placeholder="Enter old password">
 
                                             <div
                                                     v-if="messageOldPass"
@@ -221,7 +220,7 @@
                 return [day, month, year].join('-');
             },
             handleEditUser() {
-                if (!this.validEditUserData() && this.handleCheckOldPass()) {
+                if (!this.validEditUserData() /*&& this.handleCheckOldPass()*/) {
                     const pass = this.newpass != "" ? this.newpass : this.user.password;
                     const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
                     const editUserPass = this.newpass != "" ? true : false;
@@ -254,15 +253,17 @@
                     this.messageUsername = "Length is out of bound. \n";
                     isInvalid = true;
                 }
-                if (this.oldpass === undefined || this.oldpass === "") {
+                /*if (this.oldpass === undefined || this.oldpass === "") {
                     this.messageOldPass = "please fill in your old password. \n";
                     isInvalid = true;
+
                 }
                 if (this.newpass === undefined || this.newpass === "") {
+
                     this.messageNewPass = "please fill in your new password. \n";
                     isInvalid = true;
-                }
-                if (this.newpass && !this.validPassword(this.newpass)) {
+                }*/
+                /*if (this.newpass && !this.validPassword(this.newpass)) {
                     this.messageNewPass += "Password is invalid: the password must contain at least:\n" +
                         " 1 lowercase alphabetical character,\n" +
                         " 1 uppercase alphabetical character,\n" +
@@ -270,7 +271,7 @@
                         " 1 special character\n" +
                         " and must be eight characters or longer. (Example!!123!!) \n";
                     isInvalid = true;
-                }
+                }*/
 
                 if (this.user.firstname === undefined || this.user.firstname === "") {
                     this.messageFirstname = "please fill in your firstname. \n"
