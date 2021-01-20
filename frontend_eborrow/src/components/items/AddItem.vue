@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="!getCurrentUser">
+        <div v-if="!$store.state.auth.user">
             If you
             <router-link to="/login">log in</router-link>
             , you can add you items to share them.

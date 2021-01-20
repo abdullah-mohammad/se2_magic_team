@@ -1,0 +1,46 @@
+# .gitlab-ci.yml
+stages:
+    - test
+    - dockerize
+    - deploy
+
+variables:
+ DOCKER_REGISTRY: "git.haw-hamburg.de:5005"
+ SERVICE_NAME: "goshare"
+ DOCKER_TLS_CERTDIR: "/certs"
+
+create_image:
+ only: 
+   refs:
+    - master
+ stage: dockerize
+ image: docker:19.03.3
+ services:
+   - docker:19.03.3-dind
+ tags:
+   - dind
+   - docker
+ script:
+   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $DOCKER_REGISTRY
+   # Backend
+   - docker build -t goshare-backend .
+   - docker tag goshare-backend git.haw-hamburg.de:5005/acq573/se2_magic_team:backend
+   - docker push git.haw-hamburg.de:5005/acq573/se2_magic_team:backend
+   # Frontend
+   - docker build -t goshare-frontend ./frontend_eborrow
+   - docker tag goshare-frontend git.haw-hamburg.de:5005/acq573/se2_magic_team:frontend
+   - docker push git.haw-hamburg.de:5005/acq573/se2_magic_team:frontend
+
+deploy image:
+  only: 
+   refs:
+    - master
+  environment:
+    name: ICC-K8s
+  stage: deploy
+  image: git.haw-hamburg.de:5005/icc/kubectl:v1.14.0
+  script:
+  - kubectl delete service goshare-backend -n acq573-se2-magic-team && kubectl delete deployment goshare-backend -n acq573-se2-magic-team
+  - kubectl apply -f deploy.yaml -n acq573-se2-magic-team
+  - kubectl delete service goshare-frontend -n acq573-se2-magic-team && kubectl delete deployment goshare-frontend -n acq573-se2-magic-team
+  - kubectl apply -f ./frontend_eborrow/frontend.yaml -n acq573-se2-magic-team

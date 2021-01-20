@@ -97,7 +97,7 @@
     import BorrowDataService from "../services/BorrowDataService";
     import {mapState} from 'vuex';
 
-    const API_IMG_RESOURCE = "http://localhost:8080/items/get-img/";
+const API_IMG_RESOURCE = process.env.VUE_APP_API_URL+"items/get-img/";
 
     export default {
         name: "borrow",
