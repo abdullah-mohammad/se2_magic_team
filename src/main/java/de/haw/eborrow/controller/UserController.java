@@ -12,6 +12,7 @@ import de.haw.eborrow.security.jwt.JwtResponse;
 import de.haw.eborrow.security.jwt.JwtUtils;
 import de.haw.eborrow.services.FilesStorageService;
 import de.haw.eborrow.services.UserDetailsImpl;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,27 +140,39 @@ public class UserController {
 
     @PreAuthorize("permitAll()")
     @PutMapping("/edit-user/{id}")
-    public ResponseEntity<User> editUser(@PathVariable("id") long id, @RequestBody Map<String,Object> body) throws ParseException {
+    public ResponseEntity<User> editUser(@PathVariable("id") long id,
+                                         @RequestParam(value = "newPic", required = false) MultipartFile newUserPic,
+                                         @RequestParam(value = "editPass") Boolean shouldEditPass,
+                                         @RequestParam(value = "username") String username,
+                                         @RequestParam(value = "password") String password,
+                                         @RequestParam(value = "firstname") String firstname,
+                                         @RequestParam(value = "lastname") String lastname,
+                                         @RequestParam(value = "email") String email,
+                                         @RequestParam(value = "gender") String gender,
+                                         @RequestParam(value = "birthdate") String birthdate) throws ParseException {
         Optional<User> userData = applicationUserRepository.findById(id);
-        boolean shouldEditPass = (boolean) body.get("editPass");
         if (userData.isPresent()) {
             User _user = userData.get();
-            _user.setUsername((String) body.get("username"));
+            _user.setUsername(username);
             if (shouldEditPass)
-                _user.setPassword(bCryptPasswordEncoder.encode((String) body.get("password")));
-            _user.setEmail((String) body.get("email"));
-            _user.setFirstname((String) body.get("firstname"));
-            _user.setLastname((String) body.get("lastname"));
-            _user.setGender((String) body.get("gender"));
+                _user.setPassword(bCryptPasswordEncoder.encode(password));
+            _user.setEmail(email);
+            _user.setFirstname(firstname);
+            _user.setLastname(lastname);
+            _user.setGender(gender);
+            Date userBirthdate = new SimpleDateFormat("yyyy-MM-dd").parse(birthdate);
+            _user.setBirthdate(userBirthdate);
+            String fileName = "";
+            if (newUserPic != null) {
+                fileName = username + "_" + id + "." + FilenameUtils.getExtension(newUserPic.getOriginalFilename());
+                String directory = "profilepictures/";
+                try{
+                    storageService.delete("/profilepictures/", fileName);
+                } catch (Exception ignored){}
+                storageService.save(newUserPic, fileName,directory);
+                _user.setProfilepicture(fileName);
+            }
 
-            System.out.println("String birthdate"+body.get("birthdate"));
-            Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(body.get("birthdate").toString());
-            System.out.println("Date burthdate"+birthdate);
-         //   Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").parse(body.get("birthdate").toString());
-
-            //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            //Date date = formatter.parse(body.get("birthdate").toString());
-            _user.setBirthdate(birthdate);
             return new ResponseEntity<User>(applicationUserRepository.save(_user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

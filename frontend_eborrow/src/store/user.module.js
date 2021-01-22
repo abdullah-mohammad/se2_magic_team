@@ -1,14 +1,17 @@
+import User from "../models/user";
 import userDataService from "../services/UserDataService";
 
 export const user = {
   namespaced: true,
   state: {
-      user: undefined,
+      user: User,
+      clonedUserPic: null,
       errMsg: ""
   },
   mutations: {
     SET_CURRENT_USER(state, editedUser) {
       state.user = editedUser
+      state.clonedUserPic = editedUser.profilepicture
     },
     SET_ERR_MSG(state, msg) {
         state.errMsg = msg
