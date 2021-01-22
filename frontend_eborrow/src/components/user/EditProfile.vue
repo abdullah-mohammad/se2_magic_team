@@ -158,18 +158,25 @@
                                     <div class="row">
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Birthdate</h6>
-                                        </div>
 
-                                        <input id="birthdate" v-model="user.birthdate" type="date" class="form-control"
-                                               name="birthdate"/>
-                                        <div
-                                                v-if="messageBirthdate"
-                                                class="alert"
-                                                :class="successful ? 'alert-success' : 'alert-danger'">
-                                            {{ messageBirthdate }}
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                          <input id="birthdate" v-model="user.birthdate" type="date" class="form-control"
+                                                                     name="birthdate"/>
+                                          <div
+                                              v-if="messageBirthDate"
+                                              class="alert"
+                                              :class="successful ? 'alert-success' : 'alert-danger'">
+                                            {{ messageBirthDate }}
+                                          </div>
                                         </div>
                                     </div>
-                                    <p v-if="errMsge" class="text-danger">{{errMsge}}</p>
+                                    <div
+                                        v-if="errMsge"
+                                        class="alert"
+                                        :class="successful ? 'alert-success' : 'alert-danger'">
+                                      {{ errMsge }}
+                                    </div>
                                     <br>
                                     <input type="submit" class="btn btn-success" value="Save">
                                     <a @click="goBack()" class="btn btn-primary">Back</a>
@@ -188,9 +195,9 @@
 
 <script>
     import {mapActions, mapState} from 'vuex';
-   // import User from '../../models/user';
     import userDataService from "../../services/UserDataService";
-    const API_IMG_RESOURCE = "http://localhost:8080/users/get-img/";
+
+    const API_IMG_RESOURCE = process.env.VUE_APP_API_URL+"users/get-img/";
 
 
 
@@ -228,22 +235,10 @@
                 setCurrentUser: "user/setCurrentUser",
                 editUser: "user/editUser"
             }),
-            formatDate(date) {
-                var d = new Date(date),
-                    month = '' + (d.getMonth() + 1),
-                    day = '' + d.getDate(),
-                    year = d.getFullYear();
-
-                if (month.length < 2)
-                    month = '0' + month;
-                if (day.length < 2)
-                    day = '0' + day;
-
-                return [day, month, year].join('-');
-            },
             handleEditUser() {
-                const pass = this.newpass != "" ? this.newpass : this.user.password;
-                const editUserPass = this.newpass != "" ? true : false;
+              if (!this.validEditUserData()) {
+                const pass = this.newpass !== "" ? this.newpass : this.user.password;
+                const editUserPass = this.newpass !== "";
                 var userdata = new FormData();
                 userdata.append("username", this.user.username);
                 userdata.append("password", pass);
@@ -258,9 +253,11 @@
 
                 userDataService.editUser(this.currentUser.id, userdata)
                     .then(() => {
-                        this.$router.push("/profile");
+                      this.$router.push("/profile");
                     })
                     .catch(e => this.errMsge = e)
+
+              }
             },
             validEditUserData() {
 
@@ -282,17 +279,18 @@
                     this.messageUsername = "Length is out of bound. \n";
                     isInvalid = true;
                 }
-                /*if (this.oldpass === undefined || this.oldpass === "") {
+
+                if (this.newpass || this.newpass.trim() !== ""){
+                  if (!this.oldpass || (this.oldpass && this.handleCheckOldPass())) {
                     this.messageOldPass = "please fill in your old password. \n";
                     isInvalid = true;
+                  }
 
-                }
-                if (this.newpass === undefined || this.newpass === "") {
-
+                  if (!this.newpass || this.newpass.trim() === "") {
                     this.messageNewPass = "please fill in your new password. \n";
                     isInvalid = true;
-                }*/
-                /*if (this.newpass && !this.validPassword(this.newpass)) {
+                  }
+                  if (this.newpass && !this.validPassword(this.newpass)) {
                     this.messageNewPass += "Password is invalid: the password must contain at least:\n" +
                         " 1 lowercase alphabetical character,\n" +
                         " 1 uppercase alphabetical character,\n" +
@@ -300,7 +298,8 @@
                         " 1 special character\n" +
                         " and must be eight characters or longer. (Example!!123!!) \n";
                     isInvalid = true;
-                }*/
+                  }
+                }
 
                 if (this.user.firstname === undefined || this.user.firstname === "") {
                     this.messageFirstname = "please fill in your firstname. \n"
@@ -331,7 +330,7 @@
                     isInvalid = true;
                 }
 
-                if (this.user.birthdate === undefined) {
+                if (!this.user.birthdate) {
                     this.messageBirthDate = "please choose your birthdate.\n";
                     isInvalid = true;
                 }
@@ -359,14 +358,10 @@
                 var passIsValid = false
                 userDataService.checkUserPass(this.currentUser.id, this.oldpass)
                     .then(() => {
-                        this.messageOldPass = ""
-                        //this.oldpassValid = true
                         passIsValid = true
                     })
                     .catch(e => {
                         this.errMsge = e
-                        this.messageOldPass = "old password doesn't match"
-                        // this.oldpassValid = false
                         passIsValid = false
                     })
                 return passIsValid
