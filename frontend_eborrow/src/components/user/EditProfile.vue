@@ -17,8 +17,21 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex flex-column align-items-center text-center">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
-                                         class="rounded-circle" width="150">
+                                    <img v-if="!url" :src="getUserPicture(user.profilepicture)"
+                                         class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
+                                    <img v-else :src="url" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
+                                    <div class="form-group">
+                                        <label for="fileImage">Upload neu image</label>
+                                        <input
+                                                type="file"
+                                                @change="onImageUpload"
+                                                id="fileImage"
+                                                name="fileImage"
+                                                accept="image/png, image/jpeg"
+                                                ref="fileImage"
+                                        />
+                                    </div>
+
                                     <div class="mt-3">
                                         <input type="text" class="form-control text-center" placeholder="Enter username"
                                                v-model="user.username"> <br>
@@ -127,8 +140,12 @@
                                             <h6 class="mb-0">Gender</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">
-                                            <input type="text" class="form-control" placeholder="Choose gender"
-                                                   v-model="user.gender">
+                                            <select id="gender" v-model="user.gender" >
+
+                                                <option value="f">F</option>
+                                                <option value="m">M</option>
+
+                                            </select>
                                             <div
                                                     v-if="messageGender"
                                                     class="alert alert-danger">
@@ -171,13 +188,18 @@
 
 <script>
     import {mapActions, mapState} from 'vuex';
-    import User from '../../models/user';
+   // import User from '../../models/user';
     import userDataService from "../../services/UserDataService";
+    const API_IMG_RESOURCE = "http://localhost:8080/users/get-img/";
+
+
 
     export default {
         name: "edit-profile",
         data() {
             return {
+                url: null,
+                fileImage: null,
                 errMsge: "",
                 oldpass: "",
                 oldpassValid: false,
@@ -220,19 +242,26 @@
                 return [day, month, year].join('-');
             },
             handleEditUser() {
-                if (!this.validEditUserData() /*&& this.handleCheckOldPass()*/) {
-                    const pass = this.newpass != "" ? this.newpass : this.user.password;
-                    const user = new User(this.user.username, pass, this.user.firstname, this.user.lastname, this.user.email, this.user.gender, this.user.profilepicture, this.user.birthdate)
-                    const editUserPass = this.newpass != "" ? true : false;
-                    const data = {...user, editPass: editUserPass}
-                    userDataService.editUser(this.currentUser.id, data)
-                        .then(() => {
-                            this.$router.push("/profile");
-                        })
-                        .catch(e => this.errMsge = e)
-                }
-            },
+                const pass = this.newpass != "" ? this.newpass : this.user.password;
+                const editUserPass = this.newpass != "" ? true : false;
+                var userdata = new FormData();
+                userdata.append("username", this.user.username);
+                userdata.append("password", pass);
+                userdata.append("firstname", this.user.firstname);
+                userdata.append("lastname", this.user.lastname);
+                userdata.append("email", this.user.email);
+                userdata.append("gender", this.user.gender);
+                userdata.append("birthdate", this.user.birthdate);
+                userdata.append("profilepicture", this.user.profilepicture);
+                userdata.append("editPass", editUserPass);
+                userdata.append("fileImage", this.fileImage);
 
+                userDataService.editUser(this.currentUser.id, userdata)
+                    .then(() => {
+                        this.$router.push("/profile");
+                    })
+                    .catch(e => this.errMsge = e)
+            },
             validEditUserData() {
 
                 this.messageUsername = "";
@@ -341,6 +370,21 @@
                         passIsValid = false
                     })
                 return passIsValid
+            },
+            getUserPicture(img) {
+                if (img != undefined) {
+                    return `${API_IMG_RESOURCE}${img}/`
+                }
+            },
+            onImageUpload(event) {
+                if (event.target.files[0] != null) {
+                    this.fileImage = event.target.files[0];
+                    this.url = URL.createObjectURL(this.fileImage);
+                } else {
+                    this.url = null;
+                }
+                console.log(this.url)
+
             }
         },
         mounted() {

@@ -7,10 +7,10 @@ values
 
 insert into user (username, password, firstname, lastname, email, gender, profilepicture, birthdate, address_id)
 values
-('user', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'Jill', 'Haseluff', 'j.h@using.com', 'w', 'user1.jpg', CURRENT_DATE, 1); -- corresponds to password:'password'
+('user', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'Jill', 'Haseluff', 'j.h@using.com', 'm', 'user1.jpg', CURRENT_DATE, 1); -- corresponds to password:'password'
 insert into user (username, password, firstname, lastname, email, gender, profilepicture, birthdate, address_id)
 values
-('user2', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'Max', 'Power', 'power@POWER.com', 'm', 'user2.png', CURRENT_DATE, 2); -- corresponds to password:'password'
+('user2', '$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS', 'Max', 'Power', 'power@POWER.com', 'f', 'user2.png', CURRENT_DATE, 2); -- corresponds to password:'password'
 
 
 insert into item (title, description, available, picture, user_id)
