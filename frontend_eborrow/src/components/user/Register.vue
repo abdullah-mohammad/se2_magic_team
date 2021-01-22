@@ -107,13 +107,14 @@
                     </div>
                     <div class="form-group">
                         <label for="gender">gender</label>
-                        <input
+                        <select
                                 id="gender"
                                 v-model="user.gender"
-                                type="gender"
-                                class="form-control"
-                                name="gender"
-                        />
+
+                        >
+                            <option  value="f" >F</option>
+                            <option value="m">M</option>
+                        </select>
                         <div
                                 v-if="messageGender"
                                 class="alert"

@@ -99,7 +99,7 @@ export default {
   name: "Profile",
   data(){
     return {
-      birthdate :this.currentUser.birthdate,
+     // birthdate :this.currentUser.birthdate,
        dateVal : new Date(),
     }
   },

@@ -139,27 +139,38 @@ public class UserController {
 
     @PreAuthorize("permitAll()")
     @PutMapping("/edit-user/{id}")
-    public ResponseEntity<User> editUser(@PathVariable("id") long id, @RequestBody Map<String,Object> body) throws ParseException {
+    public ResponseEntity<User> editUser(@PathVariable("id") long id, @ModelAttribute SignupRequest user,@RequestParam("editPass") Boolean shouldEditPass,@RequestParam(value = "fileImage",
+            required = false) MultipartFile picture) throws ParseException {
         Optional<User> userData = applicationUserRepository.findById(id);
-        boolean shouldEditPass = (boolean) body.get("editPass");
+        // boolean shouldEditPass = (boolean) body.get("editPass");
         if (userData.isPresent()) {
             User _user = userData.get();
-            _user.setUsername((String) body.get("username"));
-            if (shouldEditPass)
-                _user.setPassword(bCryptPasswordEncoder.encode((String) body.get("password")));
-            _user.setEmail((String) body.get("email"));
-            _user.setFirstname((String) body.get("firstname"));
-            _user.setLastname((String) body.get("lastname"));
-            _user.setGender((String) body.get("gender"));
+            _user.setUsername((user.getUsername()));
+            if (shouldEditPass != null && shouldEditPass)
+                _user.setPassword(bCryptPasswordEncoder.encode((String) user.getPassword()));
+            _user.setEmail(user.getEmail());
+            _user.setFirstname(user.getFirstname());
+            _user.setLastname(user.getLastname());
+            _user.setGender(user.getGender());
 
-            System.out.println("String birthdate"+body.get("birthdate"));
-            Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(body.get("birthdate").toString());
+            //Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(user.getBirthdate().toString());
+            Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(user.getBirthdate());
+
             System.out.println("Date burthdate"+birthdate);
-         //   Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").parse(body.get("birthdate").toString());
-
-            //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            //Date date = formatter.parse(body.get("birthdate").toString());
+            System.out.println("wo bist Du");
             _user.setBirthdate(birthdate);
+            String fileName = "";
+            if (picture != null) {
+                fileName = user.getUsername() + "_" +
+                        StringUtils.cleanPath(Objects.requireNonNull(picture.getOriginalFilename()));
+                String directory = "profilepictures/";
+                storageService.save(picture, fileName,directory);
+                _user.setProfilepicture(fileName);
+            }else {
+                _user.setProfilepicture( _user.getProfilepicture());
+
+            }
+
             return new ResponseEntity<User>(applicationUserRepository.save(_user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
