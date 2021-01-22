@@ -194,6 +194,9 @@
 <script>
     import {mapActions, mapState} from 'vuex';
     import userDataService from "../../services/UserDataService";
+    const API_IMG_RESOURCE = "http://localhost:8080/users/get-img/";
+
+
 
     const API_IMG_RESOURCE = process.env.VUE_APP_API_URL+"users/get-img/";
 
@@ -201,6 +204,8 @@
         name: "edit-profile",
         data() {
             return {
+                url: null,
+                fileImage: null,
                 errMsge: "",
                 oldpass: "",
                 oldpassValid: false,
@@ -290,7 +295,6 @@
                         .catch(e => this.errMsge = e) 
                 }
             },
-            
             validEditUserData() {
 
                 this.messageUsername = "";
@@ -399,6 +403,21 @@
                         passIsValid = false
                     })
                 return passIsValid
+            },
+            getUserPicture(img) {
+                if (img != undefined) {
+                    return `${API_IMG_RESOURCE}${img}/`
+                }
+            },
+            onImageUpload(event) {
+                if (event.target.files[0] != null) {
+                    this.fileImage = event.target.files[0];
+                    this.url = URL.createObjectURL(this.fileImage);
+                } else {
+                    this.url = null;
+                }
+                console.log(this.url)
+
             }
         },
         mounted() {
