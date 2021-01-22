@@ -47,7 +47,7 @@
                     <div class="col-md-8">
                         <div class="card mb-3">
                             <div class="card-body">
-                                <form @submit.prevent="handleEditUser">
+<!--                                <form @submit.prevent="handleEditUser">-->
                                     <div class="row">
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">First name</h6>
@@ -157,14 +157,16 @@
                                         <div class="col-sm-9 text-secondary">
                                             <input id="birthdate" v-model="user.birthdate" type="date" class="form-control"
                                             name="birthdate"/>
-                                        </div>
-                                        <div
+                                            <div
                                                 v-if="messageBirthDate"
                                                 class="alert"
                                                 :class="successful ? 'alert-success' : 'alert-danger'">
-                                            {{ messageBirthDate }}
+                                              {{ messageBirthDate }}
+                                            </div>
                                         </div>
+
                                     </div>
+                                    <br>
                                     <div
                                         v-if="errMsge"
                                         class="alert"
@@ -258,7 +260,7 @@
                 }
             },
             handleEditUser() {
-                if (!this.validEditUserData() /*&& this.handleCheckOldPass()*/) {
+                if (!this.validEditUserData()) {
                     const pass = this.newpass !== "" ? this.newpass : this.user.password;
                     const editUserPass = this.newpass !== "";
                     const newPic = this.user.profilepicture === this.clonedUserPic ? null : this.user.profilepicture;
@@ -382,7 +384,7 @@
                         passIsValid = true
                     })
                     .catch(e => {
-                        this.errMsge = e
+                        this.errMsge = e.message
                         passIsValid = false
                     })
                 return passIsValid
