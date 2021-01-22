@@ -1,64 +1,60 @@
 <template>
     <div>
         <div class="container">
-            <div v-if="currentUser" class="main-body">
-                <!-- Breadcrumb -->
-                <nav aria-label="breadcrumb" class="main-breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">User</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Edit User Profile</li>
-                    </ol>
-                </nav>
-                <!-- /Breadcrumb -->
+            <div  v-if="currentUser"  class="main-body">
+                <!-- Page Heading -->
+                <h2 class="my-4 gs-title">Settings: </h2>
+                <!-- Page Heading -->
 
+                <!-- Edit-Block -->
+                <form @submit.prevent="handleEditUser">
                 <div class="row gutters-sm">
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex flex-column align-items-center text-center">
-                                    <img v-if="!url" :src="getUserPicture(user.profilepicture)"
-                                         class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
-                                    <img v-else :src="url" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
-                                    <div class="form-group">
-                                        <label for="fileImage">Upload neu image</label>
+                    <!-- Profile-Image -->
+                    <div class="col-md-4 mb-3 mr-0">
+                        <div class="card m-0 p-0"  style="border: none;">
+                            <div class="card-body m-0 p-0">
+                            <div class="d-flex flex-column align-items-center text-center">
+                                <img v-if="newProfilePicUrl" :src="newProfilePicUrl" alt="Profile picture"
+                                    class="img-thumbnail"
+                                    width="230"
+                                >
+                                <img v-else onerror='this.onerror=null;this.src="https://via.placeholder.com/150"'
+                                    :src="user.clonedUserPic ? getUserPicture(user.clonedUserPic) : getUserPicture(user.profilepicture)" alt="Profile picture"
+                                    class="img-thumbnail"
+                                    width="230">
+                                <div class="mt-3">
+                                    <div class="custom-file">
                                         <input
-                                                type="file"
-                                                @change="onImageUpload"
-                                                id="fileImage"
-                                                name="fileImage"
-                                                accept="image/png, image/jpeg"
-                                                ref="fileImage"
+                                            type="file"
+                                            @change="onImageUpload"
+                                            id="fileImage"
+                                            name="fileImage"
+                                            accept="image/png, image/jpeg"
+                                            :ref="user.profilepicture"
+                                            class="custom-file-input"
                                         />
-                                    </div>
-
-                                    <div class="mt-3">
-                                        <input type="text" class="form-control text-center" placeholder="Enter username"
-                                               v-model="user.username"> <br>
-                                        <div
-                                                v-if="messageUsername"
-                                                class="alert"
-                                                :class="successful ? 'alert-success' : 'alert-danger'">
-                                            {{ messageUsername }}
-                                        </div>
-                                        <button class="btn btn-outline-danger">Delete</button>
+                                        <label id="fileImageLabel" class="custom-file-label" for="fileImage"></label>
                                     </div>
                                 </div>
                             </div>
+                            
+                            </div>
                         </div>
                     </div>
+                    <!-- Profile-Image -->
+
+                    <!-- Edit-Form -->
                     <div class="col-md-8">
                         <div class="card mb-3">
                             <div class="card-body">
-                                <form @submit.prevent="handleEditUser">
                                     <div class="row">
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">First name</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <input type="text" class="form-control"
-                                                   aria-describedby="FirstNameHelp" placeholder="Enter your first name"
-                                                   v-model="user.firstname">
+                                                aria-describedby="FirstNameHelp" placeholder="Enter your first name"
+                                                v-model="user.firstname">
                                             <div
                                                     v-if="messageFirstname"
                                                     class="alert"
@@ -74,8 +70,8 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <input type="text" class="form-control" id="" aria-describedby="emailHelp"
-                                                   placeholder="Enter your last name"
-                                                   v-model="user.lastname">
+                                                placeholder="Enter your last name"
+                                                v-model="user.lastname">
                                             <div
                                                     v-if="messageLastname"
                                                     class="alert"
@@ -91,7 +87,7 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <input type="text" class="form-control" placeholder="Enter email"
-                                                   v-model="user.email">
+                                                v-model="user.email">
                                             <div
                                                     v-if="messageEmail"
                                                     class="alert"
@@ -107,7 +103,7 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <input v-model="oldpass" type="password" class="form-control"
-                                                   placeholder="Enter old password">
+                                                placeholder="Enter old password">
 
                                             <div
                                                     v-if="messageOldPass"
@@ -124,7 +120,7 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <input v-model="newpass" type="password" class="form-control"
-                                                   placeholder="Enter new password">
+                                                placeholder="Enter new password">
 
                                             <div
                                                     v-if="messageNewPass"
@@ -140,11 +136,9 @@
                                             <h6 class="mb-0">Gender</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">
-                                            <select id="gender" v-model="user.gender" >
-
-                                                <option value="f">F</option>
-                                                <option value="m">M</option>
-
+                                            <select v-model="user.gender" name="gender" class="custom-select custom-select">
+                                                <option :selected="user.gender === 'm'" value="m">Male</option>
+                                                <option :selected="user.gender === 'w'" value="w">Female</option>
                                             </select>
                                             <div
                                                     v-if="messageGender"
@@ -159,25 +153,36 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Birthdate</h6>
                                         </div>
-
-                                        <input id="birthdate" v-model="user.birthdate" type="date" class="form-control"
-                                               name="birthdate"/>
+                                        <div class="col-sm-9 text-secondary">
+                                            <input id="birthdate" v-model="user.birthdate" type="date" class="form-control"
+                                            name="birthdate"/>
+                                        </div>
                                         <div
-                                                v-if="messageBirthdate"
+                                                v-if="messageBirthDate"
                                                 class="alert"
                                                 :class="successful ? 'alert-success' : 'alert-danger'">
-                                            {{ messageBirthdate }}
+                                            {{ messageBirthDate }}
                                         </div>
                                     </div>
                                     <p v-if="errMsge" class="text-danger">{{errMsge}}</p>
                                     <br>
-                                    <input type="submit" class="btn btn-success" value="Save">
-                                    <a @click="goBack()" class="btn btn-primary">Back</a>
-                                </form>
+                                    <input 
+                                        type="submit" 
+                                        class="btn btn-sm btn-primary pt-1 pb-1 pl-4 pr-4" 
+                                        style="font-family: 'GoShareFont'; background: #539AC5; border-radius: 5px; font-weight: 600; letter-spacing:1.5px; border:none"
+                                        value="Save"> 
+                                    <span style="padding-left:5px"> &nbsp; </span> &nbsp; 
+                                    <button 
+                                        class="btn btn-sm btn-danger pt-1 pb-1 pl-4 pr-4" 
+                                        style="font-family: 'GoShareFont'; background: #C55353; border-radius: 5px; font-weight: 600; letter-spacing:1.5px; border:none"
+                                        @click={}>Delete</button>
                             </div>
                         </div>
                     </div>
+                    <!-- Edit-Form -->
                 </div>
+                <!-- Edit-Block -->
+                </form>
             </div>
             <div v-else>
                 {{errMsge}}
@@ -188,11 +193,12 @@
 
 <script>
     import {mapActions, mapState} from 'vuex';
-   // import User from '../../models/user';
     import userDataService from "../../services/UserDataService";
     const API_IMG_RESOURCE = "http://localhost:8080/users/get-img/";
 
 
+
+    const API_IMG_RESOURCE = process.env.VUE_APP_API_URL+"users/get-img/";
 
     export default {
         name: "edit-profile",
@@ -213,13 +219,15 @@
                 messageEmail: "",
                 messageGender: "",
                 messageBirthDate: "",
+                newProfilePicUrl: null,
+                successful: null
             }
         },
         computed: {
             currentUser() {
                 return this.$store.state.auth.user;
             },
-            ...mapState('user', ['user'])
+            ...mapState('user', ['user', 'clonedUserPic'])
         },
         methods: {
             ...mapActions({
@@ -228,6 +236,29 @@
                 setCurrentUser: "user/setCurrentUser",
                 editUser: "user/editUser"
             }),
+            getUserPicture(img) {
+                if (img != undefined) {
+                    // TODO es muss das Bild richtig gelesen werden.
+                    // ich habe damit auch versucht es wird daten geliefert aber nicht geklappt
+                    // wenn man das Bild in img zeigen möchte.
+                    // userDataService.getPicture(img);
+                    console.log(`${API_IMG_RESOURCE}${img}/`);
+                    return `${API_IMG_RESOURCE}${img}/`
+                }
+            },
+            onImageUpload(event) {
+                if (event.target.files[0] != null) {
+                    this.user.profilepicture = event.target.files[0];
+                    this.newProfilePicUrl = URL.createObjectURL(this.user.profilepicture);
+                    document.getElementById("fileImageLabel").classList.add("selected")
+                    document.getElementById("fileImageLabel").innerHTML = this.user.profilepicture.name
+                } else {
+                    this.newProfilePicUrl = null;
+                    document.getElementById("fileImageLabel").classList.remove("selected")
+                    document.getElementById("fileImageLabel").innerHTML = ""
+                    this.user.profilepicture = this.clonedUserPic
+                }
+            },
             formatDate(date) {
                 var d = new Date(date),
                     month = '' + (d.getMonth() + 1),
@@ -242,25 +273,27 @@
                 return [day, month, year].join('-');
             },
             handleEditUser() {
-                const pass = this.newpass != "" ? this.newpass : this.user.password;
-                const editUserPass = this.newpass != "" ? true : false;
-                var userdata = new FormData();
-                userdata.append("username", this.user.username);
-                userdata.append("password", pass);
-                userdata.append("firstname", this.user.firstname);
-                userdata.append("lastname", this.user.lastname);
-                userdata.append("email", this.user.email);
-                userdata.append("gender", this.user.gender);
-                userdata.append("birthdate", this.user.birthdate);
-                userdata.append("profilepicture", this.user.profilepicture);
-                userdata.append("editPass", editUserPass);
-                userdata.append("fileImage", this.fileImage);
-
-                userDataService.editUser(this.currentUser.id, userdata)
-                    .then(() => {
-                        this.$router.push("/profile");
-                    })
-                    .catch(e => this.errMsge = e)
+                if (!this.validEditUserData() /*&& this.handleCheckOldPass()*/) {
+                    const pass = this.newpass != "" ? this.newpass : this.user.password;
+                    const editUserPass = this.newpass != "" ? true : false;
+                    const newPic = this.user.profilepicture === this.clonedUserPic ? null : this.user.profilepicture;
+                    var data = new FormData();
+                    data.append("username", this.user.username);
+                    data.append("password", pass);
+                    data.append("firstname", this.user.firstname);
+                    data.append("lastname", this.user.lastname);
+                    data.append("email", this.user.email);
+                    data.append("gender", this.user.gender);
+                    data.append("birthdate", this.user.birthdate);
+                    data.append("editPass", editUserPass);
+                    data.append("newPic", newPic);
+                    userDataService.editUser(this.currentUser.id, data)
+                        .then((res) => {
+                            this.user.profilepicture = res.data.profilepicture
+                            this.$router.push("/profile");
+                        })
+                        .catch(e => this.errMsge = e) 
+                }
             },
             validEditUserData() {
 
@@ -399,3 +432,16 @@
 
     }
 </script>
+
+
+<style lang="css">
+    .custom-file-label::after {
+        left: 0;
+        right: auto;
+        border-left-width: 0;
+        border-right: inherit;
+        font-family: FontAwesome;
+        content: "\f03e"!important;
+        font-weight: 900;
+    }
+</style>

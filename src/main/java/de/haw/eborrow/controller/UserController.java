@@ -12,6 +12,7 @@ import de.haw.eborrow.security.jwt.JwtResponse;
 import de.haw.eborrow.security.jwt.JwtUtils;
 import de.haw.eborrow.services.FilesStorageService;
 import de.haw.eborrow.services.UserDetailsImpl;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,36 +140,37 @@ public class UserController {
 
     @PreAuthorize("permitAll()")
     @PutMapping("/edit-user/{id}")
-    public ResponseEntity<User> editUser(@PathVariable("id") long id, @ModelAttribute SignupRequest user,@RequestParam("editPass") Boolean shouldEditPass,@RequestParam(value = "fileImage",
-            required = false) MultipartFile picture) throws ParseException {
+    public ResponseEntity<User> editUser(@PathVariable("id") long id,
+                                         @RequestParam(value = "newPic", required = false) MultipartFile newUserPic,
+                                         @RequestParam(value = "editPass") Boolean shouldEditPass,
+                                         @RequestParam(value = "username") String username,
+                                         @RequestParam(value = "password") String password,
+                                         @RequestParam(value = "firstname") String firstname,
+                                         @RequestParam(value = "lastname") String lastname,
+                                         @RequestParam(value = "email") String email,
+                                         @RequestParam(value = "gender") String gender,
+                                         @RequestParam(value = "birthdate") String birthdate) throws ParseException {
         Optional<User> userData = applicationUserRepository.findById(id);
-        // boolean shouldEditPass = (boolean) body.get("editPass");
         if (userData.isPresent()) {
             User _user = userData.get();
-            _user.setUsername((user.getUsername()));
-            if (shouldEditPass != null && shouldEditPass)
-                _user.setPassword(bCryptPasswordEncoder.encode((String) user.getPassword()));
-            _user.setEmail(user.getEmail());
-            _user.setFirstname(user.getFirstname());
-            _user.setLastname(user.getLastname());
-            _user.setGender(user.getGender());
-
-            //Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(user.getBirthdate().toString());
-            Date birthdate = new SimpleDateFormat("yyyy-MM-dd").parse(user.getBirthdate());
-
-            System.out.println("Date burthdate"+birthdate);
-            System.out.println("wo bist Du");
-            _user.setBirthdate(birthdate);
+            _user.setUsername(username);
+            if (shouldEditPass)
+                _user.setPassword(bCryptPasswordEncoder.encode(password));
+            _user.setEmail(email);
+            _user.setFirstname(firstname);
+            _user.setLastname(lastname);
+            _user.setGender(gender);
+            Date userBirthdate = new SimpleDateFormat("yyyy-MM-dd").parse(birthdate);
+            _user.setBirthdate(userBirthdate);
             String fileName = "";
-            if (picture != null) {
-                fileName = user.getUsername() + "_" +
-                        StringUtils.cleanPath(Objects.requireNonNull(picture.getOriginalFilename()));
+            if (newUserPic != null) {
+                fileName = username + "_" + id + "." + FilenameUtils.getExtension(newUserPic.getOriginalFilename());
                 String directory = "profilepictures/";
-                storageService.save(picture, fileName,directory);
+                try{
+                    storageService.delete("/profilepictures/", fileName);
+                } catch (Exception ignored){}
+                storageService.save(newUserPic, fileName,directory);
                 _user.setProfilepicture(fileName);
-            }else {
-                _user.setProfilepicture( _user.getProfilepicture());
-
             }
 
             return new ResponseEntity<User>(applicationUserRepository.save(_user), HttpStatus.OK);
