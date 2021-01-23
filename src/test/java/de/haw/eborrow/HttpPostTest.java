@@ -1,6 +1,7 @@
 
 package de.haw.eborrow;
 
+import de.haw.eborrow.models.Address;
 import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
 import org.junit.jupiter.api.Test;
@@ -27,8 +28,8 @@ public class HttpPostTest {
 
 	@Test
 	public void itemsHttpPostTest () throws Exception {
-		User user = new User("user", "$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS", "User 1", "isLastaName", "user@using.com", "w", new Date(111), "pic.jpg");
-		Item item = new Item(	"Rasenmaeher","Gutes Geraet, ich liebe es, liebst du es auch?", "maeh.jpg",	true, user);
+		User user = new User("user", "$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS", "User 1", "isLastaName", "user@using.com", "w", new Date(111), "pic.jpg", new Address("Berliner Tor", "1", 20099, "Hamburg", "Germany"));
+		Item item = new Item(	"Rasenmaeher","Gutes Geraet, ich liebe es, liebst du es auch?", "maeh.jpg",	new Date(111),new Date(222), user);
 
 		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/items",
 				String.class)).contains(item.getDescription());

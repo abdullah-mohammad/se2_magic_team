@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -28,7 +29,9 @@ public class Item {
     @Column(length = 5000)
     private String description;
 
-    private boolean available;
+    private Date available_from;
+
+    private Date available_to;
 
     private String picture;
 
@@ -40,18 +43,20 @@ public class Item {
     @OneToMany(mappedBy="user")
     private List<Borrow> borrowedItems = new ArrayList<>();
 
-    public Item(String title, String description, String picture,boolean available) {
+    public Item(String title, String description, String picture, Date availableFrom, Date availableTo) {
         this.title = title;
         this.description = description;
         this.picture = picture;
-        this.available = available;
+        this.available_from = availableFrom;
+        this.available_to = availableTo;;
     }
 
-    public Item(String title, String description, String picture,boolean available, User user) {
+    public Item(String title, String description, String picture, Date availableFrom, Date availableTo, User user) {
         this.title = title;
         this.description = description;
         this.picture = picture;
-        this.available = available;
+        this.available_from = availableFrom;
+        this.available_to = availableTo;
         this.user = user;
     }
 
@@ -98,12 +103,20 @@ public class Item {
         this.description = description;
     }
 
-    public boolean isAvailable() {
-        return available;
+    public Date getAvailableFrom() {
+        return available_from;
     }
 
-    public void setAvailable(boolean available) {
-        this.available = available;
+    public void setAvailableFrom(Date availableFrom) {
+        this.available_from = availableFrom;
+    }
+
+    public Date getAvailableTo() {
+        return available_to;
+    }
+
+    public void setAvailableTo(Date availableTo) {
+        this.available_to = availableTo;
     }
 
     public void addItemToBorrowedItems(Borrow borrow){
@@ -116,8 +129,9 @@ public class Item {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", available=" + available +
-                ", user=" + user.getId() +
+                ", availableFrom=" + available_from +
+                ", availableTo=" + available_to +
+                ", user=" + user +
                 '}';
     }
 }

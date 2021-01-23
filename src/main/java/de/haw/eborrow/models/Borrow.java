@@ -31,7 +31,7 @@ public class Borrow {
     }
 
     public Borrow(User user, Item item, Date borrowFrom, Date borrowTo) {
-        this.id = id;
+        //this.id = id;
         this.user = user;
         this.item = item;
         this.borrowFrom = borrowFrom;
