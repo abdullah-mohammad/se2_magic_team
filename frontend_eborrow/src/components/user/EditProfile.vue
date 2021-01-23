@@ -137,8 +137,8 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary">
                                             <select v-model="user.gender" name="gender" class="custom-select custom-select">
-                                                <option :selected="user.gender === 'm'" value="m">Male</option>
-                                                <option :selected="user.gender === 'w'" value="w">Female</option>
+                                                <option :selected="user.gender === 'm'" value="m">M</option>
+                                                <option :selected="user.gender === 'f'" value="f">F</option>
                                             </select>
                                             <div
                                                     v-if="messageGender"

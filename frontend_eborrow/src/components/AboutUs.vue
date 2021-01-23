@@ -65,7 +65,7 @@
 
 <script>
   export default {
-    name: "About Us",
+    name: "AboutUs",
     props: {
       msg: String,
     },

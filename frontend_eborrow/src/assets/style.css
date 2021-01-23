@@ -27,6 +27,12 @@
 
 @font-face {
     font-family: "GoShareFont";
+    src: url("./Roboto/Roboto-Medium.ttf");
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: "GoShareFont";
     src: url("./Roboto/Roboto-Italic.ttf");
     font-style: italic;
 }
@@ -102,6 +108,8 @@
 
 .gs-title {
     color: var(--c-red)!important;
+    font-family: 'GoShareFont';
+    font-weight: 500;
 }
 
 .gs-tool-card {
@@ -195,8 +203,11 @@
     position: page;
     z-index: auto;
     color: #fff;
-    background-color: var(--orange1);
-    border-color: var(--orange1);
+    /* background-color: var(--orange1);
+    border-color: var(--orange1); */
+    background-color: white;
+    color: var(--orange1);
+    border: none;
 }
 
 .gs-page-link {
@@ -205,21 +216,28 @@
     padding: .5rem .75rem;
     margin-left: -1px;
     line-height: 1.25;
-    color: var(--orange1);
-    background-color: #fff;
-    border: 1px solid #dee2e6;
+    color: var(--gray1);
+    background-color: unset;
+    /* border: 1px solid #dee2e6; */
+    border: none;
 }
 
 .gs-page-link:hover {
     z-index: 2;
     color: var(--orange1);
     text-decoration: none;
-    background-color: #e9ecef;
-    border-color: #dee2e6;
+    /* background-color: #e9ecef;
+    border-color: #dee2e6; */
+    background-color: unset;
+    border:none;
 }
 
+.gs-page-item a:focus { outline: none !important; box-shadow: none; }
+
+.gs-page-item.active .gs-page-link:hover{ opacity: 1; }
+
 .dropdown-menu {
-    left: 50% !important; transform: translateX(-50%) !important; top: 100% !important;
+    left: 50% !important; /* transform: translateX(-50%) !important; */ top: 100% !important;
 }
 
 .gs-text-gray1 {

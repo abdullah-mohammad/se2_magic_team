@@ -69,8 +69,8 @@
                       <div class="col-sm-3">
                         <h6 class="mb-0">Gender</h6>
                       </div>
-                      <div class="col-sm-9 text-secondary">
-                        {{ user.gender }}
+                      <div v-if="user.gender" class="col-sm-9 text-secondary">
+                        {{ user.gender.toUpperCase() }}
                       </div>
                     </div>
                     <hr>

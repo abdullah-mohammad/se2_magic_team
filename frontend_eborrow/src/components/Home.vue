@@ -107,8 +107,9 @@
         </div>
         <!-- /.row -->
       </div>
-
-      <paginate
+    </div>
+    <paginate
+          v-if="showItems"
           page:1
           :page-count=getPageCount
           :container-class="'pagination justify-content-center'"
@@ -123,8 +124,6 @@
           :click-handler="paginateCallback"
       >
       </paginate>
-
-    </div>
     </div>
   </div>
 </template>

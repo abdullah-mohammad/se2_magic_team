@@ -1,93 +1,125 @@
 <template>
-    <div>
+    <div class="container">
         <div v-if="!$store.state.auth.user">
             If you
             <router-link to="/login">log in</router-link>
-            , you can add you items to share them.
+            , you can add your items to share them.
         </div>
         <div class="submit-form" v-else>
-            <h1>add new item:</h1>
+            <!-- Page Heading -->
+            <h2 class="my-4 gs-title">Add new Item: </h2>
+            <!-- Page Heading -->
             <div v-if="!submitted">
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input
-                            type="text"
-                            class="form-control"
-                            id="title"
-                            v-model="item.title"/>
+                <div class="col-md-7 ml-0" style="display:inline-block">
+                    <div class="form-group">
+                        <label for="title" class="font-weight-bold">Title</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="title"
+                                v-model="item.title"/>
 
-                    <div
-                            v-if="messageTitle"
-                            class="alert"
-                            :class="successful ? 'alert-success' : 'alert-danger'">
-                        {{ messageTitle }}
+                        <div
+                                v-if="messageTitle"
+                                class="alert"
+                                :class="successful ? 'alert-success' : 'alert-danger'">
+                            {{ messageTitle }}
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea
-                            class="form-control"
-                            id="description"
-                            v-model="item.description"/>
+                    <div class="form-group">
+                        <label for="description" class="font-weight-bold">Description</label>
+                        <textarea
+                                rows="5"
+                                class="form-control"
+                                id="description"
+                                v-model="item.description"/>
 
-                    <div
-                            v-if="messageDescription"
-                            class="alert"
-                            :class="successful ? 'alert-success' : 'alert-danger'">
-                        {{ messageDescription }}
+                        <div
+                                v-if="messageDescription"
+                                class="alert"
+                                :class="successful ? 'alert-success' : 'alert-danger'">
+                            {{ messageDescription }}
+                        </div>
                     </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-6">
+                    <div class="row form-group">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="availableFrom" class="font-weight-bold">available from</label>
+                                <input
+                                        type="date"
+                                        class="form-control"
+                                        id="availableFrom"
+                                        v-model="item.availableFrom"/>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="availableTo" class="font-weight-bold">available to</label>
+                                <input
+                                        type="date"
+                                        class="form-control"
+                                        id="availableTo"
+                                        v-model="item.availableTo"/>
+                            </div>
+                        </div>
+                        <div class="col form-group">
+                            <div v-if="messageAvailableTo || messageAvailableFrom"
+                                class="alert"
+                                :class="successful ? 'alert-success' : 'alert-danger'">
+                                {{ messageAvailableFrom }}{{ messageAvailableTo }}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="mobile-item-img" class="d-sm-none d-md-none d-lg-none d-xl-none">
                         <div class="form-group">
-                            <label for="availableFrom">available from</label>
                             <input
-                                    type="date"
-                                    class="form-control"
-                                    id="availableFrom"
-                                    v-model="item.availableFrom"/>
+                                    type="file"
+                                    @change="onImageUpload"
+                                    id="fileImage"
+                                    name="fileImage"
+                                    accept="image/png, image/jpeg"
+                                    ref="fileImage"
+                            />
                         </div>
-                    </div>
-                    <div class="col-6">
                         <div class="form-group">
-                            <label for="availableTo">available to</label>
-                            <input
-                                    type="date"
-                                    class="form-control"
-                                    id="availableTo"
-                                    v-model="item.availableTo"/>
+                            <div id="preview">
+                                <img :src="url ? url : 'https://via.placeholder.com/150'"
+                                    class="img-thumbnail"
+                                    width="275"
+                                    alt="Item picture"
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div class="col form-group">
-                        <div v-if="messageAvailableTo || messageAvailableFrom"
-                             class="alert"
-                             :class="successful ? 'alert-success' : 'alert-danger'">
-                            {{ messageAvailableFrom }}{{ messageAvailableTo }}
-                        </div>
+                    <button @click="saveItem" class="btn btn-sm btn-primary pt-1 pb-1 pl-5 pr-5"
+                                            style="font-family: 'GoShareFont'; background: #539AC5; border-radius: 5px; font-weight: 600; letter-spacing:1.5px; border:none"
+                    >Share</button>
+                </div>
+
+                <div id="desktop-item-img" class="col-md-4 ml-3 d-none d-sm-inline-block" style="display:inline-block; vertical-align: top;">
+                    <img
+                        :src="url ? url : 'https://via.placeholder.com/150'" alt="Item picture"
+                        class="img-thumbnail"
+                        width="275">
+                    <div class="form-group mt-3">
+                        <input
+                                type="file"
+                                @change="onImageUpload"
+                                id="fileImage-dsk"
+                                name="fileImage"
+                                accept="image/png, image/jpeg"
+                                ref="fileImage"
+                        />
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="fileImage">Upload image</label>
-                    <input
-                            type="file"
-                            @change="onImageUpload"
-                            id="fileImage"
-                            name="fileImage"
-                            accept="image/png, image/jpeg"
-                            ref="fileImage"
-                    />
-                </div>
-                <div class="form-group">
-                    <div id="preview">
-                        <img v-if="url" :src="url"/>
-                    </div>
-                </div>
-                <button @click="saveItem" class="btn btn-success">Share</button>
+
             </div>
+            
 
             <div v-else>
                 <h4>You submitted successfully!</h4>
-                <button class="btn btn-success" @click="newItem">Add</button>
+                <br>
+                <button class="btn btn btn-sm btn-success pt-1 pb-1 pl-5 pr-5" @click="newItem">Add</button>
             </div>
         </div>
     </div>
@@ -202,10 +234,10 @@
 </script>
 
 <style>
-    .submit-form {
+    /* .submit-form {
         max-width: 300px;
         margin: auto;
-    }
+    } */
 
     #preview {
         display: flex;
@@ -216,5 +248,15 @@
     #preview img {
         max-width: 100%;
         max-height: 500px;
+    }
+
+    @media screen and (max-width: 767px) {
+        #desktop-item-img {
+            display: none !important;
+        }
+
+        #mobile-item-img {
+            display: block !important;
+        }
     }
 </style>
