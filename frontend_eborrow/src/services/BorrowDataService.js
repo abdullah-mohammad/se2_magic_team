@@ -9,6 +9,10 @@ class BorrowDataService {
         return http.get(`/borrow/${userId}`);
     }
 
+    getByItemId(itemId) {
+        return http.get(`/borrows/${itemId}`);
+    }
+
     create(data) {
         return http.post("/borrow", data);
     }
@@ -23,6 +27,10 @@ class BorrowDataService {
 
     deleteAll() {
         return http.delete(`/borrow`);
+    }
+
+    getBorrowedCount(data) {
+        return http.post("/borrow/check", data);
     }
 }
 

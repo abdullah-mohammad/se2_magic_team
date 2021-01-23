@@ -42,22 +42,49 @@
                       {{ messageNewDescription }}
                     </div>
                   </div>
-
-
                 </div>
 
                 <div class="row">
                   <div class="col-sm-3">
-                    <h6 class="mb-0">Available</h6>
+                    <h6 class="mb-0">AvailableFrom</h6>
                   </div>
                   <div class="col-sm-9 text-secondary">
-                    <input type="text" class="form-control" placeholder="" v-model="currentItem.available">
+                    <datepicker
+                        :disabledDates="disabledDates"
+                        :bootstrap-styling="true"
+                        type="date"
+                        id="availableFrom"
+                        placeholder="from"
+                        v-model="currentItem.availableFrom">
+                    </datepicker>
                   </div>
-                 <!-- <div v-if="messageAvailableFrom"
+                  <div v-if="messageAvailableFrom"
                        class="alert"
                        :class="successful ? 'alert-success' : 'alert-danger'">
                     {{ messageAvailableFrom }}
-                  </div>-->
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">AvailableTo</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary">
+                    <!--<input type="text" class="form-control" placeholder="" v-model="currentItem.availableTo">-->
+                    <datepicker
+                        :disabledDates="disabledDates"
+                        :bootstrap-styling="true"
+                        type="date"
+                        id="availableTo"
+                        placeholder="from"
+                        v-model="currentItem.availableTo">
+                    </datepicker>
+                  </div>
+                  <div v-if="messageAvailableTo"
+                       class="alert"
+                       :class="successful ? 'alert-success' : 'alert-danger'">
+                    {{ messageAvailableTo }}
+                  </div>
                 </div>
 
                 <div class="row">
@@ -97,21 +124,28 @@
 <script>
 import ItemDataService from "../../services/ItemDataService";
 import {mapGetters} from "vuex";
+import Datepicker from 'vuejs-datepicker';
 
-const API_IMG_RESOURCE = process.env.VUE_APP_API_URL+"items/get-img/";
+const API_IMG_RESOURCE = process.env.VUE_APP_API_URL + "items/get-img/";
 
 export default {
   name: "editItem",
+  components: {
+    Datepicker
+  },
   data() {
     return {
+      disabledDates: {
+        to: new Date(Date.now()),
+      },
       url: null,
       message: "edited",
       currentItem: null,
       fileImage: null,
-      messageNewTitle:"",
-      messageNewDescription:"",
-      //messageAvailableFrom:"",
-      //messageAvailableTo:"",
+      messageNewTitle: "",
+      messageNewDescription: "",
+      messageAvailableFrom: "",
+      messageAvailableTo: "",
 
     };
   },
@@ -158,25 +192,26 @@ export default {
     },
     updateItem() {
 
-      if(!this.validEditItemData()) {
+      if (!this.validEditItemData()) {
         var data = new FormData();
         data.append("id", this.currentItem.id);
         data.append("title", this.currentItem.title);
         data.append("description", this.currentItem.description);
         data.append("picture", this.currentItem.picture);
-        data.append("available", this.currentItem.available);
+        data.append("availableFrom", this.currentItem.availableFrom);
+        data.append("availableTo", this.currentItem.availableTo);
         data.append("user", String(this.currentItem.user.id));
         data.append("fileImage", this.fileImage);
         confirm("Do you really want to edit this Item?");
         ItemDataService.update(this.currentItem.id, data)
-                .then((response) => {
-                  console.log(response.data);
-                  this.message = "The item was updated successfully!";
+            .then((response) => {
+              console.log(response.data);
+              this.message = "The item was updated successfully!";
 
-                })
-                .catch((e) => {
-                  console.log(e);
-                });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
       }
     },
     navigateBack() {
@@ -187,8 +222,8 @@ export default {
 
       this.messageNewTitle = "";
       this.messageNewDescription = "";
-      //this.messageAvailableFrom = "";
-     // this.messageAvailableTo = "";
+      this.messageAvailableFrom = "";
+      this.messageAvailableTo = "";
 
       var isInvalid = false
 
@@ -209,17 +244,13 @@ export default {
         isInvalid = true;
       }
 
-     /* if (!this.currentItem.availableFrom) {
-        this.messageAvailableFrom = "please choose the start date. \n";
-        isInvalid = true;
-      }
+       if (!this.currentItem.availableFrom && !this.currentItem.availableTo) {
+         this.messageAvailableFrom = "please choose the start date. \n";
+         this.messageAvailableTo = "please choose the end date. \n";
+         isInvalid = true;
+       }
 
-      if (!this.currentItem.availableTo) {
-        this.messageAvailableTo = "please choose the end date. \n";
-        isInvalid = true;
-      }
-*/
-      if (this.item.availableFrom > this.item.availableTo) {
+      if (this.currentItem.availableFrom > this.currentItem.availableTo) {
         this.messageAvailableFrom += "start date can not be earlier than end date. \n";
         isInvalid = true;
       }

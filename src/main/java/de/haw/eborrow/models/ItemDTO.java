@@ -11,7 +11,10 @@ public class ItemDTO {
     private String description;
 
     @NotBlank
-    private String available;
+    private String availableFrom;
+
+    @NotBlank
+    private String availableTo;
 
     @NotBlank
     private String user;
@@ -32,12 +35,20 @@ public class ItemDTO {
         this.description = description;
     }
 
-    public String getAvailable() {
-        return available;
+    public String getAvailableFrom() {
+        return availableFrom;
     }
 
-    public void setAvailable(String available) {
-        this.available = available;
+    public void setAvailableFrom(String availableFrom) {
+        this.availableFrom = availableFrom;
+    }
+
+    public String getAvailableTo() {
+        return availableTo;
+    }
+
+    public void setAvailableTo(String availableTo) {
+        this.availableTo = availableTo;
     }
 
     public String getUser() {

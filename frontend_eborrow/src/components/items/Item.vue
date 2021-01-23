@@ -29,9 +29,7 @@
                                                                               :to="{ path: '/user/'+ currentItem.user.id}">{{ currentItem.user.firstname }} {{ currentItem.user.lastname }}</router-link> </span>
               </div>
               <div class="m-bot15"><strong>Availability : </strong>
-                <span :class="{'text-success': currentItem.available, 'amount-old': !currentItem.available}">Yes</span>
-                <span
-                    :class="{'amount-old text-dark': currentItem.available, 'pro-price text-danger': !currentItem.available}"> No</span>
+                <span>{{new Date(currentItem.availableFrom).toISOString().substring(0,10)}} -> {{new Date(currentItem.availableTo).toISOString().substring(0,10)}}</span>
               </div>
               <br>
               <p>
