@@ -19,7 +19,7 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificationExecutor<Item> {
 
-    List<Item> findByAvailable(boolean available);
+    //List<Item> findByAvailable(boolean available);
 
     List<Item> findByTitleContaining(String title);
 
@@ -28,6 +28,11 @@ public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificat
             SELECT b.ITEM_ID   FROM BORROW b
             WHERE '2021-01-28' <= b. BORROW_TO  AND '2021-01-30' >= BORROW_FROM
     )*/
+
+    @Query("SELECT count (i.id)" +
+            " FROM Item i " +
+            " WHERE i.id = :itemId AND CURRENT_DATE between i.available_from AND i.available_to")
+    Long isAvailable(@Param("itemId") long itemId);
 
     @Query("SELECT i" +
             " FROM Item i" +

@@ -3,6 +3,7 @@ package de.haw.eborrow.controller;
 import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.ItemDTO;
 import de.haw.eborrow.models.User;
+import de.haw.eborrow.repository.BorrowRepository;
 import de.haw.eborrow.repository.ItemRepository;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.services.FilesStorageService;
@@ -36,6 +37,8 @@ public class ItemController {
     UserRepository userRepository;
     @Autowired
     FilesStorageService storageService;
+    @Autowired
+    BorrowRepository borrowRepository;
 
     @GetMapping("/items")
     public ResponseEntity<List<Item>> getAllItems(@RequestParam(required = false) String title) {
@@ -59,17 +62,14 @@ public class ItemController {
     @GetMapping("/items/user/{id}")
     public ResponseEntity<List<Item>> getItemsByUserId(@PathVariable("id")long id) {
         try {
-            System.out.println(id);
             long userId = Long.valueOf(id);
             Optional<User> user = userRepository.findById(userId);
             if (!user.isPresent()) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            System.out.println(user);
             List<Item> items = new ArrayList<>();
 
             itemRepository.findAll().stream().filter(item -> item.getUser().equals(user.get())).forEach(items::add);
-            System.out.println(items);
 
             if (items.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -86,7 +86,6 @@ public class ItemController {
         Optional<Item> itemData = itemRepository.findById(id);
 
         if (itemData.isPresent()) {
-            System.out.println(itemData.get());
             return new ResponseEntity<>(itemData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -101,7 +100,8 @@ public class ItemController {
         try {
             String title = itemDTO.getTitle();
             String description = itemDTO.getDescription();
-            boolean available = Boolean.parseBoolean(itemDTO.getAvailable());
+            Date availableFrom = new SimpleDateFormat("yyyy-MM-dd").parse(itemDTO.getAvailableFrom());
+            Date availableTo = new SimpleDateFormat("yyyy-MM-dd").parse(itemDTO.getAvailableTo());
 
             Long _userId = Long.valueOf(itemDTO.getUser());
             User user = userRepository.getOne(_userId);
@@ -110,10 +110,10 @@ public class ItemController {
                 fileName = itemDTO.getUser() + "_" + itemDTO.getTitle() + "_" +
                         StringUtils.cleanPath(Objects.requireNonNull(picture.getOriginalFilename()));
                 String directory = "items/";
-                storageService.save(picture, fileName,directory);
+                storageService.save(picture, fileName, directory);
             }
 
-            Item _item = itemRepository.save(new Item(title, description, fileName, available, user));
+            Item _item = itemRepository.save(new Item(title, description, fileName, availableFrom, availableTo, user));
             user.addItem(_item);
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);
@@ -134,7 +134,6 @@ public class ItemController {
                 Date fromD = new SimpleDateFormat("yyyy-MM-dd").parse(from);
                 Date tillD = new SimpleDateFormat("yyyy-MM-dd").parse(till);
                 items = itemRepository.filterItemListBy(title, fromD, tillD);
-                System.out.println(items);
             } else if (!from.equals("") || !till.equals("")){
                 if (!from.equals("")) {
                     Date fromD = new SimpleDateFormat("yyyy-MM-dd").parse(from);
@@ -159,19 +158,20 @@ public class ItemController {
 
     @PutMapping("/items/editItem/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable("id") long id, @ModelAttribute Item item,@RequestParam(value = "fileImage",
-            required = false) MultipartFile picture ) {
+            required = false) MultipartFile picture) {
         Optional<Item> itemData = itemRepository.findById(id);
         if (itemData.isPresent()) {
             Item _item = itemData.get();
-            _item.setTitle(  item.getTitle());
+            _item.setTitle(item.getTitle());
             _item.setDescription(item.getDescription());
-            _item.setAvailable(item.isAvailable());
+            _item.setAvailableFrom(item.getAvailableFrom());
+            _item.setAvailableTo(item.getAvailableTo());
             String fileName = "";
             if (picture != null) {
                 fileName = item.getUser().getId() + "_" + item.getTitle() + "_" +
                         StringUtils.cleanPath(Objects.requireNonNull(picture.getOriginalFilename()));
                 String directory = "items/";
-                storageService.save(picture, fileName,directory);
+                storageService.save(picture, fileName, directory);
                 item.setPicture(fileName);
             }
             _item.setPicture(item.getPicture());
@@ -208,18 +208,34 @@ public class ItemController {
 
     }
 
-    @GetMapping("/items/available")
-    public ResponseEntity<List<Item>> findByAvailable() {
+    @GetMapping("/items/available/{id}")
+    public ResponseEntity<Boolean> isItemAvailable(@PathVariable("id") long id, String Dfrom, String DTill) {
         try {
-            List<Item> items = itemRepository.findByAvailable(true);
+            int itemExistInBorrow;
+            if (Dfrom == null && DTill == null) {
+                itemExistInBorrow = borrowRepository.getBorrowedItemIn(id, new Date(), new Date());
+                if (itemRepository.isAvailable(id) == 0 || itemExistInBorrow != 0) {
+                    return new ResponseEntity<>(false, HttpStatus.OK);
+                }
 
-            if (items.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(true, HttpStatus.OK);
+
+            } else {
+                Date from = new SimpleDateFormat("yyyy-MM-dd").parse(Dfrom);
+                Date to = new SimpleDateFormat("yyyy-MM-dd").parse(DTill);
+
+                itemExistInBorrow = borrowRepository.getBorrowedItemIn(id, from, to);
+                if (itemRepository.isAvailable(id) == 0 || itemExistInBorrow != 0) {
+                    return new ResponseEntity<>(false, HttpStatus.OK);
+                }
+
+                return new ResponseEntity<>(true, HttpStatus.OK);
             }
-            return new ResponseEntity<>(items, HttpStatus.OK);
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
 
     @GetMapping(

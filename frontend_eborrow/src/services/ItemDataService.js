@@ -41,6 +41,10 @@ class ItemDataService {
   getMyGegenstaende(id){
     return http.get(`/items/user/${id}`)
   }
+
+  isAvailable(id){
+    return http.get(`/items/available/${id}`)
+  }
 }
 
 export default new ItemDataService();

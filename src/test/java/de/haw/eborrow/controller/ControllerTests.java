@@ -63,7 +63,7 @@ class ItemControllerTest {
 		User user = new User("user", "$2a$10$MeWhrWoE2yvclNulZyCZb.IDxlJIhQDMbm8pOVhH3DRGFaz7ZpaaS", "User 1", "isLastaName", "user@using.com", "w", new Date(111),
 				"pic.jpg", new Address("Berliner Tor", "1", 20099, "Hamburg", "Germany"));
 
-		Item item = new Item("Rasenmaeher", "Gutes Geraet, ich liebe es, liebst du es auch?", "maeh.jpg", true, user);
+		Item item = new Item("Rasenmaeher", "Gutes Geraet, ich liebe es, liebst du es auch?", "maeh.jpg", new Date(111),new Date(222), user);
 
 		MvcResult result = mvc.perform(request)
 				.andExpect(jsonPath("$[0].id", is(1)))
