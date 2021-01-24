@@ -194,12 +194,11 @@ export default {
 
       if (!this.validEditItemData()) {
         var data = new FormData();
-        data.append("id", this.currentItem.id);
         data.append("title", this.currentItem.title);
         data.append("description", this.currentItem.description);
         data.append("picture", this.currentItem.picture);
-        data.append("availableFrom", this.currentItem.availableFrom);
-        data.append("availableTo", this.currentItem.availableTo);
+        data.append("availableFrom", new Date(this.currentItem.availableFrom));
+        data.append("availableTo", new Date(this.currentItem.availableTo));
         data.append("user", String(this.currentItem.user.id));
         data.append("fileImage", this.fileImage);
         confirm("Do you really want to edit this Item?");
