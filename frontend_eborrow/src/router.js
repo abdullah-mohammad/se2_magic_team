@@ -72,6 +72,11 @@ export const router = new Router({
       name: "borrow",
       component: () => import("./components/ItemBorrow"),
     },
+    {
+      path: "/borrowedlist",
+      name: "borrowedlist",
+      component: () => import("./components/items/BorrowedList"),
+    }
   ],
 });
 

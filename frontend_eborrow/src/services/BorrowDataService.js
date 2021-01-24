@@ -32,6 +32,9 @@ class BorrowDataService {
     getBorrowedCount(data) {
         return http.post("/borrow/check", data);
     }
+    getBorrowedList(id){
+        return http.get(`/borrow/user/${id}`)
+    }
 }
 
 export default new BorrowDataService();

@@ -11,13 +11,14 @@ import org.springframework.data.repository.query.Param;
 import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface BorrowRepository extends JpaRepository<Borrow,Long> {
 
     @Override
     List<Borrow> findAll();
 
-    List<Borrow> findByUser(User user);
+    List<Borrow> findByUser(Optional<User> user);
 
     List<Borrow> findByItem(Item item);
 
