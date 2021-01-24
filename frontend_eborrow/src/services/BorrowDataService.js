@@ -24,6 +24,9 @@ class BorrowDataService {
     deleteAll() {
         return http.delete(`/borrow`);
     }
+    getBorrowedList(id){
+        return http.get(`/borrow/user/${id}`)
+    }
 }
 
 export default new BorrowDataService();

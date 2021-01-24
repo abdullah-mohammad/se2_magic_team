@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -65,8 +62,30 @@ public class BorrowController {
         }
     }
 
-    @GetMapping("/borrow/{user-id:}")
-    public ResponseEntity<List<Borrow>> getBorrowedItems(@PathVariable("user-id") String _userId) {
+    @GetMapping("/borrow/user/{id}")
+    public ResponseEntity<List<Borrow>> getBorrowedItems(@PathVariable("id") long id) {
+        try {
+            System.out.println(id);
+            Long userId = Long.valueOf(id);
+            Optional<User> user = userRepository.findById(userId);
+            if (!user.isPresent()) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            List<Borrow> borrowedList = borrowRepository.findByUser(user);
+
+            if (borrowedList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            System.out.println("getBorrowedItems...." + borrowedList);
+            return new ResponseEntity<>(borrowedList, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println("getBorrowedItems....error");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+ /*   public ResponseEntity<List<Borrow>> getBorrowedItems(@PathVariable("user-id") String _userId) {
         try {
             Long userId = Long.valueOf(_userId);
             User user = userRepository.getOne(userId);
@@ -78,5 +97,5 @@ public class BorrowController {
             System.out.println("getBorrowedItems....error");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }*/
 }

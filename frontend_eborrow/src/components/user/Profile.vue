@@ -79,7 +79,7 @@
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
 
-                <a :href="''" class="text-secondary">borrowed</a>
+                <a :href="'borrowedlist/'" class="text-secondary">borrowed</a>
               </li>
             </ul>
           </div>
