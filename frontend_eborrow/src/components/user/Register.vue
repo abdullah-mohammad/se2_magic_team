@@ -185,6 +185,81 @@
                   </div>
                 </div>
               </div>
+              <hr>
+              <div class="row">
+                    <div class="col-sm-9 text-secondary mb-3">
+                        <input id="street" v-model="address.street" type="text" class="form-control"
+                            name="street"
+                            placeholder="Street"
+                            />
+                        <div
+                            v-if="messageStreet"
+                            class="alert"
+                            :class="successful ? 'alert-success' : 'alert-danger'"
+                        >
+                            {{ messageStreet }}
+                        </div>
+                    </div>
+                    <div class="col-sm-3 mb-3 text-secondary">
+                        <input id="streetnumber" v-model="address.streetnumber" type="number" class="form-control"
+                            name="streetnumber"
+                            placeholder="Nr."
+                            />
+                        <div
+                            v-if="messageStreetNr"
+                            class="alert"
+                            :class="successful ? 'alert-success' : 'alert-danger'"
+                        >
+                            {{ messageStreetNr }}
+                        </div>
+                    </div>
+              </div>
+
+              <div class="row">
+                    <div class="col-sm-4 text-secondary mb-3">
+                        <input id="zip" v-model="address.zipcode" type="number" class="form-control"
+                            name="zip"
+                            placeholder="Zip"
+                            />
+                        <div
+                            v-if="messageZip"
+                            class="alert"
+                            :class="successful ? 'alert-success' : 'alert-danger'"
+                        >
+                            {{ messageZip }}
+                        </div>
+                    </div>
+                    <div class="col-sm-8 mb-3 text-secondary">
+                        <input id="city" v-model="address.city" type="text" class="form-control"
+                            name="city"
+                            placeholder="City"
+                            />
+                        <div
+                            v-if="messageCity"
+                            class="alert"
+                            :class="successful ? 'alert-success' : 'alert-danger'"
+                        >
+                            {{ messageCity }}
+                        </div>
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-sm-12 mb-3 text-secondary">
+                        <input type="text" class="form-control"
+                            id="country"
+                            v-model="address.country"
+                            name="country"
+                            placeholder="Country"
+                        >
+                        <div
+                            v-if="messageCountry"
+                            class="alert"
+                            :class="successful ? 'alert-success' : 'alert-danger'"
+                        >
+                            {{ messageCountry }}
+                        </div>
+                    </div>
+              </div>
               <br />
               <div class="row">
                 <div class="col-sm-12 text-center">
@@ -225,7 +300,10 @@
 
 <script>
 import User from "../../models/user";
+import Address from "../../models/address";
 import authService from "../../services/AuthService";
+import addressService from "../../services/AddressDataService";
+import userDataService from '../../services/UserDataService';
 
 export default {
   name: "Register",
@@ -245,6 +323,12 @@ export default {
       messageBirthDate: "",
       selectedFile: null,
       url: null,
+      address: new Address(),
+      messageStreet: "",
+      messageStreetNr: "",
+      messageZip: "",
+      messageCity: "",
+      messageCountry: "",
     };
   },
   computed: {},
@@ -254,6 +338,13 @@ export default {
       this.message = "";
       this.submitted = true;
       if (!this.validUserData()) {
+        var addressData = new FormData();
+        addressData.append("street", this.address.street);
+        addressData.append("streetnumber", this.address.streetnumber);
+        addressData.append("zipcode", this.address.zipcode);
+        addressData.append("city", this.address.city);
+        addressData.append("country", this.address.country);
+
         var userdata = new FormData();
         userdata.append("username", this.user.username);
         userdata.append("password", this.user.password);
@@ -271,8 +362,16 @@ export default {
         var json = JSON.stringify(object);
         console.log(json);
 
+        // save user
         authService.register(userdata).then(
           (data) => {
+              // save address
+              addressData.append("userId", data.data.id);
+              addressService.save(addressData)
+                            .then(resAddr=>{
+                                // update user-Address
+                                userDataService.editUserAddress(data.data.id, resAddr.data.id)
+                            })
             this.message = data.message;
             this.successful = true;
           },
@@ -282,6 +381,7 @@ export default {
             this.successful = false;
           }
         );
+
       }
     },
     onFileSelected(event) {
@@ -306,6 +406,12 @@ export default {
       this.messageEmail = "";
       this.messageGender = "";
       this.messageBirthDate = "";
+
+      this.messageStreet = "";
+      this.messageStreetNr = "";
+      this.messageZip = "";
+      this.messageCity = "";
+      this.messageCountry = "";
 
       var isInvalid = false;
       if (this.user.username === undefined || this.user.username === "") {
@@ -374,6 +480,42 @@ export default {
         isInvalid = true;
       }
 
+      if (this.address.street === undefined || this.address.street === "") {
+        this.messageStreet = "please fill in the street. \n"
+        isInvalid = true;
+      }
+      if (this.address.street && (this.address.street.length < 2 || this.address.street.length > 50)) {
+        this.messageStreet = "Length is out of bound. \n";
+        isInvalid = true;
+      }
+
+      if (this.address.streetnumber === undefined || this.address.streetnumber === "") {
+        this.messageStreetNr = "please fill in the street-number. \n"
+        isInvalid = true;
+      }
+      if (this.address.zipcode === undefined || this.address.zipcode === "") {
+        this.messageZip = "please fill in the address-zipcode. \n"
+        isInvalid = true;
+      }
+
+      if (this.address.city === undefined || this.address.city === "") {
+        this.messageCity = "please fill in the city. \n"
+        isInvalid = true;
+      }
+      if (this.address.city && (this.address.city.length < 2 || this.address.city.length > 50)) {
+        this.messageCity = "Length is out of bound. \n";
+        isInvalid = true;
+      }
+
+      if (this.address.country === undefined || this.address.country === "") {
+        this.messageCountry = "please fill in the country. \n"
+        isInvalid = true;
+      }
+      if (this.address.country && (this.address.country.length < 2 || this.address.country.length > 50)) {
+        this.messageCountry = "Length is out of bound. \n";
+        isInvalid = true;
+      }
+      
       return isInvalid;
     },
     /** Validate an e-mail address.

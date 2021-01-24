@@ -5,6 +5,10 @@ const API_KEY = "5b3ce3597851110001cf6248b9081736f3b748a287a6a218bf156167"
 
 class AddressDataService {
 
+    save(data) {
+        return http.post("/address", data);
+    }
+
     getAll() {
         return http.get("/addresses");
     }

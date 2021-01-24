@@ -5,6 +5,10 @@ class UserDataService {
     return http.put(`/users/edit-user/${id}`, data);
   }
 
+  editUserAddress(id, addrId) {
+    return http.put(`/users/edit-user-address/${id}`, addrId);
+  }
+
   getUser(id) {
     return http.get(`/users/user/${id}`);
   }

@@ -4,6 +4,8 @@ import Vuex from 'vuex';
 import { auth } from './auth.module';
 import { items } from './items.module';
 import { myitems } from './myitems.module';
+import { borrowedlist } from './borrowedlist.module';
+
 
 import { user } from './user.module';
 
@@ -14,6 +16,7 @@ export default new Vuex.Store({
     auth,
     items,
     myitems,
+    borrowedlist,
     user
   }
 });

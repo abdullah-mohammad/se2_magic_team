@@ -140,6 +140,7 @@
                                             <select v-model="user.gender" name="gender" class="custom-select custom-select">
                                                 <option :selected="user.gender === 'm'" value="m">M</option>
                                                 <option :selected="user.gender === 'f'" value="f">F</option>
+                                                <option :selected="user.gender === 'd'" value="d">D</option>
                                             </select>
                                             <div
                                                     v-if="messageGender"
