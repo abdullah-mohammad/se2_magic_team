@@ -34,6 +34,14 @@ public class Address {
         this.country = country;
     }
 
+    public Address(String street, String streetnumber, int zipcode, String city, String country, User user) {
+        this.street = street;
+        this.streetnumber = streetnumber;
+        this.zipcode = zipcode;
+        this.city = city;
+        this.country = country;
+    }
+
 
     // getters and setters
     public long getId() {
