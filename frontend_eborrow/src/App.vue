@@ -18,7 +18,7 @@
           <ul class="navbar-nav gs-navbar-nav ml-auto mt-2 mt-lg-3">
             <!-- Links -->
               <li class="nav-item gs-nav-item">
-                <router-link to="/items" class="nav-link gs-nav-link">Discover <span class="sr-only">(current)</span></router-link>
+                <router-link to="/" class="nav-link gs-nav-link">Discover <span class="sr-only">(current)</span></router-link>
               </li>
               <li class="nav-item">
                 <router-link to="/add" class="nav-link gs-nav-link">Share</router-link>
@@ -27,7 +27,7 @@
                 <router-link to="/items" class="nav-link gs-nav-link">Borrow</router-link>
               </li>
               <li class="nav-item">
-                <router-link to="/add" class="nav-link gs-nav-link">Help</router-link>
+                <router-link to="/career" class="nav-link gs-nav-link">Help</router-link>
               </li>
             <!-- Links -->
           
@@ -39,11 +39,17 @@
                   </a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li class="dropdown-item nav-item gs-nav-item">
-                      <router-link to="/" class="nav-link gs-nav-link" v-on:click.native="logOut">Log Out</router-link>
+                      <router-link to="/myitems" class="nav-link gs-nav-link">My tools</router-link>
+                    </li>
+                    <li class="dropdown-item nav-item gs-nav-item">
+                      <router-link to="/profile" class="nav-link gs-nav-link">Profile</router-link>
+                    </li>
+                    <li class="dropdown-item nav-item gs-nav-item">
+                      <router-link :to="'/edit-profile/'+currentUser.id" class="nav-link gs-nav-link">Settings</router-link>
                     </li>
                     <div class="dropdown-divider"></div>
                     <li class="dropdown-item nav-item gs-nav-item">
-                      <router-link to="/profile" class="nav-link gs-nav-link">Profile</router-link>
+                      <router-link to="/" class="nav-link gs-nav-link" v-on:click.native="logOut">Log Out</router-link>
                     </li>
                   </div>
                 </li>

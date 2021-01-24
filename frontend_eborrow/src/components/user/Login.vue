@@ -35,7 +35,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-primary btn-block" :disabled="loading">
+                    <button class="btn btn-primary btn-block" :disabled="loading"
+                        style="font-family: 'GoShareFont'; background: #539AC5; border-radius: 5px; font-weight: 600; letter-spacing:1.5px; border:none"
+                    >
             <span
                     v-show="loading"
                     class="spinner-border spinner-border-sm"

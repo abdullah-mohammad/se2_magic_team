@@ -1,9 +1,8 @@
 <template>
   <div v-if="currentItem">
     <!-- Page Heading -->
-    <h1 class="my-4">Item
-      <small>details</small>
-    </h1>
+    <h2 class="my-4 gs-title">Item details: </h2>
+    <!-- Page Heading -->
 
     <div class="container bootdey">
       <div class="col-md-12">
@@ -33,11 +32,11 @@
               </div>
               <br>
               <p>
-                <button @click="navigateBack" class="btn btn-round btn-primary gs-btn-rounded gs-btn-blue"
+                <button @click="navigateBack" class="gs-btn-red .gs-a btn btn-sm btn-danger pt-1 pb-1 pl-3 pr-3 mr-3"
                         type="button"><i class="fa fa-chevron-left"></i> Back
                 </button>
                 <!--<button class="btn btn-round btn-success gs-btn-rounded" type="button"><i class="fa fa-shopping-cart"></i> Borrow</button>-->
-                <router-link  v-if="currentItem.user.id!==currentUser.id" :to="{ path: '/borrow/' + currentItem.id}" class="btn btn-round btn-success gs-btn-rounded">
+                <router-link  v-if="currentItem.user.id!==currentUser.id" :to="{ path: '/borrow/' + currentItem.id}" class="btn btn-sm btn-primary gs-btn-blue pt-1 pb-1 pl-3 pr-3">
                   <i class="fa fa-shopping-cart"></i> Borrow
                 </router-link>
               </p>

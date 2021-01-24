@@ -1,172 +1,185 @@
 <template>
-
     <div class="col-md-12">
-        <div class="card card-container">
-            <img id="profile-img" v-if="url" :src="url" class="profile-img-card"/>
-            <form name="form" @submit.prevent="handleRegister">
-                <div v-if="!successful">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input
-                                id="username"
-                                v-model="user.username"
-                                type="text"
-                                class="form-control"
-                                name="username"
-
-                        />
-
-                        <div
-                                v-if="messageUsername"
-                                class="alert"
-                                :class="successful ? 'alert-success' : 'alert-danger'"
-                        >
-                            {{ messageUsername }}
+        <!-- Page Heading -->
+        <h2 class="my-4 gs-title">Create your account in GoShare community: </h2>
+        <!-- Page Heading -->
+        <br>
+        <!-- Register-Block -->
+        <form name="form" @submit.prevent="handleRegister">
+            <div v-if="!successful" class="row gutters-sm">
+                <!-- Profile-Image -->
+                <div class="col-md-4 mb-3 mr-0">
+                    <div class="card m-0 p-0"  style="border: none; box-shadow:none; background:none;">
+                        <div class="card-body m-0 p-0">
+                            <div class="d-flex flex-column align-items-center text-center">
+                                <img :src="url ? url : 'https://via.placeholder.com/150'" alt="Profile picture"
+                                    class="img-thumbnail"
+                                    width="230"
+                                >
+                                <div class="mt-3 mb-3">
+                                    <div class="custom-file">
+                                        <input
+                                            @change="onFileSelected"
+                                            type="file"
+                                            id="picture"
+                                            name="fileImage"
+                                            accept="image/png,image/jpeg"
+                                            class="custom-file-input"
+                                        />
+                                        <label id="fileImageLabel" class="custom-file-label" for="fileImage"></label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input
-                                id="password"
-                                v-model="user.password"
-                                type="password"
-                                class="form-control"
-                                name="password"
-
-                        />
-                        <div
-                                v-if="messagePassword"
-                                class="alert"
-                                :class="successful ? 'alert-success' : 'alert-danger'"
-                        >
-                            {{ messagePassword }}
-                        </div>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="firstname">firstname</label>
-                        <input
-                                id="firstname"
-                                v-model="user.firstname"
-                                type="text"
-                                class="form-control"
-                                name="firstname"
-
-                        />
-
-                        <div
-                                v-if="messageFirstname"
-                                class="alert"
-                                :class="successful ? 'alert-success' : 'alert-danger'"
-                        >
-                            {{ messageFirstname }}
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="lastname">lastname</label>
-                        <input
-                                id="lastname"
-                                v-model="user.lastname"
-                                type="text"
-                                class="form-control"
-                                name="lastname"
-
-                        />
-
-                        <div
-                                v-if="messageLastname"
-                                class="alert"
-                                :class="successful ? 'alert-success' : 'alert-danger'"
-                        >
-                            {{ messageLastname }}
-                        </div>
-
-                    </div>
-                    <div class="form-group">
-                        <label for="email">email</label>
-                        <input
-                                id="email"
-                                v-model="user.email"
-                                type="text"
-                                class="form-control"
-                                name="email"
-
-                        />
-                        <div
-                                v-if="messageEmail"
-                                class="alert"
-                                :class="successful ? 'alert-success' : 'alert-danger'"
-                        >
-                            {{ messageEmail }}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">gender</label>
-                        <select
-                                id="gender"
-                                v-model="user.gender"
-
-                        >
-                            <option  value="f" >F</option>
-                            <option value="m">M</option>
-                        </select>
-                        <div
-                                v-if="messageGender"
-                                class="alert"
-                                :class="successful ? 'alert-success' : 'alert-danger'"
-                        >
-                            {{ messageGender }}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="birthdate">birthdate</label>
-                        <input
-                                id="birthdate"
-                                v-model="user.birthdate"
-                                type="date"
-                                class="form-control"
-                                name="birthdate"
-                        />
-                        <div
-                                v-if="messageBirthDate"
-                                class="alert"
-                                :class="successful ? 'alert-success' : 'alert-danger'"
-                        >
-                            {{ messageBirthDate }}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="picture">picture</label>
-                        <input
-                                @change="onFileSelected"
-                                type="file"
-                                id="picture"
-                                name="fileImage"
-                                accept="image/png,image/jpeg"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <button class="btn btn-primary btn-block">Sign Up</button>
                     </div>
                 </div>
-                <div v-if="successful">Account created, nice to have you on board!</div>
-            </form>
+                <!-- Profile-Image -->
 
-
-            <div
-                    v-if="message"
-                    class="alert"
-                    :class="successful ? 'alert-success' : 'alert-danger'"
-            >
-                {{ message }}
+                <!-- Edit-Form -->
+                <div class="col-md-7">
+                    <div class="card mb-3 mt-0">
+                        <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-12 text-secondary">
+                                        <input type="text" class="form-control"
+                                            id="username"
+                                            v-model="user.username"
+                                            name="username"
+                                            placeholder="Username"
+                                        >
+                                        <div
+                                            v-if="messageUsername"
+                                            class="alert"
+                                            :class="successful ? 'alert-success' : 'alert-danger'"
+                                        >
+                                            {{ messageUsername }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-12 text-secondary">
+                                        <input type="text" class="form-control"
+                                            id="firstname"
+                                            v-model="user.firstname"
+                                            name="firstname"
+                                            placeholder="Firstname"
+                                        >
+                                        <div
+                                            v-if="messageFirstname"
+                                            class="alert"
+                                            :class="successful ? 'alert-success' : 'alert-danger'"
+                                        >
+                                            {{ messageFirstname }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-12 text-secondary">
+                                        <input type="text" class="form-control"
+                                            id="lastname"
+                                            v-model="user.lastname"
+                                            name="lastname"
+                                            placeholder="Lastname"
+                                        >
+                                        <div
+                                            v-if="messageLastname"
+                                            class="alert"
+                                            :class="successful ? 'alert-success' : 'alert-danger'"
+                                        >
+                                            {{ messageLastname }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-12 text-secondary">
+                                        <input type="text" class="form-control" placeholder="Email"
+                                            id="email"
+                                            v-model="user.email"
+                                            name="email"
+                                        >
+                                        <div
+                                            v-if="messageEmail"
+                                            class="alert"
+                                            :class="successful ? 'alert-success' : 'alert-danger'"
+                                        >
+                                            {{ messageEmail }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-12 text-secondary">
+                                        <input type="password" class="form-control"
+                                            id="password"
+                                            v-model="user.password"
+                                            name="password"
+                                            placeholder="Password"
+                                        >
+                                        <div
+                                            v-if="messagePassword"
+                                            class="alert"
+                                            :class="successful ? 'alert-success' : 'alert-danger'"
+                                        >
+                                            {{ messagePassword }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3 text-secondary">
+                                        <select v-model="user.gender" id="gender" name="gender" class="custom-select custom-select">
+                                            <option value="m">M</option>
+                                            <option value="f">F</option>
+                                        </select>
+                                        <div
+                                            v-if="messageGender"
+                                            class="alert"
+                                            :class="successful ? 'alert-success' : 'alert-danger'"
+                                        >
+                                            {{ messageGender }}
+                                        </div>
+                                    </div>
+                                     <div class="col-sm-6 text-secondary">
+                                        <input id="birthdate" v-model="user.birthdate" type="date" class="form-control"
+                                        name="birthdate"/>
+                                        <div
+                                            v-if="messageBirthDate"
+                                            class="alert"
+                                            :class="successful ? 'alert-success' : 'alert-danger'"
+                                        >
+                                            {{ messageBirthDate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-12 text-center">
+                                        <input 
+                                            type="submit" 
+                                            class="btn btn-sm btn-primary pt-1 pb-1 pl-4 pr-4" 
+                                            style="font-family: 'GoShareFont'; background: #539AC5; border-radius: 5px; font-weight: 600; letter-spacing:1.5px; border:none"
+                                            value="Let's do it"> 
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Edit-Form -->
             </div>
-
+            <!-- Edit-Block -->
+            <div v-if="successful">Account created, nice to have you on board!</div>
+        </form>
+        <!-- Register-Block -->
+        
+        <div
+            v-if="message"
+            class="alert"
+            :class="successful ? 'alert-success' : 'alert-danger'"
+        >
+            {{ message }}
         </div>
     </div>
 </template>
@@ -240,8 +253,12 @@
                 if (event.target.files[0] != null) {
                     this.user.profilepicture = event.target.files[0];
                     this.url = URL.createObjectURL(this.user.profilepicture);
+                    document.getElementById("fileImageLabel").classList.add("selected")
+                    document.getElementById("fileImageLabel").innerHTML = this.user.profilepicture.name
                 } else {
                     this.url = null;
+                    document.getElementById("fileImageLabel").classList.remove("selected")
+                    document.getElementById("fileImageLabel").innerHTML = ""
                 }
             },
             validUserData() {
