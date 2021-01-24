@@ -72,8 +72,6 @@ public class UserController {
     public ResponseEntity<User> signUp(@ModelAttribute SignupRequest userRequest,@RequestParam(value = "profilepicture",
             required = false) MultipartFile  profilepicture) {
         Date birthdate;
-        //TODO: Adress Felder in Signup Form
-        Optional<Address> address = addressRepository.findById(1L);
         try {
             if (userRequest.getPassword().length()<5){
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -176,6 +174,24 @@ public class UserController {
             return new ResponseEntity<User>(applicationUserRepository.save(_user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PreAuthorize("permitAll()")
+    @PutMapping("/edit-user-address/{id}")
+    public ResponseEntity<User> editUserAddress(@PathVariable("id") long id,
+                                                @RequestBody long addressId) {
+        try {
+            Optional<User> user = applicationUserRepository.findById(id);
+            if (user.isPresent()) {
+                User _user = user.get();
+                Address address = addressRepository.findById(addressId).orElse(null);
+                _user.setAddress(address);
+                return new ResponseEntity<>(applicationUserRepository.save(_user), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
