@@ -109,7 +109,6 @@
                   :src="url ? url : 'https://via.placeholder.com/150'"
                   class="img-thumbnail"
                   width="275"
-                  ∏
                   alt="Item picture"
                 />
               </div>
