@@ -22,7 +22,8 @@ export const items = {
         items: [],
         isLoaded: false,
         toFilter: false,
-        nearMeItems: []
+        nearMeItems: [],
+        locationApiError: false
     },
     mutations: {
         SET_ITEMS(state, payload) {
@@ -39,12 +40,16 @@ export const items = {
         },
         GET_ITEM(state, payload) {
             state.items = payload;
-        }
+        },
+        SET_LOCATION_API_ERROR(state, value) {
+            state.locationApiError = value;
+        },
     },
     actions: {
         async setItems(context, filterData=null){
             try {
                 context.commit('SET_LOADED', false);
+                context.commit('SET_LOCATION_API_ERROR', false);
 
                 const res = (filterData) ? await ItemDataService.filter(filterData) : await ItemDataService.getAll();
                 const userIsAuthentified = context.rootState.auth.user != null;
@@ -94,7 +99,8 @@ export const items = {
 
                             await Promise.all(promises)
                             if(!nearMeItemsWithGeoCodes[0].geocode || allItemEntriesDistancesEqualInfinity(nearMeItemsWithGeoCodes, MODE.DISTANCE_FROM_ME))
-                                    alert("An API-Error occured while trying to compute distance between your address and items location")
+                                    //alert("An API-Error occured while trying to compute distance between your address and items location")
+                                    context.commit('SET_LOCATION_API_ERROR', true);
 
                             context.commit('SET_NEAR_ME_ITEMS', nearMeItemsWithGeoCodes);
                             context.commit('SET_LOADED', true);
@@ -158,6 +164,12 @@ export const items = {
                                 
                         })
                         await Promise.all(promises)
+                        /* frueher war das nicht da!! */
+                        if(!nearMeItemsWithGeoCodes[0].geocode || allItemEntriesDistancesEqualInfinity(nearMeItemsWithGeoCodes, MODE.DISTANCE_FROM_ME))
+                                    //alert("An API-Error occured while trying to compute distance between your address and items location")
+                                    context.commit('SET_LOCATION_API_ERROR', true);
+                            context.commit('SET_NEAR_ME_ITEMS', nearMeItemsWithGeoCodes);
+                        /* END frueher war das nicht da!! */
 
                         // Now: setItemsInlineAdresses & geoCodes & distances from filter location for 'sort'
                         const nearMeItemsWithFromMeDistance = context.state.nearMeItems; // copy of it
@@ -192,7 +204,9 @@ export const items = {
                             
                             if(sortPromises) await Promise.all(sortPromises)
                             if(filterData.get('where') && (!nearMeItemsWithGeoCodes[0].geocode || allItemEntriesDistancesEqualInfinity(nearMeItemsWithGeoCodes, MODE.DISTANCE_FROM_FILTER_LOCATION)))
-                                    alert("An API-Error occured while trying to compute distance between the filter location and items location")
+                                    //alert("An API-Error occured while trying to compute distance between the filter location and items location")
+                                    context.commit('SET_LOCATION_API_ERROR', true);
+                            
                             // sort result
                             if(filterData.get('where') && !allItemEntriesDistancesEqualInfinity(nearMeItemsWithGeoCodes, MODE.DISTANCE_FROM_FILTER_LOCATION)) {
                                 nearMeItemsWithGeoCodes.sort((a,b) => a.distanceFromFilterLocation - b.distanceFromFilterLocation);
@@ -247,7 +261,9 @@ export const items = {
 
                             if(promises) await Promise.all(promises)
                             if(filterData.get('where') && (!itemsWithGeoCodes[0].geocode || allItemEntriesDistancesEqualInfinity(itemsWithGeoCodes, MODE.DISTANCE_FROM_FILTER_LOCATION)))
-                                    alert("An API-Error occured while trying to compute distance between the filter location and items location")
+                                    //alert("An API-Error occured while trying to compute distance between the filter location and items location")
+                                    context.commit('SET_LOCATION_API_ERROR', true);
+
                             // sort result
                             if(filterData.get('where') && !allItemEntriesDistancesEqualInfinity(itemsWithGeoCodes, MODE.DISTANCE_FROM_FILTER_LOCATION)) {
                                 itemsWithGeoCodes.sort((a,b) => a.distanceFromFilterLocation - b.distanceFromFilterLocation);
@@ -298,6 +314,10 @@ export const items = {
                 console.log(e);
                 return Promise.reject(e);
             }
+        },
+
+        resetLocationApiError(context) {
+            context.commit('SET_LOCATION_API_ERROR', false);
         }
 
     },
