@@ -86,6 +86,12 @@
             Loading filter from your address...
         </div>
       </div>
+      <div v-if="locationApiError" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Location-API Error!</strong> <br> An API-Error occured while trying to compute distance between your address and items location
+        <button style="background:none;" type="button" class="close">
+          <span style="font-size:25px" @click="resetLocationApiError">&times;</span>
+        </button>
+      </div>
     <div class="container">
       <div class="row" v-if="showItems" @submit="itemsSuchen">
       <div style="width: 100%;" v-for="(item) in (currentUser? nearMeItems.slice(startLimit, endLimit) : items.slice(startLimit, endLimit))" :key="item.id">
@@ -182,7 +188,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('items', ['items', 'nearMeItems','isLoaded']),
+    ...mapState('items', ['items', 'nearMeItems','isLoaded', 'locationApiError']),
     getPageCount() { // total pages
       return this.currentUser ? this.nearMeItems.length / MAX_NUMBER_ITEMS_PER_LIST : this.items.length / MAX_NUMBER_ITEMS_PER_LIST;
     },
@@ -197,7 +203,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      setItems: "items/setItems"
+      setItems: "items/setItems",
+      resetLocationApiError: "items/resetLocationApiError"
     }),
     paginateCallback: function (pageNum) {
       this.startLimit = MAX_NUMBER_ITEMS_PER_LIST * (pageNum - 1);
