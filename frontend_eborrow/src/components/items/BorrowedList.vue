@@ -22,7 +22,9 @@
               </div>
               <div class="gs-tool-card-actions ">
                 <router-link :to="{ path: '/items/'+ borrowedItem.id}"
-                             class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">see details
+                             class="gs-btn-blue .gs-a btn btn-sm btn-primary pt-1 pb-1 pl-3 pr-3 mt-3"
+                             style="font-family: 'GoShareFont'; border-radius: 5px; font-weight: 400; letter-spacing:1.25px; border:none;"
+                          >see details
                 </router-link>
               </div>
             </div>

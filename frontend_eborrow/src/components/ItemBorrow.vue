@@ -3,13 +3,16 @@
     <div v-if="!currentUser">
       If you
       <router-link to="/login">log in</router-link>
-      , you can add you items to share them.
+      , you will be able to borrow an item. <br>
+      If you don't have an account, please click
+      <router-link to="/register">here</router-link>
+      to register yourself.
     </div>
     <div v-if="!submitted">
       <div v-if="currentItem">
         <!-- Page Heading -->
         <h2 class="my-4 gs-title">borrow item: </h2>
-        <div class="container bootdey">
+        <div class="container pl-0 pr-0 bootdey">
           <div class="col-md-12">
             <section class="panel">
               <div class="panel-body">
@@ -71,12 +74,15 @@
                   <br>
                   <p>
                     <button @click="navigateBack"
-                            class="btn btn-round btn-primary gs-btn-rounded gs-btn-blue"
+                            class="gs-btn-blue btn btn-primary pt-1 pb-1 pl-3 pr-3 mr-3"
+                            style="font-family: 'GoShareFont'; border-radius: 5px; font-weight: 400; letter-spacing:1.25px; border:none;"
                             type="button"><i class="fa fa-chevron-left"></i> Back
                     </button>
-                    <button @click="borrowItem" v-if="currentItem.user.id!==currentUser.id"
-
-                            class="btn btn-round btn-success gs-btn-rounded" type="button"><i
+                    <button @click="borrowItem"
+                            :disabled="!(currentUser && currentItem.user.id!==currentUser.id)"
+                            class="btn btn-success  pt-1 pb-1 pl-3 pr-3"
+                            style="font-family: 'GoShareFont'; border-radius: 5px; font-weight: 400; letter-spacing:1.25px; border:none;"
+                            type="button"><i
                         class="fa fa-shopping-cart"></i> Borrow
                     </button>
                   </p>

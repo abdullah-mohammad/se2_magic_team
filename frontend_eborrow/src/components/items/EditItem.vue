@@ -1,124 +1,164 @@
 <template>
   <div v-if="currentItem">
-    <div class="container">
-      <div>
-        <!-- Page Heading -->
-        <nav aria-label="breadcrumb" class="main-breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Item</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit Item</li>
-          </ol>
-          <div class="col-md-8">
-            <div class="card mt-3">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-sm-3">
-                    <h6 class="mb-0">new Title</h6>
-                  </div>
-                  <div class="col-sm-9 text-secondary">
-                    <input type="text" class="form-control" placeholder="Enter a new Title"
-                           v-model="currentItem.title">
-                    <div v-if="messageNewTitle"
-                         class="alert"
-                         :class="successful ? 'alert-success' : 'alert-danger'">
-                      {{ messageNewTitle }}
-                    </div>
-                  </div>
+     <!-- Page Heading -->
+    <h2 class="my-4 gs-title">Edit Item: </h2>
+    <!-- Page Heading -->
 
+    <div>
+        <div class="col-md-7 ml-0" style="display: inline-block">
+          <div class="form-group">
+            <label for="title" class="font-weight-bold">New Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              v-model="currentItem.title"
+              placeholder="Enter a new Title"
+            />
+            <div v-if="messageNewTitle"
+                  class="alert"
+                  :class="successful ? 'alert-success' : 'alert-danger'">
+              {{ messageNewTitle }}
+            </div>
+          </div>
 
-                </div>
-
-                <div class="row">
-                  <div class="col-sm-3">
-                    <h6 class="mb-0">new Description</h6>
-                  </div>
-                  <div class="col-sm-9 text-secondary">
-                    <input type="text" class="form-control" placeholder="Enter a new Desc."
-                           v-model="currentItem.description">
-                    <div v-if="messageNewDescription"
-                         class="alert"
-                         :class="successful ? 'alert-success' : 'alert-danger'">
-                      {{ messageNewDescription }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-sm-3">
-                    <h6 class="mb-0">AvailableFrom</h6>
-                  </div>
-                  <div class="col-sm-9 text-secondary">
-                    <datepicker
-                        :disabledDates="disabledDates"
-                        :bootstrap-styling="true"
-                        type="date"
-                        id="availableFrom"
-                        placeholder="from"
-                        v-model="currentItem.availableFrom">
-                    </datepicker>
-                  </div>
-                  <div v-if="messageAvailableFrom"
+          <div class="form-group">
+            <label for="description" class="font-weight-bold"
+              >New Description</label
+            >
+            <textarea
+              rows="5"
+              class="form-control"
+              id="description"
+              v-model="currentItem.description"
+              placeholder="Enter a new Description"
+            />
+            <div v-if="messageNewDescription"
+                  class="alert"
+                  :class="successful ? 'alert-success' : 'alert-danger'">
+              {{ messageNewDescription }}
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="availableFrom" class="font-weight-bold"
+                  >Available From</label
+                >
+                <datepicker
+                    :disabledDates="disabledDates"
+                    :bootstrap-styling="true"
+                    type="date"
+                    id="availableFrom"
+                    placeholder="from"
+                    v-model="currentItem.availableFrom">
+                </datepicker>
+                 <div v-if="messageAvailableFrom"
                        class="alert"
                        :class="successful ? 'alert-success' : 'alert-danger'">
                     {{ messageAvailableFrom }}
                   </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-sm-3">
-                    <h6 class="mb-0">AvailableTo</h6>
-                  </div>
-                  <div class="col-sm-9 text-secondary">
-                    <!--<input type="text" class="form-control" placeholder="" v-model="currentItem.availableTo">-->
-                    <datepicker
-                        :disabledDates="disabledDates"
-                        :bootstrap-styling="true"
-                        type="date"
-                        id="availableTo"
-                        placeholder="from"
-                        v-model="currentItem.availableTo">
-                    </datepicker>
-                  </div>
-                  <div v-if="messageAvailableTo"
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="availableTo" class="font-weight-bold"
+                  >Available To</label
+                >
+                <datepicker
+                    :disabledDates="disabledDates"
+                    :bootstrap-styling="true"
+                    type="date"
+                    id="availableTo"
+                    placeholder="from"
+                    v-model="currentItem.availableTo">
+                </datepicker>
+                 <div v-if="messageAvailableTo"
                        class="alert"
                        :class="successful ? 'alert-success' : 'alert-danger'">
                     {{ messageAvailableTo }}
                   </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-sm-3">
-                    <h6 class="mb-0">new Photo</h6>
-                  </div>
-                  <div class="form-group">
-                    <label for="fileImage">Upload image</label>
-                    <input
-                        type="file"
-                        @change="onImageUpload"
-                        id="fileImage"
-                        name="fileImage"
-                        accept="image/png, image/jpeg"
-                        ref="fileImage"
-                    />
-                  </div>
-                  <div class="form-group">
-                    <div id="preview">
-                      <img v-if="!url" :src="getCurrentItemPicture"
-                           class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
-                      <img v-else :src="url" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
-                    </div>
-                  </div>
-                </div>
-                <button @click="updateItem" id="massege" class="btn btn-success">Save</button>
-                <a @click="goBack()" class="btn btn-primary">Back</a>
+              </div>
+            </div>
+            <div class="col form-group">
+              <div
+                v-if="messageAvailableTo || messageAvailableFrom"
+                class="alert"
+                :class="successful ? 'alert-success' : 'alert-danger'"
+              >
+                {{ messageAvailableFrom }}{{ messageAvailableTo }}
               </div>
             </div>
           </div>
+          <div
+            id="mobile-item-img"
+            class="d-sm-none d-md-none d-lg-none d-xl-none"
+          >
+            <div class="form-group">
+              <input
+                type="file"
+                @change="onImageUpload"
+                id="fileImage"
+                name="fileImage"
+                accept="image/png, image/jpeg"
+                ref="fileImage"
+              />
+            </div>
+            <div class="form-group">
+              <div id="preview">
+                <img v-if="!url" :src="getCurrentItemPicture"
+                      class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
+                <img v-else :src="url" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
+              </div>
+            </div>
+          </div>
+          <button
+            @click="updateItem"
+            class="btn btn-sm btn-primary pt-1 pb-1 pl-4 pr-4"
+            style="
+              font-family: 'GoShareFont';
+              background: #539ac5;
+              border-radius: 5px;
+              font-weight: 400;
+              letter-spacing: 1.5px;
+              border: none;
+            "
+          >
+            Save
+          </button>
+          <a @click="goBack()" 
+            class="gs-btn-red btn btn-sm btn-danger pt-1 pb-1 pl-4 pr-4 ml-3"
+            style="
+              font-family: 'GoShareFont';
+              border-radius: 5px;
+              font-weight: 600;
+              letter-spacing: 1.5px;
+              border: none;
+            "
+          >Back</a>
+        </div>
 
-        </nav>
+        <div
+          id="desktop-item-img"
+          class="col-md-4 ml-3 d-none d-sm-inline-block"
+          style="display: inline-block; vertical-align: top"
+        >
+            <img v-if="!url" :src="getCurrentItemPicture"
+                  class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
+            <img v-else :src="url" class="img-fluid rounded mb-3 mb-md-0 gs-fit-image" alt=""/>
+          <div class="form-group mt-3">
+            <input
+              type="file"
+              @change="onImageUpload"
+              id="fileImage-dsk"
+              name="fileImage"
+              accept="image/png, image/jpeg"
+              ref="fileImage"
+            />
+          </div>
+        </div>
       </div>
-    </div>
+
   </div>
 </template>
 <script>
@@ -431,5 +471,26 @@ body {
 .pro-d-head {
   font-size: 18px;
   font-weight: 300;
+}
+
+#preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 100%;
+  max-height: 500px;
+}
+
+@media screen and (max-width: 767px) {
+  #desktop-item-img {
+    display: none !important;
+  }
+
+  #mobile-item-img {
+    display: block !important;
+  }
 }
 </style>

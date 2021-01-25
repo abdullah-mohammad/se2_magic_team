@@ -69,17 +69,26 @@
   <div id="home-bg-img-right" class="d-none d-md-block"></div>
 
     <br>
-    <div v-if="!loaded">
-          <atom-spinner
-            :animation-duration="1000"
-            :size="60"
-            :color="'#ff1d5e'"
-          />
-        Loading filter from current postion...
+    <div v-if="!isLoaded" style="position: relative; width: 100%;">
+        <div style="position: absolute;
+                  top: 0;
+                  bottom: 0;
+                  left: 0;
+                  text-align: center;
+                  right: 0;
+                  margin: auto;">
+              <radar-spinner
+                style="margin:auto"
+                :animation-duration="2000"
+                :size="60"
+                :color="'#ff1d5e'"
+              />
+            Loading filter from your address...
+        </div>
       </div>
     <div class="container">
       <div class="row" v-if="showItems" @submit="itemsSuchen">
-      <div style="width: 100%;" v-for="(item) in items" :key="item.id">
+      <div style="width: 100%;" v-for="(item) in (currentUser? nearMeItems.slice(startLimit, endLimit) : items.slice(startLimit, endLimit))" :key="item.id">
         <!-- Item One -->
         <div class="row gs-tool-card">
           <div class="col-md-5">
@@ -96,11 +105,17 @@
               {{ item.description }}
             </VClamp>
                         <div class="gs-tool-card-actions">
-                          <span v-if="item.distance != Infinity" class="text-muted">{{item.distance}} km from you </span> &nbsp;
+                          <span v-if="currentUser && item.distanceFromMe != Infinity" class="text-muted">{{item.distanceFromMe}} km from you </span> &nbsp;
                           <router-link :to="{ path: '/items/'+ item.id}"
-                                       class="btn btn-sm btn-rounded btn-primary gs-btn-blue .gs-a">See details
+                                        class="gs-btn-blue .gs-a btn btn-sm btn-primary pt-1 pb-1 pl-3 pr-3"
+                                        style="font-family: 'GoShareFont'; border-radius: 5px; font-weight: 400; letter-spacing:1.25px; border:none;"
+                                       >See details
                           </router-link>
-                          <router-link  v-if = "item.user.id!==currentUser.id"  :to="{ path: '/borrow/' + item.id}" class="btn btn-sm btn-outline-danger gs-btn-red .gs-a">Borrow
+                          <router-link  v-if="!currentUser || (currentUser && ( (!isNaN(item.user) && item.user !=currentUser.id) || (isNaN(item.user) && item.user.id!=currentUser.id)))" 
+                                    :to="{ path: '/borrow/' + item.id}" 
+                                    class="gs-btn-red .gs-a btn btn-sm btn-danger pt-1 pb-1 pl-3 pr-3" 
+                                    style="font-family: 'GoShareFont'; border-radius: 5px; font-weight: 400; letter-spacing:1.25px; border:none;"
+                                  >Borrow
                           </router-link>
                         </div>
           </div>
@@ -108,8 +123,11 @@
         <!-- /.row -->
       </div>
     </div>
+    <div v-if="isLoaded && !((currentUser && nearMeItems.length > 0) || (!currentUser && items.length > 0))">
+      <p :style="{color:'#C55353', fontWeight: '600', fontSize: '17px', fontStyle: 'italic',textAlign: 'center', marginTop: '50px'}">Sorry, there is no data matching your search 😢</p>
+    </div>
     <paginate
-          v-if="showItems"
+          v-if="showItems && ((currentUser && nearMeItems.length > 0) || (!currentUser && items.length > 0))"
           page:1
           :page-count=getPageCount
           :container-class="'pagination justify-content-center'"
@@ -119,8 +137,8 @@
           :prev-link-class="'page-link gs-page-link'"
           :next-link-class="'page-link gs-page-link'"
           :page-link-class="'page-link gs-page-link'"
-          :prev-text="'&laquo;'"
-          :next-text="'&raquo;'"
+          :prev-text="'prev'"
+          :next-text="'last'"
           :click-handler="paginateCallback"
       >
       </paginate>
@@ -132,7 +150,7 @@
 import {mapActions, mapState} from 'vuex';
 import Paginate from 'vuejs-paginate';
 import VClamp from 'vue-clamp';
-import {AtomSpinner} from 'epic-spinners'
+import {RadarSpinner} from 'epic-spinners'
 
 const MAX_NUMBER_ITEMS_PER_LIST = 5;
 const API_IMG_RESOURCE = process.env.VUE_APP_API_URL+"items/get-img/";
@@ -146,7 +164,7 @@ export default {
   components: {
     Paginate,
     VClamp,
-    AtomSpinner
+    RadarSpinner
   },
   data() {
     return {
@@ -164,9 +182,9 @@ export default {
     };
   },
   computed: {
-    ...mapState('items', ['items', 'loaded']),
+    ...mapState('items', ['items', 'nearMeItems','isLoaded']),
     getPageCount() { // total pages
-      return this.items.length / MAX_NUMBER_ITEMS_PER_LIST;
+      return this.currentUser ? this.nearMeItems.length / MAX_NUMBER_ITEMS_PER_LIST : this.items.length / MAX_NUMBER_ITEMS_PER_LIST;
     },
 
     currentUser() {
@@ -214,7 +232,7 @@ export default {
   mounted() {
     // this is call of promise: so make sure that data has been fetched before pursuiving...
     this.setItems().then(() => {
-      if (this.items.length > 0)
+      if ((this.currentUser && this.nearMeItems.length > 0) || (!this.currentUser && this.items.length > 0))
         this.paginateCallback(1);
     })
   },
