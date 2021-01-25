@@ -4,7 +4,7 @@
     <h2 class="my-4 gs-title">Item details: </h2>
     <!-- Page Heading -->
 
-    <div class="container bootdey">
+    <div class="container pl-0 pr-0 bootdey">
       <div class="col-md-12">
         <section class="panel">
           <div class="panel-body">
@@ -36,7 +36,7 @@
                         type="button"><i class="fa fa-chevron-left"></i> Back
                 </button>
                 <!--<button class="btn btn-round btn-success gs-btn-rounded" type="button"><i class="fa fa-shopping-cart"></i> Borrow</button>-->
-                <router-link  v-if="currentItem.user.id!==currentUser.id" :to="{ path: '/borrow/' + currentItem.id}" class="btn btn-sm btn-primary gs-btn-blue pt-1 pb-1 pl-3 pr-3">
+                <router-link  v-if="currentUser && currentItem.user.id!==currentUser.id" :to="{ path: '/borrow/' + currentItem.id}" class="btn btn-sm btn-primary gs-btn-blue pt-1 pb-1 pl-3 pr-3">
                   <i class="fa fa-shopping-cart"></i> Borrow
                 </router-link>
               </p>
