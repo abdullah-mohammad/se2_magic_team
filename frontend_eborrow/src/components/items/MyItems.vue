@@ -79,6 +79,7 @@ import {mapActions, mapGetters, mapState} from 'vuex';
 import Paginate from 'vuejs-paginate';
 import VClamp from 'vue-clamp';
 import ItemDataService from "@/services/ItemDataService";
+import swal from "sweetalert";
 
 
 const MAX_NUMBER_ITEMS_PER_LIST = 5;
@@ -119,7 +120,27 @@ export default {
       this.endLimit = this.startLimit + MAX_NUMBER_ITEMS_PER_LIST;
     },
     deleteItem(id) {
-      if (confirm("Do you really want to delete?")) {
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this item!",
+        icon: "error",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          ItemDataService.delete(id)
+              .then(() => {
+                swal( "The deletion was successful", {
+                  icon: "success",
+                })
+                this.setMyItems(this.currentUser.id);
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+        }
+      });
+/*      if (confirm("Do you really want to delete?")) {
         ItemDataService.delete(id)
             .then(() => {
               this.setMyItems(this.currentUser.id);
@@ -127,7 +148,7 @@ export default {
             .catch((e) => {
               console.log(e);
             });
-      }
+      }*/
     },
     getItemPicture(img) {
       if (img != null && img !== "" && img !== undefined) {

@@ -493,8 +493,13 @@ export default {
         this.messageStreetNr = "please fill in the street-number. \n"
         isInvalid = true;
       }
-      if (this.address.zipcode === undefined || this.address.zipcode === "") {
+      if (this.address.zipcode === undefined ||  this.address.zipcode === "") {
         this.messageZip = "please fill in the address-zipcode. \n"
+        isInvalid = true;
+      }
+
+      if (this.address.zipcode && !this.validZipCode(this.address.zipcode)) {
+        this.messageZip = "zipcode is invalid. \n"
         isInvalid = true;
       }
 
@@ -531,6 +536,10 @@ export default {
     validPassword(password) {
       var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&]).{5,}$/;
       return re.test(password);
+    },
+    validZipCode(zipcode) {
+      var re = /^(?=[0-9]).{5}$/;
+      return re.test(zipcode);
     },
   },
 };

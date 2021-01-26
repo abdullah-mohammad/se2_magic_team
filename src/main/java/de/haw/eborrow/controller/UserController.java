@@ -5,6 +5,7 @@ import de.haw.eborrow.models.Address;
 import de.haw.eborrow.models.Item;
 import de.haw.eborrow.models.User;
 import de.haw.eborrow.repository.AddressRepository;
+import de.haw.eborrow.repository.ItemRepository;
 import de.haw.eborrow.repository.UserRepository;
 import de.haw.eborrow.security.SigninRequest;
 import de.haw.eborrow.security.SignupRequest;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Null;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -55,6 +57,9 @@ public class UserController {
 
     @Autowired
     FilesStorageService storageService;
+
+    @Autowired
+    ItemRepository itemRepository;
 
     private UserRepository applicationUserRepository;
     private AddressRepository addressRepository;
@@ -121,6 +126,28 @@ public class UserController {
             return (ResponseEntity<List<User>>) applicationUserRepository.findAll();
     }
 
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable("id") long id) {
+        try {
+            String name = "";
+            Optional<User> user = applicationUserRepository.findById(id);
+            if (user.isPresent()) {
+                List<Item> items = itemRepository.findAllByUser(user.get());
+                for (Item item:items) {
+                    itemRepository.delete(item);
+                }
+                name = user.get().getFirstname();
+                storageService.delete("/profilepictures/",user.get().getProfilepicture());
+                applicationUserRepository.deleteById(id);
+                return new ResponseEntity<>(name,HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>( HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/user/{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") long id) {
         try {
@@ -135,7 +162,6 @@ public class UserController {
         }
 
     }
-
     @PreAuthorize("permitAll()")
     @PutMapping("/edit-user/{id}")
     public ResponseEntity<User> editUser(@PathVariable("id") long id,
