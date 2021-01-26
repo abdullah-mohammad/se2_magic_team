@@ -7,7 +7,6 @@
                 <!-- Page Heading -->
 
                 <!-- Edit-Block -->
-                <form @submit.prevent="handleEditUser">
                 <div class="row gutters-sm">
                     <!-- Profile-Image -->
                     <div class="col-md-4 mb-3 mr-0">
@@ -179,19 +178,18 @@
                                         type="submit"
                                         class="btn btn-sm btn-primary pt-1 pb-1 pl-4 pr-4"
                                         style="font-family: 'GoShareFont'; background: #539AC5; border-radius: 5px; font-weight: 600; letter-spacing:1.5px; border:none"
-                                        value="Save">
+                                        value="Save" @click="handleEditUser">
                                     <span style="padding-left:5px"> &nbsp; </span> &nbsp;
                                     <button
                                         class="btn btn-sm btn-danger pt-1 pb-1 pl-4 pr-4"
                                         style="font-family: 'GoShareFont'; background: #C55353; border-radius: 5px; font-weight: 600; letter-spacing:1.5px; border:none"
-                                        @click={}>Delete</button>
+                                        @click="deleteUser(user.id)">Delete</button>
                             </div>
                         </div>
                     </div>
                     <!-- Edit-Form -->
                 </div>
                 <!-- Edit-Block -->
-                </form>
             </div>
             <div v-else>
                 {{errMsge}}
@@ -199,10 +197,11 @@
         </div>
     </div>
 </template>
-
 <script>
     import {mapActions, mapState} from 'vuex';
-    import userDataService from "../../services/UserDataService";
+    import UserDataService from "../../services/UserDataService";
+    import swal from 'sweetalert';
+
     const API_IMG_RESOURCE = process.env.VUE_APP_API_URL+"users/get-img/";
 
 
@@ -226,7 +225,7 @@
                 messageGender: "",
                 messageBirthDate: "",
                 newProfilePicUrl: null,
-                successful: null
+                successful: null,
             }
         },
         computed: {
@@ -275,7 +274,7 @@
                     data.append("birthdate", this.user.birthdate);
                     data.append("editPass", editUserPass);
                     data.append("newPic", newPic);
-                    userDataService.editUser(this.currentUser.id, data)
+                    UserDataService.editUser(this.currentUser.id, data)
                         .then((res) => {
                             this.user.profilepicture = res.data.profilepicture
                             this.$router.push("/profile");
@@ -380,7 +379,7 @@
             },
             handleCheckOldPass() {
                 var passIsValid = false
-                userDataService.checkUserPass(this.currentUser.id, this.oldpass)
+                UserDataService.checkUserPass(this.currentUser.id, this.oldpass)
                     .then(() => {
                         passIsValid = true
                     })
@@ -389,6 +388,32 @@
                         passIsValid = false
                     })
                 return passIsValid
+            },
+            deleteUser(id){
+              swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover your account!",
+                icon: "error",
+                buttons: true,
+                dangerMode: true,
+              }).then((willDelete) => {
+                  if (willDelete) {
+                    UserDataService.deleteUser(id).then((res) => {
+                      swal(res.data + ", Sorry to see you go. Good bye!", {
+                        icon: "success",
+                      }).then(() => {
+                        this.$router.push('/');
+                      });
+                      this.$store.dispatch("auth/logout");
+                      this.$store.dispatch("user/deleteUser");
+                    }).catch((e) => {
+                      console.log(e.message())
+                    });
+
+                  } else {
+                    swal("Thank you for staying with us!");
+                  }
+                });
             },
         },
         mounted() {
@@ -399,8 +424,6 @@
             this.isChecked = false
             this.newpass = ""
         },
-
-
     }
 </script>
 
@@ -414,5 +437,67 @@
         font-family: FontAwesome;
         content: "\f03e"!important;
         font-weight: 900;
+    }
+    .circular-sb {
+      width: 400px;
+      height: 120px;
+      border: 3px solid #242424;
+      margin: 30px auto;
+      padding: 35px 10px;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      font-family: "Roboto Thin";
+      position: relative;
+      color: #242424;
+    }
+    .circle1 {
+      border: 3px solid #242424;
+      position: absolute;
+      width: 25px;
+      padding: 20px;
+      border-radius: 50%;
+      right: -25px;
+      bottom: 23px;
+    }
+
+    .circle1:before {
+      content: "";
+      position: absolute;
+      width: 25px;
+      padding: 20px;
+      border-radius: 50%;
+      right: 0px;
+      bottom: 0px;
+      background: #fff;
+    }
+    .circle2 {
+      border: 2px solid #242424;
+      position: absolute;
+      width: 5px;
+      padding: 10px 10px;
+      border-radius: 50%;
+      right: -50px;
+      bottom: 15px;
+    }
+
+    .circle3 {
+      border: 2px solid #242424;
+      position: absolute;
+      width: 1px;
+      padding: 5px 5px;
+      border-radius: 50%;
+      right: -70px;
+      bottom: 15px;
+    }
+    .goodbye-message{
+      height: 300px;
+      position: relative;
+    }
+    .goodbye-message .circular-sb img{
+      position: absolute;
+      right: -160px;
+      bottom: -55px;
     }
 </style>

@@ -139,7 +139,7 @@
             :src="url ? url : 'https://via.placeholder.com/150'"
             alt="Item picture"
             class="img-thumbnail"
-            width="275"
+            width="320"
           />
           <div class="form-group mt-3">
             <input
@@ -150,6 +150,16 @@
               accept="image/png, image/jpeg"
               ref="fileImage"
             />
+
+          </div>
+          <div class="form-group  ">
+            <div
+                v-if="messageImage"
+                class="alert"
+                :class="successful ? 'alert-success' : 'alert-danger'"
+            >
+              {{ messageImage }}
+            </div>
           </div>
         </div>
       </div>
@@ -198,6 +208,7 @@ export default {
       messageDescription: "",
       messageAvailableFrom: "",
       messageAvailableTo: "",
+      messageImage: "",
     };
   },
   computed: mapGetters("user", ["getCurrentUser"]),
@@ -236,9 +247,15 @@ export default {
     },
 
     onImageUpload(event) {
+      this.messageImage = "";
       if (event.target.files[0] != null) {
         this.item.fileImage = event.target.files[0];
-        this.url = URL.createObjectURL(this.item.fileImage);
+        if(Math.round(this.item.fileImage.size/(1024*1024)) > 1){
+          this.messageImage = "the image should not be bigger than 1 MB.";
+          this.url = null;
+        }else{
+          this.url = URL.createObjectURL(this.item.fileImage);
+        }
       } else {
         this.url = null;
       }

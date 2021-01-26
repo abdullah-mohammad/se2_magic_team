@@ -1,6 +1,7 @@
 package de.haw.eborrow.repository;
 
 import de.haw.eborrow.models.Borrow;
+import de.haw.eborrow.models.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import de.haw.eborrow.models.Item;
@@ -54,4 +55,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificat
             "    )")
     List<Item> filterItemListBy(@Param("title") String title, @Param("fromD") @Temporal(TemporalType.TIMESTAMP) Date date);
 
+    List<Item> findAllByUser(User user);
 }

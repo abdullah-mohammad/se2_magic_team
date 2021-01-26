@@ -13,6 +13,10 @@ class UserDataService {
     return http.get(`/users/user/${id}`);
   }
 
+  deleteUser(id) {
+    return http.delete(`/users/user/${id}`);
+  }
+
   checkUserPass(id, pass) {
     return http.post(`/users/check-pass/${id}`, pass)
   }
@@ -20,6 +24,7 @@ class UserDataService {
   getUserInlineAddress(id) {
     return http.get(`/users/user-address/${id}`);
   }
+
 }
 
 export default new UserDataService();
