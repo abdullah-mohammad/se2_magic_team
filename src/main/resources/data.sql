@@ -15,6 +15,7 @@ values
 
 insert into item (title, description, available_from, available_to, picture, user_id)
 values
+( 'Bolzenschneider','Lust ein paar Fahrräder zu knacken ??' ,'2021-02-02' , DATEADD('DAY', + 30, '2021-02-02') , 'bolzenschneider.jpg', 2),
 ( 'Rasenmäher-Roboter','Ich liebe diesen Roboter und finde jeder sollte mal die Chance gehabt haben so einen in seinem Garten fahren zu lassen!' ,'2021-02-02' , DATEADD('DAY', + 10, '2021-02-02') , 'rasenmaehrer_roboter.jpg', 1),
 ( 'Schubkarre','Bis zu 200kg Tragekapazität. Bitte poliert zurück!' ,'2021-02-02' , DATEADD('DAY', + 15, '2021-02-02'),'schubkarre.jpg', 2),
 ( 'Akkuschrauber','So viele Schrauben wurden hiermit geschraubt. Helft diesem Stück seine Legende fortzuschreiben','2021-02-02' , DATEADD('DAY', + 20, '2021-02-02'),'schrauber.jpg', 1),

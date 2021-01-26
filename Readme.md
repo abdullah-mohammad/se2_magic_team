@@ -166,6 +166,34 @@ Das Frontend muss dafür noch einmal neu gestartet werden bzw. das Dockerfile au
 
 Dazu wurde die Pipeline `.gitlab-ci.yaml` geschrieben.
 
+### 5. Manuelles Deployment kompletter Ablauf
+```
+kubelogin
+docker login git.haw-hamburg.de:5005
+
+docker build -t goshare-backend .
+docker tag goshare-backend git.haw-hamburg.de:5005/acq573/se2_magic_team:backend
+docker push git.haw-hamburg.de:5005/acq573/se2_magic_team:backend
+kubectl delete service goshare-backend -n acq573-se2-magic-team && kubectl delete deployment goshare-backend -n acq573-se2-magic-team
+kubectl apply -f deploy.yaml -n acq573-se2-magic-team
+
+kubectl delete pod <PODNAME> --grace-period=0 --force --namespace <NAMESPACE>
+
+kubectl delete pod goshare-frontend-57bfbb5b7f-p6cz4 --grace-period=0 --force --namespace acq573-se2-magic-team
+
+
+cd frontend_eborrow
+docker build -t goshare-frontend .
+docker tag goshare-frontend git.haw-hamburg.de:5005/acq573/se2_magic_team:frontend
+docker push git.haw-hamburg.de:5005/acq573/se2_magic_team:frontend
+kubectl delete service goshare-frontend -n acq573-se2-magic-team && kubectl delete deployment goshare-frontend -n acq573-se2-magic-team
+kubectl apply -f frontend.yaml -n acq573-se2-magic-team
+
+kubectl get deploy,pod,svc -n acq573-se2-magic-team
+```
+
+
+
 # Quellen
 
 https://userdoc.informatik.haw-hamburg.de/lib/exe/fetch.php?media=docu:icc_tutorial_hello_world.pdf
