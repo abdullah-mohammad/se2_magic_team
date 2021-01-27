@@ -163,7 +163,7 @@
 </template>
 <script>
 import ItemDataService from "../../services/ItemDataService";
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import Datepicker from 'vuejs-datepicker';
 
 const API_IMG_RESOURCE = process.env.VUE_APP_API_URL + "items/get-img/";
@@ -197,6 +197,9 @@ export default {
     ...mapGetters('user', ['getCurrentUser']),
   },
   methods: {
+    ...mapActions({
+      setMustRefresh: "items/setMustRefresh"
+    }),
 
     currentUser() {
       return this.$store.state.auth.user;
@@ -246,7 +249,7 @@ export default {
             .then((response) => {
               console.log(response.data);
               this.message = "The item was updated successfully!";
-
+              this.setMustRefresh(true)
             })
             .catch((e) => {
               console.log(e);

@@ -102,7 +102,7 @@
 <script>
 import ItemDataService from "../services/ItemDataService";
 import BorrowDataService from "../services/BorrowDataService";
-import {mapState} from 'vuex';
+import {mapActions, mapState} from 'vuex';
 import Datepicker from 'vuejs-datepicker';
 
 const API_IMG_RESOURCE = process.env.VUE_APP_API_URL + "items/get-img/";
@@ -135,6 +135,9 @@ export default {
     }),
   },
   methods: {
+    ...mapActions({
+      setMustRefresh: "items/setMustRefresh"
+    }),
     getItem(id) {
       ItemDataService.get(id)
           .then((response) => {
@@ -190,6 +193,7 @@ export default {
           this.submitted = false;
           console.log(e);
         })
+        this.setMustRefresh(true)
       }
     },
 

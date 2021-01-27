@@ -23,7 +23,8 @@ export const items = {
         isLoaded: false,
         toFilter: false,
         nearMeItems: [],
-        locationApiError: false
+        locationApiError: false,
+        mustRefresh: true
     },
     mutations: {
         SET_ITEMS(state, payload) {
@@ -34,6 +35,9 @@ export const items = {
         },
         SET_LOADED(state, value) {
             state.isLoaded = value;
+        },
+        SET_MUST_REFRESH(state, value) {
+            state.mustRefresh = value;
         },
         SET_MY_ITEMS(state, payload) {
             state.items = payload;
@@ -61,14 +65,16 @@ export const items = {
                         if(!res.data) {
                             context.commit('SET_NEAR_ME_ITEMS', []);
                             context.commit('SET_LOADED', true);
+                            context.commit('SET_MUST_REFRESH', false);
                             return;
                         }
 
                         // api-calls & Aktualisierungen möglichst vermeiden
-                        if(res.data.length == context.state.nearMeItems.length){
+                        if(res.data.length == context.state.nearMeItems.length && !context.state.mustRefresh){
                             console.log("LENGTHS: ", res.data.length + " :: " + context.state.nearMeItems.length)
                             console.log("SETUP_STATE: ", context.state.nearMeItems)
                             context.commit('SET_LOADED', true);
+                            context.commit('SET_MUST_REFRESH', false);
                             return
                         }
                         
@@ -95,6 +101,7 @@ export const items = {
                                         console.log("Error by setItemsInlineAddresses & geoCodes: ", e)
                                         context.commit('SET_NEAR_ME_ITEMS', res.data);
                                         context.commit('SET_LOADED', true);
+                                        context.commit('SET_MUST_REFRESH', false);
                                         alert("Error when computing distance of Item location from your address!")
                                         return;
                                     })
@@ -121,6 +128,7 @@ export const items = {
 
                             context.commit('SET_NEAR_ME_ITEMS', nearMeItemsWithGeoCodes);
                             context.commit('SET_LOADED', true);
+                            context.commit('SET_MUST_REFRESH', false);
                             console.log("LOADED ITEMS: ", context.state.nearMeItems)
                             return Promise.resolve(nearMeItemsWithGeoCodes);
                             /* context.commit('SET_NEAR_ME_ITEMS', nearMeItemsWithGeoCodes);
@@ -146,6 +154,7 @@ export const items = {
                         if(!res.data) {
                             context.commit('SET_NEAR_ME_ITEMS', []);
                             context.commit('SET_LOADED', true);
+                            context.commit('SET_MUST_REFRESH', false);
                             return;
                         }
                         // At first: setNearItemsInlineAdresses & geoCodes & compute distances from User@ in DB
@@ -229,6 +238,7 @@ export const items = {
                                 
                             context.commit('SET_NEAR_ME_ITEMS', nearMeItemsWithGeoCodes);
                             context.commit('SET_LOADED', true);
+                            context.commit('SET_MUST_REFRESH', false);
                             console.log("LOADED ITEMS: ", context.state.items)
                             return Promise.resolve(nearMeItemsWithGeoCodes);
 
@@ -302,16 +312,6 @@ export const items = {
                     }
                 }
 
-
-                
-
-
-
-
-
-
-
-                
                 
             } catch (e) {
                 console.log(e);
@@ -329,6 +329,10 @@ export const items = {
                 return Promise.reject(e);
             }
 
+        },
+
+        setMustRefresh(context, value) {
+            context.commit('SET_MUST_REFRESH', value);
         },
 
         async getItem(id,context){
