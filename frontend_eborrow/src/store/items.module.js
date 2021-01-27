@@ -63,6 +63,15 @@ export const items = {
                             context.commit('SET_LOADED', true);
                             return;
                         }
+
+                        // api-calls & Aktualisierungen möglichst vermeiden
+                        if(res.data.length == context.state.nearMeItems.length){
+                            console.log("LENGTHS: ", res.data.length + " :: " + context.state.nearMeItems.length)
+                            console.log("SETUP_STATE: ", context.state.nearMeItems)
+                            context.commit('SET_LOADED', true);
+                            return
+                        }
+                        
                         // setNearItemsInlineAdresses & geoCodes & distances from User@ in DB
                             // get User@ in DB and transform it in geocode for 'source'
                             const connectedUserAddress = await (await UserDataService.getUserInlineAddress(context.rootState.auth.user.id)).data;
