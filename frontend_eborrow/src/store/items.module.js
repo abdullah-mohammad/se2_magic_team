@@ -262,18 +262,20 @@ export const items = {
                             
 
                             if(promises) await Promise.all(promises)
-                            // compute distances from source once!
-                                // at first set destinations
-                            let destinations = []
-                            itemsWithGeoCodes.forEach(item => {
-                                destinations.push(item.geocode)
-                            });
-                                // then compute distance and spread it...
-                            await AddressDataService.getDistanceFromLocation(source, destinations).then(distRes => {
-                                itemsWithGeoCodes.forEach((item, i) => {
-                                    itemsWithGeoCodes[i] = {...item, distanceFromFilterLocation: distRes[0][i]}
+                            if (filterData.get('where')) {
+                                // compute distances from source once!
+                                    // at first set destinations
+                                let destinations = []
+                                itemsWithGeoCodes.forEach(item => {
+                                    destinations.push(item.geocode)
+                                });
+                                    // then compute distance and spread it...
+                                await AddressDataService.getDistanceFromLocation(source, destinations).then(distRes => {
+                                    itemsWithGeoCodes.forEach((item, i) => {
+                                        itemsWithGeoCodes[i] = {...item, distanceFromFilterLocation: distRes[0][i]}
+                                    })
                                 })
-                            })
+                            }
 
                             if(filterData.get('where') && allItemEntriesDistancesEqualInfinity(itemsWithGeoCodes, MODE.DISTANCE_FROM_FILTER_LOCATION))
                                     //alert("An API-Error occured while trying to compute distance between the filter location and items location")
