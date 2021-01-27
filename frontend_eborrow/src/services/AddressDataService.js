@@ -1,7 +1,7 @@
 import { http } from "../http-common";
 import axios from "axios";
 
-const API_KEY = "5b3ce3597851110001cf6248d76aadbfbb7243bba7248b6c3fc5ade3"
+const API_KEY = "5b3ce3597851110001cf6248d62474b2ff7a4204900fb5db3ff42094"
 
 class AddressDataService {
 
@@ -21,13 +21,24 @@ class AddressDataService {
         return result;
     }
 
-    async getDistanceFromLocation(source, destination) {
+    async getDistanceFromLocation(source, destinations) {
         let result = Infinity;
+        let locations = []
+        let src = null
+        destinations.forEach((destination,i) => {
+            locations.push(destination)
+            if(src===null && JSON.stringify(destination) === JSON.stringify(source))
+                src = i
+        })
+        if (src === null) {
+            src = locations.length
+            locations.push(source)
+        }
         await axios.post(
             "https://api.openrouteservice.org/v2/matrix/driving-car",
             // data
             {
-                "locations":[source, destination],"metrics":["distance"],"sources":[0],"destinations":[1],"units":"km"
+                "locations":locations,"metrics":["distance"],"sources":[src],"units":"km"
             },
             {
                 headers: {
@@ -37,7 +48,7 @@ class AddressDataService {
                 }
             }
         )
-        .then(res => result = res.data.distances[0][0])
+        .then(res => result = res.data.distances)
         .catch(e => console.log("Error getDistanceFromLocations-API-Call", e))
         return result
     }

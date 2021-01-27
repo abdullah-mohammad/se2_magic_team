@@ -76,16 +76,11 @@ export const items = {
                                 const userId = !isNaN(item.user) ? item.user : item.user.id
                                 await UserDataService.getUserInlineAddress(userId) // set inlineAddress for each item in List
                                     .then(async addrRes => {
-                                        let geocode = null;
                                         // set geoCode 
-                                        await AddressDataService.getAddrGeoCode(addrRes.data).then(async geoCodeRes=>geocode=geoCodeRes)
-                                        // compute Distance
-                                        const destination = geocode
-                                        await AddressDataService.getDistanceFromLocation(source, destination)
-                                            .then(async distRes => {
-                                                // spread items Infos with AddrGeoCodes & distances...
-                                                nearMeItemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: geocode, distanceFromMe: distRes}
-                                            })
+                                        await AddressDataService.getAddrGeoCode(addrRes.data).then(async geoCodeRes=>{
+                                            // spread items Infos with AddrGeoCodes...
+                                            nearMeItemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: geoCodeRes}
+                                        }).catch(()=>nearMeItemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: [0.0,0.0]})
                                     })
                                     .catch(e => {
                                         console.log("Error by setItemsInlineAddresses & geoCodes: ", e)
@@ -98,7 +93,20 @@ export const items = {
                             })
 
                             await Promise.all(promises)
-                            if(!nearMeItemsWithGeoCodes[0].geocode || allItemEntriesDistancesEqualInfinity(nearMeItemsWithGeoCodes, MODE.DISTANCE_FROM_ME))
+                            // compute distances from source once!
+                                // at first set destinations
+                            let destinations = []
+                            nearMeItemsWithGeoCodes.forEach(item => {
+                                destinations.push(item.geocode)
+                            });
+                                // then compute distance and spread it...
+                            await AddressDataService.getDistanceFromLocation(source, destinations).then(distRes => {
+                                nearMeItemsWithGeoCodes.forEach((item, i) => {
+                                    nearMeItemsWithGeoCodes[i] = {...item, distanceFromMe: distRes[0][i]}
+                                })
+                            })
+
+                            if(allItemEntriesDistancesEqualInfinity(nearMeItemsWithGeoCodes, MODE.DISTANCE_FROM_ME))
                                     //alert("An API-Error occured while trying to compute distance between your address and items location")
                                     context.commit('SET_LOCATION_API_ERROR', true);
 
@@ -144,16 +152,11 @@ export const items = {
                             const userId = !isNaN(item.user) ? item.user : item.user.id
                             await UserDataService.getUserInlineAddress(userId) // set inlineAddress for each item in List
                                 .then(async addrRes => {
-                                    let geocode = null;
                                     // set geoCode 
-                                    await AddressDataService.getAddrGeoCode(addrRes.data).then(async geoCodeRes=>geocode=geoCodeRes)
-                                    // compute Distance
-                                    const destination = geocode
-                                    await AddressDataService.getDistanceFromLocation(source, destination)
-                                        .then(async distRes => {
-                                            // spread items Infos with AddrGeoCodes & distances...
-                                            nearMeItemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: geocode, distanceFromMe: distRes}
-                                        })
+                                    await AddressDataService.getAddrGeoCode(addrRes.data).then(async geoCodeRes=>{
+                                        // spread items Infos with AddrGeoCodes...
+                                        nearMeItemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: geoCodeRes}
+                                    }).catch(()=>nearMeItemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: [0.0,0.0]})
                                 })
                                 .catch(e => {
                                     console.log("Error by setItemsInlineAddresses & geoCodes: ", e)
@@ -164,15 +167,26 @@ export const items = {
                                 
                         })
                         await Promise.all(promises)
+                        // compute distances from source once!
+                            // at first set destinations
+                        let destinations = []
+                        nearMeItemsWithGeoCodes.forEach(item => {
+                            destinations.push(item.geocode)
+                        });
+                            // then compute distance and spread it...
+                        await AddressDataService.getDistanceFromLocation(source, destinations).then(distRes => {
+                            nearMeItemsWithGeoCodes.forEach((item, i) => {
+                                nearMeItemsWithGeoCodes[i] = {...item, distanceFromMe: distRes[0][i]}
+                            })
+                        })
                         /* frueher war das nicht da!! */
-                        if(!nearMeItemsWithGeoCodes[0].geocode || allItemEntriesDistancesEqualInfinity(nearMeItemsWithGeoCodes, MODE.DISTANCE_FROM_ME))
+                        if(allItemEntriesDistancesEqualInfinity(nearMeItemsWithGeoCodes, MODE.DISTANCE_FROM_ME))
                                     //alert("An API-Error occured while trying to compute distance between your address and items location")
                                     context.commit('SET_LOCATION_API_ERROR', true);
                             context.commit('SET_NEAR_ME_ITEMS', nearMeItemsWithGeoCodes);
                         /* END frueher war das nicht da!! */
 
                         // Now: setItemsInlineAdresses & geoCodes & distances from filter location for 'sort'
-                        const nearMeItemsWithFromMeDistance = context.state.nearMeItems; // copy of it
                         // init another source (filter location) if filter-location is set
                         let filterLocationInGeocode = null;
                         let sortPromises = null;
@@ -180,25 +194,17 @@ export const items = {
                         {
                                 await AddressDataService.getAddrGeoCode(filterData.get('where')).then(geoCodeRes=>filterLocationInGeocode=geoCodeRes)
                             const source = filterLocationInGeocode;
-                            // iterate this time over nearMeItemList with distanceFrom conservated
-                            sortPromises =  nearMeItemsWithFromMeDistance.map(async (item,i) => {
-                                let geocode = null;
-                                // set geoCode 
-                                await AddressDataService.getAddrGeoCode(item.inlineAddress).then(async geoCodeRes=>geocode=geoCodeRes)
-                                // compute Distance
-                                const destination = geocode
-                                await AddressDataService.getDistanceFromLocation(source, destination)
-                                    .then(async distRes => {
-                                        // spread items Infos with AddrGeoCodes & filter distances...
-                                        nearMeItemsWithGeoCodes[i] = {...item, geocode: geocode, distanceFromFilterLocation: distRes}
-                                    })
-                                    .catch(e => {
-                                        console.log("Error by setItemsInlineAddresses & geoCodes: ", e)
-                                        context.commit('SET_NEAR_ME_ITEMS', nearMeItemsWithFromMeDistance);
-                                        context.commit('SET_LOADED', true);
-                                        alert("Error when computing distance of Item location from filter location!")
-                                        return;
-                                    })    
+                            // compute distances from source once!
+                                // at first set destinations
+                            let destinations = []
+                            nearMeItemsWithGeoCodes.forEach(item => {
+                                destinations.push(item.geocode)
+                            });
+                                // then compute distance and spread it...
+                            await AddressDataService.getDistanceFromLocation(source, destinations).then(distRes => {
+                                nearMeItemsWithGeoCodes.forEach((item, i) => {
+                                    nearMeItemsWithGeoCodes[i] = {...item, distanceFromFilterLocation: distRes[0][i]}
+                                })
                             })
                         }
                             
@@ -227,25 +233,21 @@ export const items = {
                         let itemsWithGeoCodes=res.data; // copy of the raw items
                         // init another source (filter location) if filter-location is set
                         let filterLocationInGeocode = null;
+                        let source = null;
                         let promises = null;
                         if(filterData.get('where'))
                         {
                                 await AddressDataService.getAddrGeoCode(filterData.get('where')).then(geoCodeRes=>filterLocationInGeocode=geoCodeRes)
-                            const source = filterLocationInGeocode;
+                            source = filterLocationInGeocode;
                             promises =  res.data.map(async (item,i) => {
                                 const userId = !isNaN(item.user) ? item.user : item.user.id
                                 await UserDataService.getUserInlineAddress(userId) // set inlineAddress for each item in List
                                     .then(async addrRes => {
-                                        let geocode = null;
                                         // set geoCode 
-                                        await AddressDataService.getAddrGeoCode(addrRes.data).then(async geoCodeRes=>geocode=geoCodeRes)
-                                        // compute Distance
-                                        const destination = geocode
-                                        await AddressDataService.getDistanceFromLocation(source, destination)
-                                            .then(async distRes => {
-                                                // spread items Infos with AddrGeoCodes & filter distances...
-                                                itemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: geocode, distanceFromFilterLocation: distRes}
-                                            })
+                                        await AddressDataService.getAddrGeoCode(addrRes.data).then(async geoCodeRes=>{
+                                            // spread items Infos with AddrGeoCodes...
+                                            itemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: geoCodeRes}
+                                        }).catch(()=>itemsWithGeoCodes[i] = {...item, inlineAddress: addrRes.data, geocode: [0.0,0.0]})
                                     })
                                     .catch(e => {
                                         console.log("Error by setItemsInlineAddresses & geoCodes: ", e)
@@ -260,7 +262,20 @@ export const items = {
                             
 
                             if(promises) await Promise.all(promises)
-                            if(filterData.get('where') && (!itemsWithGeoCodes[0].geocode || allItemEntriesDistancesEqualInfinity(itemsWithGeoCodes, MODE.DISTANCE_FROM_FILTER_LOCATION)))
+                            // compute distances from source once!
+                                // at first set destinations
+                            let destinations = []
+                            itemsWithGeoCodes.forEach(item => {
+                                destinations.push(item.geocode)
+                            });
+                                // then compute distance and spread it...
+                            await AddressDataService.getDistanceFromLocation(source, destinations).then(distRes => {
+                                itemsWithGeoCodes.forEach((item, i) => {
+                                    itemsWithGeoCodes[i] = {...item, distanceFromFilterLocation: distRes[0][i]}
+                                })
+                            })
+
+                            if(filterData.get('where') && allItemEntriesDistancesEqualInfinity(itemsWithGeoCodes, MODE.DISTANCE_FROM_FILTER_LOCATION))
                                     //alert("An API-Error occured while trying to compute distance between the filter location and items location")
                                     context.commit('SET_LOCATION_API_ERROR', true);
 
