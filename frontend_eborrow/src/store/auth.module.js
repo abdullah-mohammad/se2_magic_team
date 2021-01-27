@@ -12,6 +12,7 @@ export const auth = {
         user => {
           commit('loginSuccess', user);
           dispatch('user/setCurrentUser', user.id, {root:true})
+          dispatch('items/setMustRefresh', true, {root:true})
           return Promise.resolve(user);
         },
         error => {
